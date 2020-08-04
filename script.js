@@ -1,8 +1,9 @@
 var gameLogic = (function() {
   // function constructor , n broj igraca sa inputa i for loopa koja pravi igrace
-  var Player = function(id, name, mapSpot) {
+  var Player = function(id, name, budget, mapSpot) {
     this.id = id;
     this.name = name;
+    this.budget = budget;
     this.mapSpot = mapSpot;
   }
 
@@ -23,61 +24,12 @@ var UIController = (function() {
     startGame: '.startGame'
   };
 
-/*  var activePlayer = [1, 2, 3, 4],
-      player1 = 1,
-      player2 = 1,
-      player3 = 0, 
-      player4 = 0, 
-      diceScore = 0;
-  
-  document.querySelector('.endTurn').addEventListener('click', nextPlayer);
-
-  function nextPlayer() {
-  
-  }
-
-  document.querySelector('.rollDice').addEventListener('click', diceNumber);
-
-  function diceNumber() {
-    diceScore = Math.floor(Math.random() * 11) + 2;
-    
-    // koji je na redu igrac
-    if (player2 > 40) {
-      player2 -= 40;
-    }
-    player2 += movePlayer(diceScore, player2);
-    console.log('player 2 je: ' + player2);
-
-    //return diceScore;
-  };
-
-  function movePlayer(diceScore, activePlayer) {
-    console.log('broj kockice: ' + diceScore);
-    document.querySelector('[data-id="'+activePlayer+'"]').classList.remove('player' + 2);
-    activePlayer += diceScore;
-    console.log(activePlayer);
-    if (activePlayer > 40) {
-      activePlayer -= 40;
-    }
-
-    document.querySelector('[data-id="'+activePlayer+'"]').classList.add('player' + 2);
-    return diceScore;
-  } */
-
-  
-
-
-
-
-
-
-
-
   return {
     getDomStrings: function() {
       return DOMstrings;
     },
 
+    
     showPlayerPanel: function() {
       // removes StartTheGame button!
       document.querySelector(DOMstrings.startGame).parentNode.removeChild(document.querySelector(DOMstrings.startGame));
@@ -99,16 +51,19 @@ var UIController = (function() {
 
       mapContainer.insertAdjacentHTML('beforeend', html);
 
+      // Nastavi, slicno kao ovo ispod ali u game logic nova funkcija da bude i da vraca broj koji se izabere! ako ne bude islo uvek moze input box pa teraj lol
+
+      /*
       var playersNumber = document.querySelectorAll('.map__player-number');
-      
       
       playersNumber.forEach(item => {
         item.addEventListener('click', exe => {
-          var broj = item.getAttribute('data-id');
+          broj = item.getAttribute('data-id');
 
           makePlayers(broj);
-        })
-      })
+          
+        });
+      });
 
       function makePlayers(broj) {
         console.log(broj);
@@ -118,22 +73,22 @@ var UIController = (function() {
         playersNumber.forEach(item => {
           item.parentNode.removeChild(document.querySelector('.map__player-number'));
         });
+        var id = 0;
 
-        
-        while (0 < broj) {
-          document.querySelector('.map__modal').insertAdjacentHTML('beforeend', 'idemo odma ' + broj + '</br>');
+        while (id < broj) {
+          
+          document.querySelector('.map__modal').insertAdjacentHTML('beforeend', 'idemo odma ' + id + '</br>');
 
-          POZOVI FUNKCIJU DA UBACUJE JEDAN PO JEDAN IGRAC PO IME INPUT I BOJA!!
-
-          broj--;
+          //POZOVI FUNKCIJU DA UBACUJE JEDAN PO JEDAN IGRAC PO IME INPUT I BOJA!!
+          
+          id++;
         }
-        
       }
-            
+      */
     }
   }
-
 })();
+
 
 var controller = (function(game, UICtrl) {
   
@@ -141,21 +96,20 @@ var controller = (function(game, UICtrl) {
     var DOM = UICtrl.getDomStrings();
 
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
-
-    document.querySelector(DOM.startGame).addEventListener('click', createPlayer);
+    document.querySelector(DOM.startGame).addEventListener('click', createGame);
   };
 
   setupEventListeners();
 
-  function createPlayer() {
-    UICtrl.showPlayerPanel()
-  }
+  function createGame() {
 
-  function hiLol() {
-    console.log('hmmmmm');
+    UICtrl.showPlayerPanel()
+
+    // vidi iz app.js korak po korak isto radi obavezno
   }
   
-
-
+  function hiLol() {
+    console.log('smhhhh');
+  }
 
 })(gameLogic, UIController);
