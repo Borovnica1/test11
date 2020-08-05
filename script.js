@@ -14,6 +14,29 @@ var gameLogic = (function() {
   var Player1 = new Player(1, 'John', 22);
   console.log(Player1.name);
 
+  var makePlayers = function(numberOfPlayers) {
+    
+    console.log(numberOfPlayers);
+  }
+
+
+  return {
+    updateEventListener: lol = function() {
+      var playersNumber = document.querySelectorAll('.map__player-number');
+      
+      // Put on every single number button CLICK event and calls function with that number
+      playersNumber.forEach(item => {
+
+        item.addEventListener('click', exe => {
+          broj = item.getAttribute('data-id'); 
+
+          makePlayers(broj);
+        });
+
+      });
+    },
+  }
+
 })();
 
 
@@ -97,16 +120,22 @@ var controller = (function(game, UICtrl) {
 
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
     document.querySelector(DOM.startGame).addEventListener('click', createGame);
+
+    
   };
 
   setupEventListeners();
 
   function createGame() {
 
-    UICtrl.showPlayerPanel()
+    UICtrl.showPlayerPanel();
+
+    game.updateEventListener(); 
 
     // vidi iz app.js korak po korak isto radi obavezno
-  }
+  };
+
+  // Pravi ovde sledecu funkciju koja se poziva kada klikne se broj i pitaj za ime i boju
   
   function hiLol() {
     console.log('smhhhh');
