@@ -14,9 +14,10 @@ var gameLogic = (function() {
   var Player1 = new Player(1, 'John', 22);
   console.log(Player1.name);
 
+
+  // ovde nastavi!!
   var makePlayers = function(numberOfPlayers) {
-    
-    console.log(numberOfPlayers);
+    console.log('to je to ' + numberOfPlayers);
   }
 
 
@@ -29,12 +30,12 @@ var gameLogic = (function() {
 
         item.addEventListener('click', exe => {
           broj = item.getAttribute('data-id'); 
-
           makePlayers(broj);
         });
 
       });
     },
+
   }
 
 })();
@@ -124,21 +125,24 @@ var controller = (function(game, UICtrl) {
     
   };
 
-  setupEventListeners();
+  
 
   function createGame() {
-
     UICtrl.showPlayerPanel();
-
-    game.updateEventListener(); 
-
+    game.updateEventListener();
     // vidi iz app.js korak po korak isto radi obavezno
   };
 
   // Pravi ovde sledecu funkciju koja se poziva kada klikne se broj i pitaj za ime i boju
   
-  function hiLol() {
-    console.log('smhhhh');
-  }
+  function createGame2(numberOfPlayers) {
+    console.log('smhhhh ' + numberOfPlayers);
+  };
 
+  var hiLol = function() {
+    console.log('bla bla');
+  };
+
+  // event listeners should be at the end cuz only then i can assign functions to var!!
+  setupEventListeners();
 })(gameLogic, UIController);
