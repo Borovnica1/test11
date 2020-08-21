@@ -15,26 +15,14 @@ var gameLogic = (function() {
   console.log(Player1.name);
 
 
-  // ovde nastavi!!
+  /* ovde nastavi!!
   var makePlayers = function(numberOfPlayers) {
     console.log('to je to ' + numberOfPlayers);
-  }
+  }*/
 
 
   return {
-    updateEventListener: lol = function() {
-      var playersNumber = document.querySelectorAll('.map__player-number');
-      
-      // Put on every single number button CLICK event and calls function with that number
-      playersNumber.forEach(item => {
-
-        item.addEventListener('click', exe => {
-          broj = item.getAttribute('data-id'); 
-          makePlayers(broj);
-        });
-
-      });
-    },
+    
 
   }
 
@@ -47,6 +35,7 @@ var UIController = (function() {
     dice: '.rollDice',
     startGame: '.startGame'
   };
+  var mapContainer = document.querySelector('.map');
 
   return {
     getDomStrings: function() {
@@ -58,10 +47,6 @@ var UIController = (function() {
       // removes StartTheGame button!
       document.querySelector(DOMstrings.startGame).parentNode.removeChild(document.querySelector(DOMstrings.startGame));
 
-
-      var mapContainer = document.querySelector('.map');
-
-
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; background-color: pink; transform: translate(-50%, -50%); padding: 2rem;">'
       + '<h1 class="map__title">' + 'Number of players?' + '</h1>' 
       + '<button class="map__player-number" data-id="2" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '2' + '</button>'
@@ -72,43 +57,19 @@ var UIController = (function() {
       + '<button class="map__player-number" data-id="7" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '7' + '</button>'
       + '<button class="map__player-number" data-id="8" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '8' + '</button>'
       + '</div>';
+      
+      mapContainer.insertAdjacentHTML('beforeend', html);
+    },
+
+    showPlayerCreate: function(playerNumber) {
+
+      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; background-color: pink; transform: translate(-50%, -50%); padding: 2rem;">' 
+      + '<h1>' + 'Player ' + playerNumber + '</h1>'
+      + 'Name: <input type="text" class="player__name">'
+      + 'chars'
+      + '</div>';
 
       mapContainer.insertAdjacentHTML('beforeend', html);
-
-      // Nastavi, slicno kao ovo ispod ali u game logic nova funkcija da bude i da vraca broj koji se izabere! ako ne bude islo uvek moze input box pa teraj lol
-
-      /*
-      var playersNumber = document.querySelectorAll('.map__player-number');
-      
-      playersNumber.forEach(item => {
-        item.addEventListener('click', exe => {
-          broj = item.getAttribute('data-id');
-
-          makePlayers(broj);
-          
-        });
-      });
-
-      function makePlayers(broj) {
-        console.log(broj);
-
-        // Removes h1 and number of player boxes!!
-        document.querySelector('.map__title').parentNode.removeChild(document.querySelector('.map__title'));
-        playersNumber.forEach(item => {
-          item.parentNode.removeChild(document.querySelector('.map__player-number'));
-        });
-        var id = 0;
-
-        while (id < broj) {
-          
-          document.querySelector('.map__modal').insertAdjacentHTML('beforeend', 'idemo odma ' + id + '</br>');
-
-          //POZOVI FUNKCIJU DA UBACUJE JEDAN PO JEDAN IGRAC PO IME INPUT I BOJA!!
-          
-          id++;
-        }
-      }
-      */
     }
   }
 })();
@@ -125,18 +86,43 @@ var controller = (function(game, UICtrl) {
     
   };
 
+  var broj = 0;
+  var numberIsPicked = false;
+  function updateEventListener() {
+    var playersNumber = document.querySelectorAll('.map__player-number');
+    
+    // Put on every single number button CLICK event and calls function with that number
+    playersNumber.forEach(item => {
+
+      item.addEventListener('click', exe => {
+        broj = item.getAttribute('data-id'); 
+        numberIsPicked = true;
+        document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
+      });
+
+    });
+  }
   
 
-  function createGame() {
+  async function createGame() {
     UICtrl.showPlayerPanel();
-    game.updateEventListener();
-    // vidi iz app.js korak po korak isto radi obavezno
-  };
+    updateEventListener();
+    
+    // Waits for a number of players to be picked before continuing this function!!
+    while (!numberIsPicked) {
+      await new Promise(r => setTimeout(r, 0100));
+    }
+    
+    while (broj > 0) {
+      UICtrl.showPlayerCreate(broj);
+      while (!playerIsCreated) {
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      
+      broj--;
+    }
+    
 
-  // Pravi ovde sledecu funkciju koja se poziva kada klikne se broj i pitaj za ime i boju
-  
-  function createGame2(numberOfPlayers) {
-    console.log('smhhhh ' + numberOfPlayers);
   };
 
   var hiLol = function() {
