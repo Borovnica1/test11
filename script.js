@@ -166,3 +166,4 @@ var controller = (function(game, UICtrl) {
   // event listeners should be at the end cuz only then i can assign functions to var!!
   setupEventListeners();
 })(gameLogic, UIController);
+// test git
