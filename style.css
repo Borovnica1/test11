@@ -108,6 +108,7 @@ body {
   width: 30%;
   margin-left: auto;
   background-color: rgb(219, 175, 175);
+  padding: .5rem;
 }
 
 .menu {
