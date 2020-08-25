@@ -1,5 +1,5 @@
 var gameLogic = (function() {
-  // function constructor , n broj igraca sa inputa i for loopa koja pravi igrace
+  // function constructor
   var Player = function(id, name, char, budget, mapSpot) {
     this.id = id;
     this.name = name;
@@ -16,23 +16,30 @@ var gameLogic = (function() {
   console.log(Player1.name);
 
   var players = [];
-
-  /* ovde nastavi!!
-  var makePlayers = function(numberOfPlayers) {
-    console.log('to je to ' + numberOfPlayers);
-  }*/
-
+  var diceRolls = [];
+  var dices = [];
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 1);
+      var newPlayer = new Player(id, name, char, 1500, 31);
       players.unshift(newPlayer);
       console.log(players);
+    },
+
+    addDiceRoll: function() {
+      var dice1 = Math.floor(Math.random() * 6) + 1;
+      var dice2 = Math.floor(Math.random() * 6) + 1;
+      dices = [dice1, dice2];
+      diceRolls.push(dices);
     },
 
     getPlayers: function() {
       return players;
     },
+
+    getDices: function() {
+      return dices;
+    }
 
   }
 
@@ -87,7 +94,6 @@ var UIController = (function() {
 
     showPlayerDashboard: function(players) {
       for (var i = 0; i < players.length; i++) {
-        console.log(players[i].name);
         html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem">'
         + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  30px; height: 30px; border-radius:50%; overflow:hidden; display:flex;justify-content: center; margin-left: .5rem;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
         + '<div style="margin-left: .3rem">'
@@ -95,12 +101,36 @@ var UIController = (function() {
         + '<h3 style="margin-left: .5rem;margin-top:.2rem">' + players[i].budget + '</h3>'
         + '</div>'
         + '</div>';
-
         document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
 
-        // u istoj for petlji dodaj igrace i na kartu!
+
+        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:inline-flex;padding: .2rem;">'
+        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
+        + '</div>';
+        document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
       }
+    },
+
+    showRollDice: function() {
+      var rollDiceBtn = document.querySelector('.rollDice');
+      mapContainer.insertAdjacentElement('beforeend', rollDiceBtn);
+      rollDiceBtn.style.display = 'block';
+    },
+
+    showDices: function(dices) {
+      htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png">';
+      htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png">';
+      document.querySelector('.rollDice1').insertAdjacentHTML('beforeend', htmlDice1);
+      document.querySelector('.rollDice2').insertAdjacentHTML('beforeend', htmlDice2);
+      document.querySelector('.rollDice1').style.display = 'block';
+      document.querySelector('.rollDice1').style.display = 'block';
+    },
+
+    hideDices: function() {
+      document.querySelector('.rollDice1').style.display = 'none';
+      document.querySelector('.rollDice1').style.display = 'none';
     }
+
   }
 })();
 
@@ -155,9 +185,15 @@ var controller = (function(game, UICtrl) {
         playerIsCreated = true;
         document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
       }
-      console.log(name, char, playerIsCreated);
     });
-    
+  }
+
+  var diceClicked = false;
+  function updateEventListener3() {
+    document.querySelector('.rollDice').addEventListener('click', () => {
+      diceClicked = true;
+      document.querySelector('.rollDice').style.display = 'none';
+    })
   }
 
   async function createGame() {
@@ -168,6 +204,9 @@ var controller = (function(game, UICtrl) {
     while (!numberIsPicked) {
       await new Promise(r => setTimeout(r, 0100));
     }
+
+    // making broj2 so i can make 2 while loops!!
+    var broj2 = broj; 
 
     while (broj > 0) {
       UICtrl.showPlayerCreate(broj);
@@ -184,7 +223,22 @@ var controller = (function(game, UICtrl) {
     var playersArr = game.getPlayers();
     UICtrl.showPlayerDashboard(playersArr);
 
-
+    // Roll dice for play order!!
+    while (broj2 > 0) {
+      UICtrl.showRollDice();
+      updateEventListener3();
+      while (!diceClicked) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      game.addDiceRoll();
+      var dices = game.getDices();
+      UICtrl.showDices(dices);
+      await new Promise(r => setTimeout(r, 1000));
+      UICtrl.hideDices();
+      diceClicked = false;
+      broj2--;
+    }
+    
   };
 
   var hiLol = function() {
