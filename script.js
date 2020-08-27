@@ -22,7 +22,7 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 31, 0);
+      var newPlayer = new Player(id, name, char, 1500, 1, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
@@ -52,7 +52,12 @@ var gameLogic = (function() {
 
     getRolledDices: function() {
       return diceRolls;
-    }
+    },
+
+
+    getGameIsActive: function() {
+      return players.length == 1 ? false : true;
+    },
 
   }
 
@@ -211,8 +216,6 @@ var controller = (function(game, UICtrl) {
         char = item.firstChild.innerHTML;
       })
     })
-    
-
     document.querySelector('.map__done').addEventListener('click', function(){
       name = document.querySelector('.player__name').value;
       if (name.length > 0 && char.length > 0) {
@@ -221,7 +224,6 @@ var controller = (function(game, UICtrl) {
       }
     });
   }
-
   var diceClicked = false;
   function updateEventListener3() {
     document.querySelector('.rollDice').addEventListener('click', () => {
@@ -280,8 +282,25 @@ var controller = (function(game, UICtrl) {
     for (var i = 0; i < rolledDices.length; i++) {
       UICtrl.showDicesNextToPlayerName(rolledDices[i], i);
     }
-    
-    
+    // And now we can play the game!!
+    gameIsPlaying();
+  };
+
+  var i = 0;
+  // Some sort of recursion going on here lol
+  var gameIsPlaying = function() {
+    var gameIsActive = game.getGameIsActive();
+    var playersArr = game.getPlayers();
+    if (gameIsActive) {
+      console.log(playersArr);
+      UICtrl.showRollDice(playersArr[i].name);
+      i++;
+      // dodaj da se restartuje i kada prekuca duzinu players arraya!!
+      // dodaj da se ceka da zavrsi end turn pre nego sto se pozove nova funkcija
+      gameIsPlaying();
+    } else {
+      hiLol();
+    }
   };
 
   var hiLol = function() {
