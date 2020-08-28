@@ -1,5 +1,7 @@
 var gameLogic = (function() {
-  // function constructor
+  // I'm using here Classical Inheritance. Old school ES5 style.
+  // There is much better way to do this with instantiation (*class* keyword) in ES6 and React!!
+  // Function constructor
   var Player = function(id, name, char, budget, mapSpot, rolledNumber) {
     this.id = id;
     this.name = name;
@@ -165,6 +167,9 @@ var UIController = (function() {
     },
 
     hideDices: function() {
+      // innerHTML is bad practice cuz the whole page has to render again!!
+      // The goal is to make as few DOM manipulation as possible.
+      // React solves those problems.
       document.querySelector('.rollDice1').innerHTML = '';
       document.querySelector('.rollDice2').innerHTML = '';
       document.querySelector('.playerNumber').innerHTML = '';
