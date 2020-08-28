@@ -136,13 +136,17 @@ var UIController = (function() {
       }
     },
 
-    showRollDice: function(name) {
+    showRollDice: function(name, gameIsActive) {
       var rollDiceBtn = document.querySelector('.rollDice');
       var playerNumber = document.querySelector('.playerNumber');
       playerNumber.innerHTML = '<h1> Player: ' + name + '</h1>';
       mapContainer.insertAdjacentElement('beforeend', rollDiceBtn);
       rollDiceBtn.style.display = 'block';
       playerNumber.style.display = 'block';
+      // Maybe some animation?
+      if (gameIsActive) {
+        document.querySelector('.endTurn').style.display = 'block';
+      }
     },
 
     showDices: function(dices, index) {
@@ -186,8 +190,8 @@ var controller = (function(game, UICtrl) {
 
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
     document.querySelector(DOM.startGame).addEventListener('click', createGame);
+    document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
 
-    
   };
 
   var broj = 0;
@@ -266,7 +270,9 @@ var controller = (function(game, UICtrl) {
 
     // Roll dice for play order!!
     while (broj2 > 0) {
-      UICtrl.showRollDice(playersArr[broj2 - 1].name);
+      // Added gameIsActive as second argument so i wouldnt create anouther similiar showRollDice function.
+      var gameIsActive = false;
+      UICtrl.showRollDice(playersArr[broj2 - 1].name, gameIsActive);
       updateEventListener3();
       while (!diceClicked) {
         await new Promise(r => setTimeout(r, 0100));
@@ -292,16 +298,23 @@ var controller = (function(game, UICtrl) {
   };
 
   var i = 0;
+  var endTurn = false;
+  
   // Some sort of recursion going on here lol
-  var gameIsPlaying = function() {
+  var gameIsPlaying = async function() {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
     if (gameIsActive) {
       console.log(playersArr);
-      UICtrl.showRollDice(playersArr[i].name);
-      i++;
-      // dodaj da se restartuje i kada prekuca duzinu players arraya!!
-      // dodaj da se ceka da zavrsi end turn pre nego sto se pozove nova funkcija
+      UICtrl.showRollDice(playersArr[i].name, gameIsActive);
+
+      // Here we are wating for player to click End Turn button!!
+      while (!endTurn) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      // When we get to last player in order we reset the circle with setting i = 0;
+      playersArr.length - 1 == i ? i = 0 : i++;
+      endTurn = false;
       gameIsPlaying();
     } else {
       hiLol();
