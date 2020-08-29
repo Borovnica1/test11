@@ -120,7 +120,7 @@ var UIController = (function() {
     },
 
     showPlayerDashboard: function(players) {
-      // Clears the previous created dashboard of players!!
+      // Clears the previous created dashboard of players!! (after sorting i believe)
       document.querySelector('.stats').innerHTML = '';
       document.querySelector('[data-id="'+players[0].mapSpot+'"]').innerHTML = '';
 
@@ -136,8 +136,8 @@ var UIController = (function() {
         document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
 
 
-        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:inline-flex;padding: .2rem;">'
-        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
+        html = '<div class="map__player'+players[i].id+'" style="height=300px;display:inline-flex;padding: .2rem;">'
+        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
       }
@@ -184,7 +184,19 @@ var UIController = (function() {
       document.querySelector('.rollDice1').innerHTML = '';
       document.querySelector('.rollDice2').innerHTML = '';
       document.querySelector('.playerNumber').innerHTML = '';
-    }
+    },
+
+    updatePlayerSpot: function(player) {
+      // Deletes him from current spot
+      document.querySelector('.map__player'+player.id).parentNode.removeChild(document.querySelector('.map__player'+player.id));
+      console.log(document.querySelector('.map__player'+player.id));
+
+      // Puts him to new spot
+      html = '<div class="map__player'+player.id+'" style="height=300px;display:inline-flex;padding: .2rem;">'
+        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
+        + '</div>';
+        document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
+    },
 
   }
 })();
@@ -323,6 +335,7 @@ var controller = (function(game, UICtrl) {
       await new Promise(r => setTimeout(r, 0500));
       UICtrl.hideDices();
       console.log(playersArr[i]);
+      UICtrl.updatePlayerSpot(playersArr[i]);
       // Here we are wating for player to click End Turn button!!
       while (!endTurn) {
         await new Promise(r => setTimeout(r, 0100));
