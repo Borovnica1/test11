@@ -29,7 +29,7 @@ var gameLogic = (function() {
       console.log(players);
     },
 
-    addDiceRoll: function(player) {
+    addDiceRoll: function(player, gameIsActive) {
       var dice1 = Math.floor(Math.random() * 6) + 1;
       var dice2 = Math.floor(Math.random() * 6) + 1;
       dices = [dice1, dice2];
@@ -37,6 +37,13 @@ var gameLogic = (function() {
 
       // add to Player property dice number!!
       player.rolledNumber = dice1 + dice2;
+
+      // We only count dice rolls once the game starts!!
+      if (gameIsActive) {
+        player.mapSpot += dice1 + dice2;
+        // If over 40 it means the player made full circle!!
+        if (player.mapSpot > 40) player.mapSpot -= 40;
+      }
     },
 
     sortPlayers: function(playersArr) {
@@ -277,7 +284,7 @@ var controller = (function(game, UICtrl) {
       while (!diceClicked) {
         await new Promise(r => setTimeout(r, 0100));
       }
-      game.addDiceRoll(playersArr[broj2 - 1]);
+      game.addDiceRoll(playersArr[broj2 - 1], gameIsActive);
       var dices = game.getDices();
       UICtrl.showDices(dices, broj2 - 1);
       await new Promise(r => setTimeout(r, 0500));
@@ -305,15 +312,24 @@ var controller = (function(game, UICtrl) {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
     if (gameIsActive) {
-      console.log(playersArr);
       UICtrl.showRollDice(playersArr[i].name, gameIsActive);
-
+      // Here we are wating for player to click Roll Dice button!!
+      while (!diceClicked) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      game.addDiceRoll(playersArr[i], gameIsActive);
+      var dices = game.getDices();
+      UICtrl.showDices(dices, i);
+      await new Promise(r => setTimeout(r, 0500));
+      UICtrl.hideDices();
+      console.log(playersArr[i]);
       // Here we are wating for player to click End Turn button!!
       while (!endTurn) {
         await new Promise(r => setTimeout(r, 0100));
       }
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
+      diceClicked = false;
       endTurn = false;
       gameIsPlaying();
     } else {
