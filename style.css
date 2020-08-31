@@ -13,8 +13,8 @@ body {
 }
 
 .container {
-  height: 90vh;
-  width: 94%;
+  height: 94vh;
+  max-width: 1300px;
   display: flex;
   margin: 2rem auto 0 auto;
   background-color: rgb(238, 218, 255);
@@ -117,10 +117,11 @@ body {
 } 
 
 .stats {
-  height: 90%;
+  height: 870px;
+  border-radius: 5px;
   width: 30%;
   margin-left: auto;
-  background-color: rgb(219, 175, 175);
+  background-color: rgb(130, 131, 226);
   padding: .5rem;
 }
 
@@ -131,7 +132,7 @@ body {
 
 .endTurn {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: none;
@@ -146,7 +147,7 @@ body {
 
 .rollDice {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: none;
@@ -179,17 +180,23 @@ body {
 }
 .playerNumber {
   position: absolute;
-  top: 30%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 1rem;
   display: none;
   z-index: 100;
+  color: rgb(231, 255, 249);
+  font-size: 30px;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+  word-break: break-word;
 }
 
 .startGame {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 1rem 1.6rem;
