@@ -11,20 +11,17 @@ var gameLogic = (function() {
     this.rolledNumber = rolledNumber;
   }
 
-  Player.prototype.movePlayer = function() {
-    console.log('dugme roll dice radi brale!')
-  }
-
   var Player1 = new Player(1, 'John', 22);
   console.log(Player1.name);
 
   var players = [];
   var diceRolls = [];
   var dices = [];
+  var charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 1, 0);
+      var newPlayer = new Player(id, name, char, 1500, 21, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
@@ -51,6 +48,11 @@ var gameLogic = (function() {
       diceRolls.sort((a, b) => (b[0] + b[1]) - (a[0] + a[1]));
     },
 
+    removeChar: function(charsIndex) {
+      // Removes chosen char from our array of available chars!!
+      charsArr.splice(charsIndex, 1);
+    },
+
     getPlayers: function() {
       return players;
     },
@@ -63,11 +65,13 @@ var gameLogic = (function() {
       return diceRolls;
     },
 
-
     getGameIsActive: function() {
       return players.length == 1 ? false : true;
     },
 
+    getCharsArr: function() {
+      return charsArr;
+    }
   }
 
 })();
@@ -91,30 +95,30 @@ var UIController = (function() {
       // removes StartTheGame button!
       document.querySelector(DOMstrings.startGame).parentNode.removeChild(document.querySelector(DOMstrings.startGame));
 
-      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; background-color: pink; transform: translate(-50%, -50%); padding: 2rem;">'
+      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2rem;">'
       + '<h1 class="map__title">' + 'Number of players?' + '</h1>' 
-      + '<button class="map__player-number" data-id="2" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '2' + '</button>'
-      + '<button class="map__player-number" data-id="3" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '3' + '</button>'
-      + '<button class="map__player-number" data-id="4" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '4' + '</button>'
-      + '<button class="map__player-number" data-id="5" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '5' + '</button>'
-      + '<button class="map__player-number" data-id="6" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '6' + '</button>'
-      + '<button class="map__player-number" data-id="7" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '7' + '</button>'
-      + '<button class="map__player-number" data-id="8" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px">' + '8' + '</button>'
+      + '<button class="map__player-number" data-id="2" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '2' + '</button>'
+      + '<button class="map__player-number" data-id="3" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '3' + '</button>'
+      + '<button class="map__player-number" data-id="4" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '4' + '</button>'
+      + '<button class="map__player-number" data-id="5" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '5' + '</button>'
+      + '<button class="map__player-number" data-id="6" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '6' + '</button>'
+      + '<button class="map__player-number" data-id="7" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '7' + '</button>'
+      + '<button class="map__player-number" data-id="8" style="margin-top:.5rem;margin-right:.5rem;width: 40px; height: 40px;cursor:pointer;">' + '8' + '</button>'
       + '</div>';
       
       mapContainer.insertAdjacentHTML('beforeend', html);
     },
 
-    showPlayerCreate: function(playerNumber) {
-      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; background-color: pink; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
+    showPlayerCreate: function(playerNumber, charsArr) {
+      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
       + '<h1>' + 'Player ' + playerNumber + '</h1>'
-      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="20" style="display:block;height:1.5rem;outline:none;border:none;">'
+      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" style="display:block;height:1.9rem;outline:none;border:none;">'
       + '<h2 style="margin-top: .4rem">' + 'Choose a character:' + '</h2>'
-      + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + '&phone;' + '</span>' + '</div>'
-      + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center; margin-left: .5rem;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + '&#9877;' + '</span>' + '</div>'
-      + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center; margin-left: .5rem;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + '&#10086;' + '</span>' + '</div>'
-      + '<button class="map__done" style="display:flex;margin:auto;padding:.6rem .9rem;margin-top:.4rem">' + 'Done' + '</button>'
-      + '</div>';
+      for (var i = 0; i < charsArr.length; i++) {
+        html += '<div class="map__box2 arrayIndex'+i+'" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center;margin-right:.2rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 30px;">'  + charsArr[i] + '</span>' + '</div>'
+      } 
+      html += '<button class="map__done btn" style="display:flex;margin:auto;padding:.6rem .9rem;margin-top:.4rem">' + 'Done' + '</button>'
+      + '</div>'
 
       mapContainer.insertAdjacentHTML('beforeend', html);
     },
@@ -125,9 +129,9 @@ var UIController = (function() {
       document.querySelector('[data-id="'+players[0].mapSpot+'"]').innerHTML = '';
 
       for (var i = 0; i < players.length; i++) {
-        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem">'
-        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display:flex;justify-content: center; margin-left: .5rem;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
-        + '<div style="margin-left: .3rem">'
+        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;">'
+        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
+        + '<div style="margin-left: .3rem;overflow:hidden;width:47%;white-space: nowrap;">'
         + '<h1>' + players[i].name + '</h1>'
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + players[i].budget + '</h2>'
         + '</div>'
@@ -136,8 +140,8 @@ var UIController = (function() {
         document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
 
 
-        html = '<div class="map__player'+players[i].id+'" style="height=300px;display:inline-flex;padding: .2rem;">'
-        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
+        html = '<div class="map__player'+players[i].id+'" style="display:inline-flex;padding: .2rem;">'
+        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
       }
@@ -146,7 +150,7 @@ var UIController = (function() {
     showRollDice: function(name, gameIsActive) {
       var rollDiceBtn = document.querySelector('.rollDice');
       var playerNumber = document.querySelector('.playerNumber');
-      playerNumber.innerHTML = '<h1> Player: ' + name + '</h1>';
+      playerNumber.innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s turn!' +  '</h1>';
       mapContainer.insertAdjacentElement('beforeend', rollDiceBtn);
       rollDiceBtn.style.display = 'block';
       playerNumber.style.display = 'block';
@@ -167,7 +171,7 @@ var UIController = (function() {
 
       // Now changing size of dices
       htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png" style="width: 25px; height:25px; border-radius:5px;margin: 0 .3rem">';
-      htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 25px; height:25px;border-radius:5px;margin-right:.3rem">';
+      htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 25px; height:25px;border-radius:5px;">';
       document.querySelector('.stats__rolled'+index).innerHTML = '<h2>Rolled: ' + (dices[0] + dices[1]) + '</h2>' + htmlDice1 + htmlDice2;
     },
 
@@ -192,8 +196,8 @@ var UIController = (function() {
       console.log(document.querySelector('.map__player'+player.id));
 
       // Puts him to new spot
-      html = '<div class="map__player'+player.id+'" style="height=300px;display:inline-flex;padding: .2rem;">'
-        + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
+      html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .2rem;">'
+        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
     },
@@ -230,7 +234,8 @@ var controller = (function(game, UICtrl) {
   }
   var playerIsCreated = false;
   var name,
-      char;
+      char,
+      charIndex;
   function updateEventListener2() {
     name = '',
     char = '';
@@ -239,13 +244,19 @@ var controller = (function(game, UICtrl) {
     playerL.forEach(item => {
       item.addEventListener('click', exe => {
         lastItem.style.border = "1px solid #000";
-        item.style.border = "1px solid red";
+        lastItem.style.backgroundColor = '';
+        item.style.border = "2px solid orangered";
+        item.style.backgroundColor = '#ffa4d1';
         lastItem = item;
         char = item.firstChild.innerHTML;
+        // Grabbing chars index from class name!!
+        // console.log(item.classList[1].charAt(item.classList[1].length - 1));
+        charIndex = item.classList[1].charAt(item.classList[1].length - 1);
       })
     })
     document.querySelector('.map__done').addEventListener('click', function(){
       name = document.querySelector('.player__name').value;
+      name = name.trim();
       if (name.length > 0 && char.length > 0) {
         playerIsCreated = true;
         document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
@@ -273,13 +284,15 @@ var controller = (function(game, UICtrl) {
     var broj2 = broj; 
 
     while (broj > 0) {
-      UICtrl.showPlayerCreate(broj);
+      var charsArr = game.getCharsArr();
+      UICtrl.showPlayerCreate(broj, charsArr);
       updateEventListener2();
 
       while (!playerIsCreated) {
         await new Promise(r => setTimeout(r, 0100));
       }
       game.addPlayer(broj, name, char);
+      game.removeChar(charIndex);
 
       playerIsCreated = false;
       broj--;
@@ -319,7 +332,7 @@ var controller = (function(game, UICtrl) {
   var i = 0;
   var endTurn = false;
   
-  // Some sort of recursion going on here lol
+  // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
   var gameIsPlaying = async function() {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
@@ -361,3 +374,5 @@ var controller = (function(game, UICtrl) {
 // make video cut extension and display on the board random cuts
 
 // svaka stranka druga boja i special effect???!?!?!?!?
+
+// DODAJ DA AKO SU OBA BROJA ISTA PONOVO SE BACA
