@@ -1,3 +1,5 @@
+// Using IIFE for data privacy (this is ES5, there are blocks for ES6) and MVC architecture for keeping code clean!
+
 var gameLogic = (function() {
   // I'm using here Classical Inheritance. Old school ES5 style.
   // There is much better way to do this with instantiation (*class* keyword) in ES6 and React!!
@@ -376,3 +378,4 @@ var controller = (function(game, UICtrl) {
 // svaka stranka druga boja i special effect???!?!?!?!?
 
 // DODAJ DA AKO SU OBA BROJA ISTA PONOVO SE BACA
+// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!1
