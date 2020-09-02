@@ -4,13 +4,14 @@ var gameLogic = (function() {
   // I'm using here Classical Inheritance. Old school ES5 style.
   // There is much better way to do this with instantiation (*class* keyword) in ES6 and React!!
   // Function constructor
-  var Player = function(id, name, char, budget, mapSpot, rolledNumber) {
+  var Player = function(id, name, char, budget, mapSpot, rolledNumber, inJail) {
     this.id = id;
     this.name = name;
     this.char = char;
     this.budget = budget;
     this.mapSpot = mapSpot;
     this.rolledNumber = rolledNumber;
+    this.inJail = inJail;
   }
 
   var Player1 = new Player(1, 'John', 22);
@@ -23,14 +24,14 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 21, 0);
+      var newPlayer = new Player(id, name, char, 1500, 21, 0, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
 
     addDiceRoll: function(player, gameIsActive) {
-      var dice1 = Math.floor(Math.random() * 6) + 1;
-      var dice2 = Math.floor(Math.random() * 6) + 1;
+      var dice1 = Math.floor(Math.random() * 2) + 1;
+      var dice2 = Math.floor(Math.random() * 2) + 1;
       dices = [dice1, dice2];
       diceRolls.unshift(dices);
 
@@ -204,6 +205,21 @@ var UIController = (function() {
         document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
     },
 
+    showGoToJail: function(playerName, playerTurnsLeft) {
+      if (playerTurnsLeft == 0) {
+        document.querySelector('.map__toJailName').innerHTML = playerName;
+        document.querySelector('.map__toJail').style.display = 'block';
+      } else {
+        document.querySelector('.map__inJailTurns').innerHTML = playerTurnsLeft;
+        document.querySelector('.map__inJail').style.display = 'block';
+      }
+    },
+    hideGoToJail: function() {
+      document.querySelector('.map__toJail').style.display = 'none';
+      document.querySelector('.map__inJail').style.display = 'none';
+    }
+
+
   }
 })();
 
@@ -333,35 +349,65 @@ var controller = (function(game, UICtrl) {
 
   var i = 0;
   var endTurn = false;
-  
+  var doubleRolls = 0;
   // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
   var gameIsPlaying = async function() {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
-    if (gameIsActive) {
-      UICtrl.showRollDice(playersArr[i].name, gameIsActive);
-      // Here we are wating for player to click Roll Dice button!!
-      while (!diceClicked) {
-        await new Promise(r => setTimeout(r, 0100));
-      }
-      game.addDiceRoll(playersArr[i], gameIsActive);
-      var dices = game.getDices();
-      UICtrl.showDices(dices, i);
-      await new Promise(r => setTimeout(r, 0500));
-      UICtrl.hideDices();
-      console.log(playersArr[i]);
-      UICtrl.updatePlayerSpot(playersArr[i]);
+    doubleRolls = 0;
+    if (gameIsActive && playersArr[i].inJail == 0) {
+      // Roll
+      do {
+        UICtrl.showRollDice(playersArr[i].name, gameIsActive);
+        // Here we are wating for player to click Roll Dice button!!
+        while (!diceClicked) {
+          await new Promise(r => setTimeout(r, 0100));
+        }
+        diceClicked = false;
+        game.addDiceRoll(playersArr[i], gameIsActive);
+        var dices = game.getDices();
+        UICtrl.showDices(dices, i);
+        await new Promise(r => setTimeout(r, 0500));
+        UICtrl.hideDices();
+        console.log(playersArr[i]);
+        UICtrl.updatePlayerSpot(playersArr[i]);
+        if (dices[0] == dices[1]) doubleRolls++;
+        // i want to see him getting to his spot lol
+        //await new Promise(r => setTimeout(r, 0500));
+        if (doubleRolls == 3 || playersArr[i].mapSpot == 11) {
+          UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
+          await new Promise(r => setTimeout(r, 3000));
+          UICtrl.hideGoToJail();
+          playersArr[i].inJail = 3;
+          playersArr[i].mapSpot = 31;
+          UICtrl.updatePlayerSpot(playersArr[i]);
+          break;
+        }
+        // check card and display it and maybe buy?
+      } while(dices[0] == [dices[1]]);
+      
       // Here we are wating for player to click End Turn button!!
       while (!endTurn) {
         await new Promise(r => setTimeout(r, 0100));
       }
+      endTurn = false;
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
-      diceClicked = false;
-      endTurn = false;
       gameIsPlaying();
     } else {
-      hiLol();
+      UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
+      await new Promise(r => setTimeout(r, 1000));
+      UICtrl.hideGoToJail();
+      playersArr[i].inJail--;
+
+      // Here we are wating for player to click End Turn button!!
+      while (!endTurn) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      endTurn = false;
+      // When we get to last player in order we reset the circle with setting i = 0;
+      playersArr.length - 1 == i ? i = 0 : i++;
+      gameIsPlaying();
     }
   };
 
@@ -377,5 +423,5 @@ var controller = (function(game, UICtrl) {
 
 // svaka stranka druga boja i special effect???!?!?!?!?
 
-// DODAJ DA AKO SU OBA BROJA ISTA PONOVO SE BACA
-// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!1
+// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
+// add free parking spot to give all the money spent
