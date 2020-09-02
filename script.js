@@ -24,14 +24,14 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 21, 0, 0);
+      var newPlayer = new Player(id, name, char, 1500, 15, 0, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
 
     addDiceRoll: function(player, gameIsActive) {
-      var dice1 = Math.floor(Math.random() * 2) + 1;
-      var dice2 = Math.floor(Math.random() * 2) + 1;
+      var dice1 = Math.floor(Math.random() * 6) + 1;
+      var dice2 = Math.floor(Math.random() * 6) + 1;
       dices = [dice1, dice2];
       diceRolls.unshift(dices);
 
@@ -54,6 +54,10 @@ var gameLogic = (function() {
     removeChar: function(charsIndex) {
       // Removes chosen char from our array of available chars!!
       charsArr.splice(charsIndex, 1);
+    },
+
+    payTax: function(player, taxNumber) {
+      taxNumber == 25 ? player.budget -= 200 : player.budget -= 100;
     },
 
     getPlayers: function() {
@@ -150,17 +154,20 @@ var UIController = (function() {
       }
     },
 
-    showRollDice: function(name, gameIsActive) {
+    showRollDice: function(name) {
       var rollDiceBtn = document.querySelector('.rollDice');
       var playerNumber = document.querySelector('.playerNumber');
       playerNumber.innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s turn!' +  '</h1>';
       mapContainer.insertAdjacentElement('beforeend', rollDiceBtn);
       rollDiceBtn.style.display = 'block';
       playerNumber.style.display = 'block';
-      // Maybe some animation?
-      if (gameIsActive) {
-        document.querySelector('.endTurn').style.display = 'block';
-      }
+    },
+
+    showEndTurn: function() {
+      document.querySelector('.endTurn').style.display = 'block';
+    },
+    hideEndTurn: function() {
+      document.querySelector('.endTurn').style.display = 'none';
     },
 
     showDices: function(dices, index) {
@@ -196,7 +203,6 @@ var UIController = (function() {
     updatePlayerSpot: function(player) {
       // Deletes him from current spot
       document.querySelector('.map__player'+player.id).parentNode.removeChild(document.querySelector('.map__player'+player.id));
-      console.log(document.querySelector('.map__player'+player.id));
 
       // Puts him to new spot
       html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .2rem;">'
@@ -206,17 +212,38 @@ var UIController = (function() {
     },
 
     showGoToJail: function(playerName, playerTurnsLeft) {
+      // Cheks if the player is already in prison!!
       if (playerTurnsLeft == 0) {
         document.querySelector('.map__toJailName').innerHTML = playerName;
         document.querySelector('.map__toJail').style.display = 'block';
       } else {
-        document.querySelector('.map__inJailTurns').innerHTML = playerTurnsLeft;
+        document.querySelector('.map__inJailTurns').innerHTML = playerName + ' ' + playerTurnsLeft;
         document.querySelector('.map__inJail').style.display = 'block';
       }
     },
     hideGoToJail: function() {
       document.querySelector('.map__toJail').style.display = 'none';
       document.querySelector('.map__inJail').style.display = 'none';
+    },
+
+    showTaxCard: function(cardNumber) {
+      // Sets image
+      var img = document.querySelector('.map__taxCard').children[1];
+      img.src = 'dices/' + cardNumber + '.jpg';
+      img.style.border = '2px solid #000';
+      document.querySelector('.map__taxCard').style.display = 'block';
+    },
+    hideTaxCard: function() {
+      document.querySelector('.map__taxCard').style.display = 'none';
+    },
+
+    showMoneyLost: function(id, moneyLost) {
+      var budgetElement = document.querySelector('.stats__player'+id).children[1].children[1];
+      budgetElement.insertAdjacentHTML('beforeend', '<span style="color:red;margin-left:.5rem;">' + '-' + moneyLost + '</span>');
+    },
+    hideMoneyLost: function(id, playerBudget) {
+      var budgetElement = document.querySelector('.stats__player'+id).children[1].children[1];
+      budgetElement.innerHTML = playerBudget;
     }
 
 
@@ -264,7 +291,7 @@ var controller = (function(game, UICtrl) {
         lastItem.style.border = "1px solid #000";
         lastItem.style.backgroundColor = '';
         item.style.border = "2px solid orangered";
-        item.style.backgroundColor = '#ffa4d1';
+        item.style.backgroundColor = 'lightblue';
         lastItem = item;
         char = item.firstChild.innerHTML;
         // Grabbing chars index from class name!!
@@ -322,7 +349,7 @@ var controller = (function(game, UICtrl) {
     while (broj2 > 0) {
       // Added gameIsActive as second argument so i wouldnt create anouther similiar showRollDice function.
       var gameIsActive = false;
-      UICtrl.showRollDice(playersArr[broj2 - 1].name, gameIsActive);
+      UICtrl.showRollDice(playersArr[broj2 - 1].name);
       updateEventListener3();
       while (!diceClicked) {
         await new Promise(r => setTimeout(r, 0100));
@@ -347,6 +374,7 @@ var controller = (function(game, UICtrl) {
     gameIsPlaying();
   };
 
+  // Keeps track of which player is on turn!!
   var i = 0;
   var endTurn = false;
   var doubleRolls = 0;
@@ -356,9 +384,9 @@ var controller = (function(game, UICtrl) {
     var playersArr = game.getPlayers();
     doubleRolls = 0;
     if (gameIsActive && playersArr[i].inJail == 0) {
-      // Roll
+      // Roll while player keeps getting double dice!
       do {
-        UICtrl.showRollDice(playersArr[i].name, gameIsActive);
+        UICtrl.showRollDice(playersArr[i].name);
         // Here we are wating for player to click Roll Dice button!!
         while (!diceClicked) {
           await new Promise(r => setTimeout(r, 0100));
@@ -374,6 +402,7 @@ var controller = (function(game, UICtrl) {
         if (dices[0] == dices[1]) doubleRolls++;
         // i want to see him getting to his spot lol
         //await new Promise(r => setTimeout(r, 0500));
+        // Go To Jail card and 3 times in a row Double rolled
         if (doubleRolls == 3 || playersArr[i].mapSpot == 11) {
           UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
           await new Promise(r => setTimeout(r, 3000));
@@ -383,28 +412,49 @@ var controller = (function(game, UICtrl) {
           UICtrl.updatePlayerSpot(playersArr[i]);
           break;
         }
+        // Check if landed on Tax card
+        if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
+          var moneyLost = 0;
+          playersArr[i].mapSpot == 25 ? moneyLost = 200 : moneyLost = 100;
+          UICtrl.showTaxCard(playersArr[i].mapSpot);
+          game.payTax(playersArr[i], playersArr[i].mapSpot);
+          console.log(playersArr[i]);
+          UICtrl.showMoneyLost(playersArr[i].id, moneyLost);
+          await new Promise(r => setTimeout(r, 3000));
+          UICtrl.hideMoneyLost(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideTaxCard();
+        }
         // check card and display it and maybe buy?
       } while(dices[0] == [dices[1]]);
-      
+
+      /////////////////////////////////
+      ////////////// SAME //////////
+      UICtrl.showEndTurn();
       // Here we are wating for player to click End Turn button!!
       while (!endTurn) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
+      UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
       gameIsPlaying();
     } else {
+      // this is when jail happens (else if)!!! not end of the game!
       UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
       await new Promise(r => setTimeout(r, 1000));
       UICtrl.hideGoToJail();
       playersArr[i].inJail--;
 
+      /////////////////////////////////
+      ////////////// SAME //////////
+      UICtrl.showEndTurn();
       // Here we are wating for player to click End Turn button!!
       while (!endTurn) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
+      UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
       gameIsPlaying();
@@ -425,3 +475,5 @@ var controller = (function(game, UICtrl) {
 
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 // add free parking spot to give all the money spent
+// add menu just under board
+// game ends after 30mins?

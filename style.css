@@ -41,7 +41,8 @@ body {
   height: 100%;
   background-image: url(dices/monopoly.jpg);
   background-size: cover;
-  z-index: 10;  
+  z-index: 10;
+  border: 2px solid #000;
 }
 
 .map__box[data-id="1"] {
@@ -194,26 +195,11 @@ body {
   word-break: break-word;
 }
 
-.map__toJail {
+.card {
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 1rem;
-  display: none;
-  z-index: 100;
-  color: rgb(231, 255, 249);
-  font-size: 30px;
-  -webkit-text-stroke: .1px black;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  text-align: center;
-  word-break: break-word;
-}
-.map__inJail {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
   padding: 1rem;
   display: none;
   z-index: 100;
