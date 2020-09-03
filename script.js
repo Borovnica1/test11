@@ -21,17 +21,35 @@ var gameLogic = (function() {
   var diceRolls = [];
   var dices = [];
   var charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
+  var chances = ['Advance to "Go".', 'Advance to Illinois Avenue.', 'Advance to St. Charles Place. If you pass Go, collect $200.', 'Bank pays you dividend of $50.', 'Go Back 3 Spaces.', 'Go directly to Jail', 'Take a walk on the Board walk.', 'You have been elected Chairman of the Board. Pay each player $50.', 'Your building and loan matures. Collect $150.', 'You have won a crossword competition. Collect $100.'];
+
+  var Chance = function(id, text) {
+    this.id = id;
+    this.text = text;
+  }
+  for (var i = 0; i < chances.length; i++) {
+    var newChance = new Chance(i+1, chances[0]);
+    chances.push(newChance);
+    chances.shift();
+  }
+  // Now to randomize the order!
+  for (var j = 0; j < chances.length; j++) {
+    var random = Math.floor(Math.random() * (chances.length - j));
+    chances.push(chances[random]);
+    chances.splice(random, 1);
+  }
+
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 15, 0, 0);
+      var newPlayer = new Player(id, name, char, 1500, 10, 0, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
 
     addDiceRoll: function(player, gameIsActive) {
-      var dice1 = Math.floor(Math.random() * 6) + 1;
-      var dice2 = Math.floor(Math.random() * 6) + 1;
+      var dice1 = Math.floor(Math.random() * 1) + 4;
+      var dice2 = Math.floor(Math.random() * 1) + 3;
       dices = [dice1, dice2];
       diceRolls.unshift(dices);
 
@@ -56,8 +74,37 @@ var gameLogic = (function() {
       charsArr.splice(charsIndex, 1);
     },
 
-    payTax: function(player, taxNumber) {
-      taxNumber == 25 ? player.budget -= 200 : player.budget -= 100;
+    updateBudget: function(player, moneyDiff, sign) {
+      if (sign == '+') {
+        player.budget += moneyDiff;
+      } else {
+        player.budget -= moneyDiff;
+      }
+      
+    },
+
+    paySomeone: function(player, playerToGet, amount) {
+      player.budget -= amount;
+      playerToGet.budget += amount;
+    },
+
+    changeSpot: function(player, id){
+      switch (id) {
+        case 1:
+          player.mapSpot = 21;break;
+        case 2:
+          player.mapSpot = 5;break;
+        case 3:
+          player.mapSpot = 32;break;
+        case 5:
+          // fixes a bug when this case happens on the chance card near Free Parking
+          player.mapSpot == 3 ? player.mapSpot = 40 : player.mapSpot -= 3;break;
+        case 6:
+          player.mapSpot = 31;
+          player.inJail = 3;break;
+        case 7:
+          player.mapSpot = 20;break;
+      }  
     },
 
     getPlayers: function() {
@@ -78,6 +125,11 @@ var gameLogic = (function() {
 
     getCharsArr: function() {
       return charsArr;
+    },
+
+    //maybe just getCards?
+    getChances: function() {
+      return chances;
     }
   }
 
@@ -147,7 +199,7 @@ var UIController = (function() {
         document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
 
 
-        html = '<div class="map__player'+players[i].id+'" style="display:inline-flex;padding: .2rem;">'
+        html = '<div class="map__player'+players[i].id+'" style="display:inline-flex;padding: .1rem;">'
         + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
@@ -226,24 +278,48 @@ var UIController = (function() {
       document.querySelector('.map__inJail').style.display = 'none';
     },
 
-    showTaxCard: function(cardNumber) {
+    showCard: function(cardNumber, typeOfCard) {
       // Sets image
-      var img = document.querySelector('.map__taxCard').children[1];
+      var firstTitle = document.querySelector('.map__card').children[0];
+      var img = document.querySelector('.map__card').children[1];
+      var secondTitle = document.querySelector('.map__card').children[2];
+      
       img.src = 'dices/' + cardNumber + '.jpg';
       img.style.border = '2px solid #000';
-      document.querySelector('.map__taxCard').style.display = 'block';
+      switch (typeOfCard) {
+        case ('tax'):
+          firstTitle.innerHTML = 'Unfortunately you landed on:';
+          secondTitle.innerHTML = 'You gotta pay money lol';
+          break;
+        case ('chance'):
+          firstTitle.innerHTML = 'You landed on:';
+          secondTitle.innerHTML = 'Chance time!!';
+          document.querySelector('.cardTaken').style.display = 'block';
+          break;
+      }
+      document.querySelector('.map__card').style.display = 'block';
     },
-    hideTaxCard: function() {
-      document.querySelector('.map__taxCard').style.display = 'none';
+    hideCard: function() {
+      document.querySelector('.map__card').style.display = 'none';
     },
 
-    showMoneyLost: function(id, moneyLost) {
+    showMoneyChange: function(id, money, sign) {
       var budgetElement = document.querySelector('.stats__player'+id).children[1].children[1];
-      budgetElement.insertAdjacentHTML('beforeend', '<span style="color:red;margin-left:.5rem;">' + '-' + moneyLost + '</span>');
+      var color;
+      sign == '+' ? color = 'green' : color = 'red';
+      budgetElement.insertAdjacentHTML('beforeend', '<span style="color:'+color+';margin-left:.5rem;">' + sign + money + '</span>');
     },
-    hideMoneyLost: function(id, playerBudget) {
+    hideMoneyChange: function(id, playerBudget) {
       var budgetElement = document.querySelector('.stats__player'+id).children[1].children[1];
       budgetElement.innerHTML = playerBudget;
+    },
+
+    showChance: function(text) {
+      document.querySelector('.map__text').innerHTML = text;
+      document.querySelector('.map__text').style.display = 'block';
+    },
+    hideChance: function() {
+      document.querySelector('.map__text').style.display = 'none';
     }
 
 
@@ -313,6 +389,13 @@ var controller = (function(game, UICtrl) {
     document.querySelector('.rollDice').addEventListener('click', () => {
       diceClicked = true;
       document.querySelector('.rollDice').style.display = 'none';
+    })
+  }
+  var cardTaken = false;
+  function updateEventListener4() {
+    document.querySelector('.cardTaken').addEventListener('click', () => {
+      cardTaken = true;
+      document.querySelector('.cardTaken').style.display = 'none';
     })
   }
 
@@ -397,7 +480,6 @@ var controller = (function(game, UICtrl) {
         UICtrl.showDices(dices, i);
         await new Promise(r => setTimeout(r, 0500));
         UICtrl.hideDices();
-        console.log(playersArr[i]);
         UICtrl.updatePlayerSpot(playersArr[i]);
         if (dices[0] == dices[1]) doubleRolls++;
         // i want to see him getting to his spot lol
@@ -414,16 +496,80 @@ var controller = (function(game, UICtrl) {
         }
         // Check if landed on Tax card
         if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
-          var moneyLost = 0;
-          playersArr[i].mapSpot == 25 ? moneyLost = 200 : moneyLost = 100;
-          UICtrl.showTaxCard(playersArr[i].mapSpot);
-          game.payTax(playersArr[i], playersArr[i].mapSpot);
+          var moneyDiff = 0;
+          var sign = '-';
+          var typeOfCard = 'tax';
+          playersArr[i].mapSpot == 25 ? moneyDiff = 200 : moneyDiff = 100;
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
+          game.updateBudget(playersArr[i], moneyDiff, sign);
           console.log(playersArr[i]);
-          UICtrl.showMoneyLost(playersArr[i].id, moneyLost);
+          UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
           await new Promise(r => setTimeout(r, 3000));
-          UICtrl.hideMoneyLost(playersArr[i].id, playersArr[i].budget);
-          UICtrl.hideTaxCard();
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideCard();
         }
+        // Check if landed on Chance
+        if ([28,3,17].includes(playersArr[i].mapSpot)) {
+          var chances = game.getChances();
+          var typeOfCard = 'chance';
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
+          cardTaken = false;
+          updateEventListener4();
+          while (!cardTaken) {
+            await new Promise(r => setTimeout(r, 0100));
+          }
+          UICtrl.hideCard();
+          UICtrl.showChance(chances[0].text);
+          // check if we only change a spot or we get money
+          if ([1,2,3,5,6,7].includes(chances[0].id)) {
+            // animation here would be good tho
+            game.changeSpot(playersArr[i], chances[0].id);
+            await new Promise(r => setTimeout(r, 2000));
+            UICtrl.updatePlayerSpot(playersArr[i]);
+            //////////////////////////
+            // check the new card spot
+
+            
+          } else if ([4,9,10].includes(chances[0].id)) {
+            var moneyDiff = 0;
+            var sign = '+';
+            chances[0].id == 4 ? moneyDiff = 50 : chances[0].id == 9 ? moneyDiff = 150 : moneyDiff = 100;
+            console.log(moneyDiff);
+            game.updateBudget(playersArr[i], moneyDiff, sign);
+            UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+            await new Promise(r => setTimeout(r, 3000));
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          } else {
+            var moneyAmount = 50;
+            var moneySum = 0;
+            for (var j = 0; j < playersArr.length; j++){
+              // Pay everyone except myself
+              if (playersArr[j] !== playersArr[i]) {
+                game.paySomeone(playersArr[i], playersArr[j], moneyAmount);
+                UICtrl.showMoneyChange(playersArr[j].id, moneyAmount, sign = '+');
+                moneySum += moneyAmount;
+              }
+              if (j+1 == playersArr.length) {
+                UICtrl.showMoneyChange(playersArr[i].id, moneySum, sign = '-');
+              }
+            }
+            await new Promise(r => setTimeout(r, 3000));
+            // And now remove numbers next to the budget
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+            for (var k = 0; k < playersArr.length; k++){
+              if (playersArr[k] !== playersArr[i]) {
+                UICtrl.hideMoneyChange(playersArr[k].id, playersArr[k].budget);
+              }
+            }
+          }
+          UICtrl.hideChance();
+          // puts the card on the back
+          chances.push(chances[0]);
+          // and then removes it from the top
+          chances.shift();
+        }
+
+
         // check card and display it and maybe buy?
       } while(dices[0] == [dices[1]]);
 
@@ -462,7 +608,7 @@ var controller = (function(game, UICtrl) {
   };
 
   var hiLol = function() {
-    console.log('bla bla');
+    
   };
 
   // event listeners should be at the end cuz only then i can assign functions to var!!

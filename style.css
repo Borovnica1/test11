@@ -224,6 +224,21 @@ body {
 .startGame:hover {
   background-color: rgba(255, 255, 0, 0.938);
 }
+.cardTaken {
+  display: none;
+}
+
+.map__text {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 1rem 1.6rem;
+  z-index: 100;
+  background-color: rgba(245, 131, 0, 0.753);
+  border: 1px solid orange;
+  display: none;
+}
 
 .map__modal {
   z-index: 100;
