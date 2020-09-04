@@ -22,6 +22,7 @@ var gameLogic = (function() {
   var dices = [];
   var charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
   var chances = ['Advance to "Go".', 'Advance to Illinois Avenue.', 'Advance to St. Charles Place. If you pass Go, collect $200.', 'Bank pays you dividend of $50.', 'Go Back 3 Spaces.', 'Go directly to Jail', 'Take a walk on the Board walk.', 'You have been elected Chairman of the Board. Pay each player $50.', 'Your building and loan matures. Collect $150.', 'You have won a crossword competition. Collect $100.'];
+  var communityChests = ['Advance to "Go".', 'Bank error in your favor. Collect $200.', 'From sale of stock you get $45.', 'Xmas Fund matures. Collect $100.', 'Hospital Fees. Pay hospital $100.', 'Pay school tax of $150', 'You inherit $100.', 'Receive for services $25.', 'It\'s your birthday. Collect $10 from every player.', 'Grand Opera Opening. Collect $50 from every player for opening night seats.'];
 
   var Chance = function(id, text) {
     this.id = id;
@@ -39,10 +40,25 @@ var gameLogic = (function() {
     chances.splice(random, 1);
   }
 
+  var CommunityChest = function(id, text) {
+    this.id = id;
+    this.text = text;
+  }
+  for (var i = 0; i < communityChests.length; i++) {
+    var newCommunityChest = new CommunityChest(i+1, communityChests[0]);
+    communityChests.push(newCommunityChest);
+    communityChests.shift();
+  }
+  // Now to randomize the order!
+  for (var j = 0; j < communityChests.length; j++) {
+    var random = Math.floor(Math.random() * (communityChests.length - j));
+    communityChests.push(communityChests[random]);
+    communityChests.splice(random, 1);
+  }
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 10, 0, 0);
+      var newPlayer = new Player(id, name, char, 1500, 16, 0, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
@@ -83,9 +99,14 @@ var gameLogic = (function() {
       
     },
 
-    paySomeone: function(player, playerToGet, amount) {
-      player.budget -= amount;
-      playerToGet.budget += amount;
+    payTime: function(player, playerTwo, amount, sign) {
+      if (sign == '+') {
+        player.budget += amount;
+        playerTwo.budget -= amount;
+      } else {
+        player.budget -= amount;
+        playerTwo.budget += amount;
+      }
     },
 
     changeSpot: function(player, id){
@@ -130,6 +151,10 @@ var gameLogic = (function() {
     //maybe just getCards?
     getChances: function() {
       return chances;
+    },
+
+    getCommunityChests: function() {
+      return communityChests;
     }
   }
 
@@ -143,6 +168,7 @@ var UIController = (function() {
     startGame: '.startGame'
   };
   var mapContainer = document.querySelector('.map');
+  var mapText = document.querySelector('.map__text');
 
   return {
     getDomStrings: function() {
@@ -257,7 +283,7 @@ var UIController = (function() {
       document.querySelector('.map__player'+player.id).parentNode.removeChild(document.querySelector('.map__player'+player.id));
 
       // Puts him to new spot
-      html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .2rem;">'
+      html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .1rem;">'
         + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
@@ -296,6 +322,11 @@ var UIController = (function() {
           secondTitle.innerHTML = 'Chance time!!';
           document.querySelector('.cardTaken').style.display = 'block';
           break;
+        case ('communityChest'):
+          firstTitle.innerHTML = 'You landed on:';
+          secondTitle.innerHTML = 'Community Chest time!!';
+          document.querySelector('.cardTaken').style.display = 'block';
+          break;
       }
       document.querySelector('.map__card').style.display = 'block';
     },
@@ -314,12 +345,20 @@ var UIController = (function() {
       budgetElement.innerHTML = playerBudget;
     },
 
-    showChance: function(text) {
-      document.querySelector('.map__text').innerHTML = text;
-      document.querySelector('.map__text').style.display = 'block';
+    
+    showCardText: function(text, typeOfCard) {
+      if (typeOfCard == 'chance') {
+        mapText.style.backgroundColor = 'rgba(245, 131, 0, 0.753)';
+        mapText.style.border = 'orange';
+      } else {
+        mapText.style.backgroundColor = 'rgba(84, 172, 230, 0.788)';
+        mapText.style.border = 'lightblue';
+      }
+      mapText.innerHTML = text;
+      mapText.style.display = 'block';
     },
-    hideChance: function() {
-      document.querySelector('.map__text').style.display = 'none';
+    hideCardText: function() {
+      mapText.style.display = 'none';
     }
 
 
@@ -519,7 +558,7 @@ var controller = (function(game, UICtrl) {
             await new Promise(r => setTimeout(r, 0100));
           }
           UICtrl.hideCard();
-          UICtrl.showChance(chances[0].text);
+          UICtrl.showCardText(chances[0].text, typeOfCard);
           // check if we only change a spot or we get money
           if ([1,2,3,5,6,7].includes(chances[0].id)) {
             // animation here would be good tho
@@ -529,12 +568,11 @@ var controller = (function(game, UICtrl) {
             //////////////////////////
             // check the new card spot
 
-            
+
           } else if ([4,9,10].includes(chances[0].id)) {
             var moneyDiff = 0;
             var sign = '+';
             chances[0].id == 4 ? moneyDiff = 50 : chances[0].id == 9 ? moneyDiff = 150 : moneyDiff = 100;
-            console.log(moneyDiff);
             game.updateBudget(playersArr[i], moneyDiff, sign);
             UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
             await new Promise(r => setTimeout(r, 3000));
@@ -545,7 +583,7 @@ var controller = (function(game, UICtrl) {
             for (var j = 0; j < playersArr.length; j++){
               // Pay everyone except myself
               if (playersArr[j] !== playersArr[i]) {
-                game.paySomeone(playersArr[i], playersArr[j], moneyAmount);
+                game.payTime(playersArr[i], playersArr[j], moneyAmount, sign = '-');
                 UICtrl.showMoneyChange(playersArr[j].id, moneyAmount, sign = '+');
                 moneySum += moneyAmount;
               }
@@ -562,11 +600,74 @@ var controller = (function(game, UICtrl) {
               }
             }
           }
-          UICtrl.hideChance();
+          UICtrl.hideCardText();
           // puts the card on the back
           chances.push(chances[0]);
           // and then removes it from the top
           chances.shift();
+        }
+        // Check if landed on Community chest
+        if ([14,23,38].includes(playersArr[i].mapSpot)) {
+          var communityChests = game.getCommunityChests();
+          var typeOfCard = 'communityChest';
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
+          cardTaken = false;
+          updateEventListener4();
+          while (!cardTaken) {
+            await new Promise(r => setTimeout(r, 0100));
+          }
+          UICtrl.hideCard();
+          UICtrl.showCardText(communityChests[0].text, typeOfCard);
+          if (1 == communityChests[0].id) {
+            // animation here would be good tho
+            game.changeSpot(playersArr[i], communityChests[0].id);
+            await new Promise(r => setTimeout(r, 2000));
+            UICtrl.updatePlayerSpot(playersArr[i]);
+          } else if ([5,6].includes(communityChests[0].id)) {
+            var moneyDiff = 0;
+            var sign = '-';
+            communityChests[0].id == 5 ? moneyDiff = 100 : moneyDiff = 150;
+            game.updateBudget(playersArr[i], moneyDiff, sign);
+            UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+            await new Promise(r => setTimeout(r, 3000));
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          } else if ([3,4,7,2,8].includes(communityChests[0].id)) {
+            var moneyDiff = 0;
+            var sign = '+';
+            communityChests[0].id == 2 ? moneyDiff = 200 : communityChests[0].id == 3 ?moneyDiff = 45 : communityChests[0].id == 8 ? moneyDiff = 25 : moneyDiff = 100;
+            game.updateBudget(playersArr[i], moneyDiff, sign);
+            UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+            await new Promise(r => setTimeout(r, 3000));
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          } else {
+            var moneyAmount = 0;
+            var moneySum = 0;
+            communityChests[0].id == 9 ? moneyAmount = 10 : moneyAmount = 50;
+            for (var j = 0; j < playersArr.length; j++){
+              // Take from everyone except myself
+              if (playersArr[j] !== playersArr[i]) {
+                game.payTime(playersArr[i], playersArr[j], moneyAmount, sign = '+');
+                UICtrl.showMoneyChange(playersArr[j].id, moneyAmount, sign = '-');
+                moneySum += moneyAmount;
+              }
+              if (j+1 == playersArr.length) {
+                UICtrl.showMoneyChange(playersArr[i].id, moneySum, sign = '+');
+              }
+            }
+            await new Promise(r => setTimeout(r, 3000));
+            // And now remove numbers next to the budget
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+            for (var k = 0; k < playersArr.length; k++){
+              if (playersArr[k] !== playersArr[i]) {
+                UICtrl.hideMoneyChange(playersArr[k].id, playersArr[k].budget);
+              }
+            }
+          }
+          UICtrl.hideCardText();
+          // puts the card on the back
+          communityChests.push(communityChests[0]);
+          // and then removes it from the top
+          communityChests.shift();
         }
 
 
