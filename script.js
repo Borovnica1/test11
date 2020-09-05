@@ -58,14 +58,14 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 21, 0, 0);
+      var newPlayer = new Player(id, name, char, 1500, 8, 0, 0);
       players.unshift(newPlayer);
       console.log(players);
     },
 
     addDiceRoll: function(player, gameIsActive) {
-      var dice1 = Math.floor(Math.random() * 6) + 1;
-      var dice2 = Math.floor(Math.random() * 6) + 1;
+      var dice1 = Math.floor(Math.random() * 1) + 5;
+      var dice2 = Math.floor(Math.random() * 1) + 4;
       dices = [dice1, dice2];
       diceRolls.unshift(dices);
 
@@ -203,9 +203,11 @@ var UIController = (function() {
         html += '<div class="map__box2 arrayIndex'+i+'" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center;margin-right:.2rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 30px;">'  + charsArr[i] + '</span>' + '</div>'
       } 
       html += '<button class="map__done btn" style="display:flex;margin:auto;padding:.6rem .9rem;margin-top:.4rem">' + 'Done' + '</button>'
-      + '</div>'
+      + '</div>';
+      
 
       mapContainer.insertAdjacentHTML('beforeend', html);
+      document.querySelector('.player__name').focus();
     },
 
     showPlayerDashboard: function(players) {
@@ -232,10 +234,14 @@ var UIController = (function() {
       }
     },
 
-    showRollDice: function(name) {
+    showRollDice: function(name, gameIsActive) {
       var rollDiceBtn = document.querySelector('.rollDice');
       var playerNumber = document.querySelector('.playerNumber');
-      playerNumber.innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s turn!' +  '</h1>';
+      if (gameIsActive == true) {
+        playerNumber.innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s turn!' +  '</h1>';
+      } else {
+        playerNumber.innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + ' roll for the play order!' +  '</h1>';
+      }
       mapContainer.insertAdjacentElement('beforeend', rollDiceBtn);
       rollDiceBtn.style.display = 'block';
       playerNumber.style.display = 'block';
@@ -326,6 +332,14 @@ var UIController = (function() {
           firstTitle.innerHTML = 'You landed on:';
           secondTitle.innerHTML = 'Community Chest time!!';
           document.querySelector('.cardTaken').style.display = 'block';
+          break;
+        case ('go'):
+          firstTitle.innerHTML = 'You passed:';
+          secondTitle.innerHTML = 'Bank gives you $200!';
+          break;
+        case ('go2'):
+          firstTitle.innerHTML = 'You passed twice:';
+          secondTitle.innerHTML = 'Bank gives you $400!';
           break;
       }
       document.querySelector('.map__card').style.display = 'block';
@@ -468,11 +482,10 @@ var controller = (function(game, UICtrl) {
     UICtrl.showPlayerDashboard(playersArr);
 
     // Roll dice for play order!!
-    // Show some visual box where it says that they are rolling for play order
     while (broj2 > 0) {
       // Added gameIsActive as second argument so i wouldnt create anouther similiar showRollDice function.
       var gameIsActive = false;
-      UICtrl.showRollDice(playersArr[broj2 - 1].name);
+      UICtrl.showRollDice(playersArr[broj2 - 1].name, gameIsActive);
       updateEventListener3();
       while (!diceClicked) {
         await new Promise(r => setTimeout(r, 0100));
@@ -510,7 +523,8 @@ var controller = (function(game, UICtrl) {
       // Roll while player keeps getting double dice!
       do {
         var lastSpot = playersArr[i].mapSpot;
-        UICtrl.showRollDice(playersArr[i].name);
+        var beforeRollSpot = playersArr[i].mapSpot;
+        UICtrl.showRollDice(playersArr[i].name, gameIsActive);
         // Here we are wating for player to click Roll Dice button!!
         while (!diceClicked) {
           await new Promise(r => setTimeout(r, 0100));
@@ -535,20 +549,8 @@ var controller = (function(game, UICtrl) {
           UICtrl.updatePlayerSpot(playersArr[i]);
           break;
         }
-        // Check if landed on Tax card
-        if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
-          var moneyDiff = 0;
-          var sign = '-';
-          var typeOfCard = 'tax';
-          playersArr[i].mapSpot == 25 ? moneyDiff = 200 : moneyDiff = 100;
-          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
-          game.updateBudget(playersArr[i], moneyDiff, sign);
-          console.log(playersArr[i]);
-          UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
-          await new Promise(r => setTimeout(r, 3000));
-          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
-          UICtrl.hideCard();
-        }
+
+
         // Check if landed on Chance
         if ([28,3,17].includes(playersArr[i].mapSpot)) {
           var chances = game.getChances();
@@ -622,6 +624,7 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideCard();
           UICtrl.showCardText(communityChests[0].text, typeOfCard);
           if (1 == communityChests[0].id) {
+            lastSpot = playersArr[i].mapSpot;
             // animation here would be good tho
             game.changeSpot(playersArr[i], communityChests[0].id);
             await new Promise(r => setTimeout(r, 2000));
@@ -672,19 +675,50 @@ var controller = (function(game, UICtrl) {
           // and then removes it from the top
           communityChests.shift();
         }
+        
 
         //////////////////////////////////
         // Does the player pass the GO???
-        console.log(lastSpot, playersArr[i].mapSpot);
-        if ((playersArr[i].mapSpot >= 21 && (playersArr[i].mapSpot - lastSpot) <= 12 && lastSpot < 21)
-          || playersArr[i].mapSpot == 21
-          || playersArr[i].mapSpot == 29 + lastSpot
-          || playersArr[i].mapSpot == 15 + lastSpot
-          || playersArr[i].mapSpot == 23 - lastSpot ) {
+        if (playersArr[i].mapSpot == 21 && [23, 28].includes(lastSpot) && beforeRollSpot < 21) {
+          game.updateBudget(playersArr[i], 400, '+');
+          UICtrl.showCard(21, 'go2');
+          UICtrl.showMoneyChange(playersArr[i].id, 400, '+');
+          await new Promise(r => setTimeout(r, 2000));
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideCard();
+        } else if ((playersArr[i].mapSpot >= 21 && (playersArr[i].mapSpot - lastSpot) <=  12 && lastSpot < 21)
+          || playersArr[i].mapSpot == 21 
+          || playersArr[i].mapSpot == 29 + lastSpot // st. charles place
+          || playersArr[i].mapSpot == 15 + lastSpot // st. charles place
+          || playersArr[i].mapSpot == -12 + lastSpot) {
           game.updateBudget(playersArr[i], 200, '+');
+          UICtrl.showCard(21, 'go');
           UICtrl.showMoneyChange(playersArr[i].id, 200, '+');
           await new Promise(r => setTimeout(r, 2000));
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideCard();
+        } else if ([23,28].includes(lastSpot) && beforeRollSpot < 21) {
+          game.updateBudget(playersArr[i], 200, '+');
+          UICtrl.showCard(21, 'go');
+          UICtrl.showMoneyChange(playersArr[i].id, 200, '+');
+          await new Promise(r => setTimeout(r, 2000));
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideCard();
+        }
+
+        // Check if landed on Tax card
+        if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
+          var moneyDiff = 0;
+          var sign = '-';
+          var typeOfCard = 'tax';
+          playersArr[i].mapSpot == 25 ? moneyDiff = 200 : moneyDiff = 100;
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
+          game.updateBudget(playersArr[i], moneyDiff, sign);
+          console.log(playersArr[i]);
+          UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+          await new Promise(r => setTimeout(r, 3000));
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideCard();
         }
 
         // check card and display it and maybe buy?
@@ -722,6 +756,10 @@ var controller = (function(game, UICtrl) {
       playersArr.length - 1 == i ? i = 0 : i++;
       gameIsPlaying();
     }
+  };
+
+  var checkIfPlayerPassedGO = function() {
+
   };
 
   var hiLol = function() {
