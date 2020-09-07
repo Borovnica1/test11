@@ -4,7 +4,7 @@ var gameLogic = (function() {
   // I'm using here Classical Inheritance. Old school ES5 style.
   // There is much better way to do this with instantiation (*class* keyword) in ES6 and React!!
   // Function constructor
-  var Player = function(id, name, char, budget, mapSpot, rolledNumber, inJail) {
+  var Player = function(id, name, char, budget, mapSpot, rolledNumber, inJail, properties) {
     this.id = id;
     this.name = name;
     this.char = char;
@@ -12,6 +12,7 @@ var gameLogic = (function() {
     this.mapSpot = mapSpot;
     this.rolledNumber = rolledNumber;
     this.inJail = inJail;
+    this.properties = properties;
   }
 
   var Player1 = new Player(1, 'John', 22);
@@ -23,6 +24,25 @@ var gameLogic = (function() {
   var charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
   var chances = ['Advance to "Go".', 'Advance to Illinois Avenue.', 'Advance to St. Charles Place. If you pass Go, collect $200.', 'Bank pays you dividend of $50.', 'Go Back 3 Spaces.', 'Go directly to Jail', 'Take a walk on the Board walk.', 'You have been elected Chairman of the Board. Pay each player $50.', 'Your building and loan matures. Collect $150.', 'You have won a crossword competition. Collect $100.'];
   var communityChests = ['Advance to "Go".', 'Bank error in your favor. Collect $200.', 'From sale of stock you get $45.', 'Xmas Fund matures. Collect $100.', 'Hospital Fees. Pay hospital $100.', 'Pay school tax of $150', 'You inherit $100.', 'Receive for services $25.', 'It\'s your birthday. Collect $10 from every player.', 'Grand Opera Opening. Collect $50 from every player for opening night seats.'];
+  var bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
+
+  var Property = function(id, title, value) {
+    this.id = id;
+    this.title = title;
+    this.value = value;
+  }
+  var id = 0;
+  for (var i = 0; i < bankProperties.length; i++) {
+    var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
+    // Skip the non property card!!
+    id++;
+    if (nonPropertyCards.includes(id)) id++;
+    var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1]);
+    bankProperties.push(newProperty);
+    bankProperties.shift();
+  }
+
+  console.log(bankProperties);
 
   var Chance = function(id, text) {
     this.id = id;
@@ -58,7 +78,7 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 8, 0, 0);
+      var newPlayer = new Player(id, name, char, 1500, 8, 0, 0, []);
       players.unshift(newPlayer);
       console.log(players);
     },
