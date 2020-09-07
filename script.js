@@ -340,7 +340,7 @@ var UIController = (function() {
       document.querySelector('.map__inJail').style.display = 'none';
     },
 
-    showCard: function(cardNumber, typeOfCard) {
+    showCard: function(cardNumber, typeOfCard, price, owner, rent) {
       // Sets image
       var firstTitle = document.querySelector('.map__card').children[0];
       var img = document.querySelector('.map__card').children[1];
@@ -370,6 +370,18 @@ var UIController = (function() {
         case ('go2'):
           firstTitle.innerHTML = 'You passed twice:';
           secondTitle.innerHTML = 'Bank gives you $400!';
+          break;
+        case ('property'):
+          firstTitle.innerHTML = 'You landed on:';
+          secondTitle.innerHTML = 'Cost: $' + price;
+          document.querySelector('.aBitRight').insertAdjacentText('beforeend', ' $'+price/2);
+          document.querySelectorAll('.qOption').forEach(el => el.style.display = 'block' )
+          break;
+        case ('propertyTaken'):
+          firstTitle.innerHTML = 'You landed on:';
+          secondTitle.innerHTML = 'Owner: ' + owner;
+          document.querySelector('.rent').innerHTML = 'Pay Rent: $' + rent ;
+          document.querySelector('.rent').style.display = 'block';
           break;
       }
       document.querySelector('.map__card').style.display = 'block';
@@ -479,6 +491,19 @@ var controller = (function(game, UICtrl) {
     document.querySelector('.cardTaken').addEventListener('click', () => {
       cardTaken = true;
       document.querySelector('.cardTaken').style.display = 'none';
+    })
+  }
+  var actionTaken = false;
+  var actionBuy = false;
+  function updateEventListener5() {
+    var options = document.querySelectorAll('.qOption')
+    console.log(options[0]);
+    options[0].addEventListener('click', () => {
+      actionBuy = true;
+      actionTaken = true;
+    })
+    options[1].addEventListener('click', () => {
+      actionTaken = true;
     })
   }
 
@@ -754,9 +779,25 @@ var controller = (function(game, UICtrl) {
         }
         // check card and display it and maybe buy?
         if (propertiesIDs.includes(playersArr[i].mapSpot)) {
-          console.log('pao na polje');
-          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
-
+          var typeOfCard;
+          var property = bankProperties.find(x => x.id == 1);
+          console.log(property);
+          // Check if its available to buy the property
+          if (!undefined) {
+            typeOfCard = 'property';
+          } else {
+            typeOfCard = 'propertyTaken';
+            /////////////////////
+            // Find who owner of the propert is and get it!!!
+          }
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, property.value, owner = 'lola', rent = 100);
+          updateEventListener5();
+          while (!actionTaken) {
+            await new Promise(r => setTimeout(r, 0100));
+          }
+          UICtrl.hideCard();
+          console.log(actionTaken, actionBuy);
+          
         }
 
       } while(dices[0] == [dices[1]]);
@@ -808,9 +849,7 @@ var controller = (function(game, UICtrl) {
 })(gameLogic, UIController);
 
 // make video cut extension and display on the board random cuts
-
 // svaka stranka druga boja i special effect???!?!?!?!?
-
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 // add free parking spot to give all the money spent
 // add menu just under board

@@ -131,7 +131,7 @@ body {
   margin: 0 auto;
 }
 
-.endTurn {
+.endTurn, .rent {
   position: absolute;
   top: 60%;
   left: 50%;
@@ -158,6 +158,32 @@ body {
   border: 1px solid rgb(0, 174, 255);
 }
 .rollDice:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.qOption {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  padding: 1rem 1.8rem;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.aBitLeft {
+  left: 35%;
+  background-color: rgba(47, 255, 82, 0.699);
+  border: 1px solid rgb(0, 255, 0);
+}
+.aBitLeft:hover {
+  background-color: rgb(0, 255, 0);
+}
+.aBitRight {
+  left: 65%;
+}
+.aBitRight:hover {
   background-color: rgb(0, 174, 255);
 }
 
