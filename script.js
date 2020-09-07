@@ -32,8 +32,8 @@ var gameLogic = (function() {
     this.value = value;
   }
   var id = 0;
+  var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
   for (var i = 0; i < bankProperties.length; i++) {
-    var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
     // Skip the non property card!!
     id++;
     if (nonPropertyCards.includes(id)) id++;
@@ -42,7 +42,9 @@ var gameLogic = (function() {
     bankProperties.shift();
   }
 
-  console.log(bankProperties);
+  let propertyIDs = bankProperties.map(x => x.id);
+  console.log(propertyIDs);
+  //console.log(bankProperties.indexOf(bankProperties.find(x => x.id == 18)));
 
   var Chance = function(id, text) {
     this.id = id;
@@ -175,6 +177,14 @@ var gameLogic = (function() {
 
     getCommunityChests: function() {
       return communityChests;
+    },
+
+    getBankProperties: function() {
+      return bankProperties;
+    },
+
+    getPropertyIDs: function() {
+      return propertyIDs;
     }
   }
 
@@ -542,6 +552,9 @@ var controller = (function(game, UICtrl) {
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
       do {
+        var bankProperties = game.getBankProperties();
+        var propertiesIDs = game.getPropertyIDs();
+
         var lastSpot = playersArr[i].mapSpot;
         var beforeRollSpot = playersArr[i].mapSpot;
         UICtrl.showRollDice(playersArr[i].name, gameIsActive);
@@ -569,8 +582,6 @@ var controller = (function(game, UICtrl) {
           UICtrl.updatePlayerSpot(playersArr[i]);
           break;
         }
-
-
         // Check if landed on Chance
         if ([28,3,17].includes(playersArr[i].mapSpot)) {
           var chances = game.getChances();
@@ -710,21 +721,22 @@ var controller = (function(game, UICtrl) {
           || playersArr[i].mapSpot == 21 
           || playersArr[i].mapSpot == 29 + lastSpot // st. charles place
           || playersArr[i].mapSpot == 15 + lastSpot // st. charles place
-          || playersArr[i].mapSpot == -12 + lastSpot) {
+          || playersArr[i].mapSpot == -12 + lastSpot
+          || ([23,28].includes(lastSpot) && beforeRollSpot < 21)) {
           game.updateBudget(playersArr[i], 200, '+');
           UICtrl.showCard(21, 'go');
           UICtrl.showMoneyChange(playersArr[i].id, 200, '+');
           await new Promise(r => setTimeout(r, 2000));
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
           UICtrl.hideCard();
-        } else if ([23,28].includes(lastSpot) && beforeRollSpot < 21) {
+        } /* else if ([23,28].includes(lastSpot) && beforeRollSpot < 21) {
           game.updateBudget(playersArr[i], 200, '+');
           UICtrl.showCard(21, 'go');
           UICtrl.showMoneyChange(playersArr[i].id, 200, '+');
           await new Promise(r => setTimeout(r, 2000));
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
           UICtrl.hideCard();
-        }
+        } */
 
         // Check if landed on Tax card
         if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
@@ -740,8 +752,13 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
           UICtrl.hideCard();
         }
-
         // check card and display it and maybe buy?
+        if (propertiesIDs.includes(playersArr[i].mapSpot)) {
+          console.log('pao na polje');
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
+
+        }
+
       } while(dices[0] == [dices[1]]);
 
       /////////////////////////////////
