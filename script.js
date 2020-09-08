@@ -374,6 +374,7 @@ var UIController = (function() {
         case ('property'):
           firstTitle.innerHTML = 'You landed on:';
           secondTitle.innerHTML = 'Cost: $' + price;
+          document.querySelector('.aBitLeft').innerHTML = 'Buy Property';
           document.querySelector('.aBitRight').innerHTML = 'Auction $' + price / 2;
           document.querySelectorAll('.qOption').forEach(el => el.style.display = 'block');
           break;
@@ -403,6 +404,8 @@ var UIController = (function() {
       document.querySelector('.map__card').style.display = 'none';
       document.querySelectorAll('.qOption').forEach(el => el.style.display = 'none');
       document.querySelector('.rent').style.display = 'none';
+      document.querySelector('.aBitLeft').classList.remove('aBitLeftAuction');
+      document.querySelector('.aBitRight').classList.remove('aBitRightAuction');
     },
 
     showMoneyChange: function(id, money, sign) {
@@ -857,6 +860,7 @@ var controller = (function(game, UICtrl) {
               bidders.push(playersArr[k]);
             }
             while (bidders.length !== 1) {
+              console.log(bidders);
               bidders.length - 1 == n ? n = 0 : n++;
               bidder = bidders[n];
               console.log(bidder);
@@ -870,6 +874,7 @@ var controller = (function(game, UICtrl) {
                 actionBuy = false;
               } else {
                 bidders.splice(n, 1);
+                n--;
               }
               UICtrl.hideCard();
             }
