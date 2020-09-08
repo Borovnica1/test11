@@ -142,7 +142,8 @@ body {
   background-color: rgba(255, 47, 47, 0.699);
   border: 1px solid rgb(255, 30, 0);
 }
-.endTurn:hover {
+.endTurn:hover,
+.rent:hover {
   background-color: rgb(255, 30, 0);
 }
 

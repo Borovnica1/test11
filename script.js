@@ -80,14 +80,14 @@ var gameLogic = (function() {
 
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 8, 0, 0, []);
+      var newPlayer = new Player(id, name, char, 1500, 21, 0, 0, []);
       players.unshift(newPlayer);
       console.log(players);
     },
 
     addDiceRoll: function(player, gameIsActive) {
-      var dice1 = Math.floor(Math.random() * 1) + 5;
-      var dice2 = Math.floor(Math.random() * 1) + 4;
+      var dice1 = Math.floor(Math.random() * 6) + 1;
+      var dice2 = Math.floor(Math.random() * 6) + 1;
       dices = [dice1, dice2];
       diceRolls.unshift(dices);
 
@@ -374,12 +374,12 @@ var UIController = (function() {
         case ('property'):
           firstTitle.innerHTML = 'You landed on:';
           secondTitle.innerHTML = 'Cost: $' + price;
-          document.querySelector('.aBitRight').insertAdjacentText('beforeend', ' $'+price/2);
-          document.querySelectorAll('.qOption').forEach(el => el.style.display = 'block' )
+          document.querySelector('.aBitRight').innerHTML = 'Auction $' + price / 2;
+          document.querySelectorAll('.qOption').forEach(el => el.style.display = 'block');
           break;
         case ('propertyTaken'):
           firstTitle.innerHTML = 'You landed on:';
-          secondTitle.innerHTML = 'Owner: ' + owner;
+          secondTitle.innerHTML = 'Owner: ' + owner.name;
           document.querySelector('.rent').innerHTML = 'Pay Rent: $' + rent ;
           document.querySelector('.rent').style.display = 'block';
           break;
@@ -388,6 +388,8 @@ var UIController = (function() {
     },
     hideCard: function() {
       document.querySelector('.map__card').style.display = 'none';
+      document.querySelectorAll('.qOption').forEach(el => el.style.display = 'none');
+      document.querySelector('.rent').style.display = 'none';
     },
 
     showMoneyChange: function(id, money, sign) {
@@ -495,15 +497,19 @@ var controller = (function(game, UICtrl) {
   }
   var actionTaken = false;
   var actionBuy = false;
+  var actionRent = false;
   function updateEventListener5() {
     var options = document.querySelectorAll('.qOption')
-    console.log(options[0]);
     options[0].addEventListener('click', () => {
       actionBuy = true;
       actionTaken = true;
     })
     options[1].addEventListener('click', () => {
       actionTaken = true;
+    })
+    document.querySelector('.rent').addEventListener('click', () => {
+      actionTaken = true;
+      actionRent = true;
     })
   }
 
@@ -778,25 +784,63 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideCard();
         }
         // check card and display it and maybe buy?
-        if (propertiesIDs.includes(playersArr[i].mapSpot)) {
+        breakme: if (propertiesIDs.includes(playersArr[i].mapSpot)) {
           var typeOfCard;
-          var property = bankProperties.find(x => x.id == 1);
-          console.log(property);
+          var indexOfProperty;
+          var owner = 0;
+          var rent;
+          var property = bankProperties.find(x => x.id == playersArr[i].mapSpot);
           // Check if its available to buy the property
-          if (!undefined) {
+          if (property !== undefined) {
             typeOfCard = 'property';
           } else {
             typeOfCard = 'propertyTaken';
             /////////////////////
-            // Find who owner of the propert is and get it!!!
+            // Find who owner of the property is and get it!!!
+            var n = 0;
+            while (property == undefined) {
+              property = playersArr[n].properties.find(x => x.id == playersArr[i].mapSpot);
+              owner = playersArr[n];
+              n++;
+            }
+            rent = (property.value / 10);
           }
-          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, property.value, owner = 'lola', rent = 100);
+          // Stop the execution of this roll cuz property is already owned by me
+          if (owner == playersArr[i]) break breakme;
+          UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, property.value, owner, rent);
           updateEventListener5();
           while (!actionTaken) {
             await new Promise(r => setTimeout(r, 0100));
           }
+          actionTaken = false;
           UICtrl.hideCard();
-          console.log(actionTaken, actionBuy);
+          if (actionRent) {
+            sign = '-';
+            moneyDiff = rent;
+            game.payTime(playersArr[i], owner, moneyDiff, sign);
+            UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+            UICtrl.showMoneyChange(owner.id, moneyDiff, sign = '+');
+            await new Promise(r => setTimeout(r, 1000));
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+            UICtrl.hideMoneyChange(owner.id, owner.budget);
+            actionRent = false;
+          } else if (actionBuy) {
+            sign = '-';
+            moneyDiff = property.value;
+            game.updateBudget(playersArr[i], moneyDiff, sign);
+            UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
+            await new Promise(r => setTimeout(r, 1000));
+            UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+            // Gives property to the owner array and takes it from the bank!!
+            playersArr[i].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
+            indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
+            bankProperties.splice(indexOfProperty, 1);
+            console.log(bankProperties);
+            console.log(playersArr);
+            actionBuy = false;
+          } else {
+            // auction
+          }
           
         }
 
@@ -850,7 +894,10 @@ var controller = (function(game, UICtrl) {
 
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
+
+
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 // add free parking spot to give all the money spent
 // add menu just under board
 // game ends after 30mins?
+// houses and hotels!!!
