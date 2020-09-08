@@ -383,6 +383,19 @@ var UIController = (function() {
           document.querySelector('.rent').innerHTML = 'Pay Rent: $' + rent ;
           document.querySelector('.rent').style.display = 'block';
           break;
+        case ('auction'):
+          firstTitle.innerHTML = 'Auction for:';
+          secondTitle.innerHTML = 'Bid: $' + price;
+          document.querySelector('.aBitLeft').innerHTML = owner.name + ' Bid: $' + Math.floor(price + (price / 5)) + ' ?';
+          document.querySelector('.aBitRight').innerHTML = 'Fold';
+          document.querySelectorAll('.qOption').forEach(el => el.style.display = 'block');
+          document.querySelector('.aBitLeft').classList.add('aBitLeftAuction');
+          document.querySelector('.aBitRight').classList.add('aBitRightAuction');
+          break;
+        case ('auctionWinner'):
+          firstTitle.innerHTML = 'Winner is: ' + owner.name;
+          secondTitle.innerHTML = 'Cost: $' + price;
+          break;
       }
       document.querySelector('.map__card').style.display = 'block';
     },
@@ -737,8 +750,6 @@ var controller = (function(game, UICtrl) {
           // and then removes it from the top
           communityChests.shift();
         }
-        
-
         //////////////////////////////////
         // Does the player pass the GO???
         if (playersArr[i].mapSpot == 21 && [23, 28].includes(lastSpot) && beforeRollSpot < 21) {
@@ -768,7 +779,6 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
           UICtrl.hideCard();
         } */
-
         // Check if landed on Tax card
         if (playersArr[i].mapSpot == 25 || playersArr[i].mapSpot == 19) {
           var moneyDiff = 0;
@@ -835,14 +845,50 @@ var controller = (function(game, UICtrl) {
             playersArr[i].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
-            console.log(bankProperties);
-            console.log(playersArr);
             actionBuy = false;
+            // ADD visuals which show who owns what
           } else {
-            // auction
+            typeOfCard = 'auction';
+            var bidValue = (property.value / 2);
+            var n = i;
+            var bidders = [];
+            var bidder;
+            for(var k = 0; k < playersArr.length; k++){
+              bidders.push(playersArr[k]);
+            }
+            while (bidders.length !== 1) {
+              bidders.length - 1 == n ? n = 0 : n++;
+              bidder = bidders[n];
+              console.log(bidder);
+              UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, bidValue, bidder);
+              while (!actionTaken) {
+                await new Promise(r => setTimeout(r, 0100));
+              }
+              actionTaken = false;
+              if (actionBuy) {
+                bidValue = Math.floor(bidValue + (bidValue / 5));
+                actionBuy = false;
+              } else {
+                bidders.splice(n, 1);
+              }
+              UICtrl.hideCard();
+            }
+            typeOfCard = 'auctionWinner';
+            UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, bidValue, bidders[0]);
+            game.updateBudget(bidders[0], bidValue, sign = '-');
+            UICtrl.showMoneyChange(bidders[0].id, bidValue, sign = '-');
+            await new Promise(r => setTimeout(r, 2000));
+            UICtrl.hideMoneyChange(bidders[0].id, bidders[0].budget);
+            UICtrl.hideCard();
+            // Gives property to the owner array and takes it from the bank!!
+            bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
+            indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
+            bankProperties.splice(indexOfProperty, 1);
+            console.log(playersArr);
           }
           
         }
+        // check if players budget is below 0 and if it is kick him out of the game
 
       } while(dices[0] == [dices[1]]);
 
