@@ -923,8 +923,6 @@ var controller = (function(game, UICtrl) {
     } else {
       // this is when jail happens (else if)!!! not end of the game!
       UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
-      await new Promise(r => setTimeout(r, 1000));
-      UICtrl.hideGoToJail();
       playersArr[i].inJail--;
 
       /////////////////////////////////
@@ -936,6 +934,7 @@ var controller = (function(game, UICtrl) {
       }
       endTurn = false;
       UICtrl.removeCurrent(playersArr[i].id);
+      UICtrl.hideGoToJail();
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
@@ -964,4 +963,3 @@ var controller = (function(game, UICtrl) {
 // add menu just under board
 // game ends after 30mins?
 // houses and hotels!!!
-// Highlight playerstats box when its his turn!!!!
