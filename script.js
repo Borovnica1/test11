@@ -246,9 +246,9 @@ var UIController = (function() {
       document.querySelector('[data-id="'+players[0].mapSpot+'"]').innerHTML = '';
 
       for (var i = 0; i < players.length; i++) {
-        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;">'
+        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue">'
         + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
-        + '<div style="margin-left: .3rem;overflow:hidden;width:47%;white-space: nowrap;">'
+        + '<div style="margin-left: .3rem;overflow:hidden;width:46%;white-space: nowrap;">'
         + '<h1>' + players[i].name + '</h1>'
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
@@ -320,7 +320,7 @@ var UIController = (function() {
 
       // Puts him to new spot
       html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .1rem;">'
-        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
+        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:orange;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
     },
@@ -433,8 +433,18 @@ var UIController = (function() {
     },
     hideCardText: function() {
       mapText.style.display = 'none';
-    }
+    },
 
+    highlightCurrent: function(id) {
+      document.querySelector('.map__player'+id).children[0].style.backgroundColor = 'orange';
+      document.querySelector('.stats__player'+id).style.border = '2px solid orange';
+      document.querySelector('.stats__player'+id).children[0].style.backgroundColor = 'orange';
+    },
+    removeCurrent: function(id) {
+      document.querySelector('.map__player'+id).children[0].style.backgroundColor = 'lightblue';
+      document.querySelector('.stats__player'+id).style.border = '2px solid lightblue';
+      document.querySelector('.stats__player'+id).children[0].style.backgroundColor = 'lightblue';
+    }
 
   }
 })();
@@ -595,6 +605,8 @@ var controller = (function(game, UICtrl) {
   var gameIsPlaying = async function() {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
+    // Highlights current player
+    UICtrl.highlightCurrent(playersArr[i].id);
     doubleRolls = 0;
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
@@ -863,7 +875,6 @@ var controller = (function(game, UICtrl) {
               console.log(bidders);
               bidders.length - 1 == n ? n = 0 : n++;
               bidder = bidders[n];
-              console.log(bidder);
               UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, bidValue, bidder);
               while (!actionTaken) {
                 await new Promise(r => setTimeout(r, 0100));
@@ -889,7 +900,6 @@ var controller = (function(game, UICtrl) {
             bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
-            console.log(playersArr);
           }
           
         }
@@ -905,6 +915,7 @@ var controller = (function(game, UICtrl) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
+      UICtrl.removeCurrent(playersArr[i].id);
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
@@ -924,6 +935,7 @@ var controller = (function(game, UICtrl) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
+      UICtrl.removeCurrent(playersArr[i].id);
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
@@ -952,3 +964,4 @@ var controller = (function(game, UICtrl) {
 // add menu just under board
 // game ends after 30mins?
 // houses and hotels!!!
+// Highlight playerstats box when its his turn!!!!
