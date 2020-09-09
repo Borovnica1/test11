@@ -78,6 +78,8 @@ var gameLogic = (function() {
     communityChests.splice(random, 1);
   }
 
+  var parkingMoney = 0;
+
   return {
     addPlayer: function(id, name, char) {
       var newPlayer = new Player(id, name, char, 1500, 21, 0, 0, []);
@@ -129,6 +131,10 @@ var gameLogic = (function() {
         player.budget -= amount;
         playerTwo.budget += amount;
       }
+    },
+
+    updateParkingMoney: function(value) {
+      parkingMoney += value;
     },
 
     changeSpot: function(player, id){
@@ -185,6 +191,10 @@ var gameLogic = (function() {
 
     getPropertyIDs: function() {
       return propertyIDs;
+    },
+
+    getParkingMoney: function(){
+      return parkingMoney;
     }
   }
 
@@ -444,7 +454,25 @@ var UIController = (function() {
       document.querySelector('.map__player'+id).children[0].style.backgroundColor = 'lightblue';
       document.querySelector('.stats__player'+id).style.border = '2px solid lightblue';
       document.querySelector('.stats__player'+id).children[0].style.backgroundColor = 'lightblue';
-    }
+    },
+
+    showParkingChange: function(addValue) {
+      document.querySelector('.map__addPotBudget').innerHTML = '+$'+addValue;
+      document.querySelector('.map__addPotBudget').style.display = 'block'
+    },
+    hideParkingChange: function(potBudget) {
+      document.querySelector('.map__addPotBudget').style.display = 'none'
+      document.querySelector('.map__potBudget').innerHTML = '$'+potBudget;
+    },
+    showParking: function(playerName) {
+      document.querySelector('.map__freeMoneyName').innerHTML = playerName;
+      document.querySelector('.map__freeMoney').style.display = 'block';
+    },
+    hideParking: function() {
+      document.querySelector('.map__freeMoney').style.display = 'none';
+    },
+
+    
 
   }
 })();
@@ -853,9 +881,12 @@ var controller = (function(game, UICtrl) {
             sign = '-';
             moneyDiff = property.value;
             game.updateBudget(playersArr[i], moneyDiff, sign);
+            game.updateParkingMoney(property.value);
+            UICtrl.showParkingChange(property.value);
             UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
             await new Promise(r => setTimeout(r, 1000));
             UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+            UICtrl.hideParkingChange(game.getParkingMoney());
             // Gives property to the owner array and takes it from the bank!!
             playersArr[i].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
@@ -892,9 +923,12 @@ var controller = (function(game, UICtrl) {
             typeOfCard = 'auctionWinner';
             UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, bidValue, bidders[0]);
             game.updateBudget(bidders[0], bidValue, sign = '-');
+            game.updateParkingMoney(bidValue);
             UICtrl.showMoneyChange(bidders[0].id, bidValue, sign = '-');
+            UICtrl.showParkingChange(bidValue);
             await new Promise(r => setTimeout(r, 2000));
             UICtrl.hideMoneyChange(bidders[0].id, bidders[0].budget);
+            UICtrl.hideParkingChange(game.getParkingMoney());
             UICtrl.hideCard();
             // Gives property to the owner array and takes it from the bank!!
             bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
@@ -902,6 +936,17 @@ var controller = (function(game, UICtrl) {
             bankProperties.splice(indexOfProperty, 1);
           }
           
+        }
+        // Player landed on Parking
+        if (playersArr[i].mapSpot == 1 && game.getParkingMoney() !== 0) {
+          game.updateBudget(playersArr[i], game.getParkingMoney(), sign = '+');
+          UICtrl.showParking(playersArr[i].name);
+          UICtrl.showMoneyChange(playersArr[i].id, game.getParkingMoney(), sign = '+');
+          game.updateParkingMoney(-game.getParkingMoney());
+          await new Promise(r => setTimeout(r, 2500));
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideParkingChange(game.getParkingMoney());
+          UICtrl.hideParking();
         }
         // check if players budget is below 0 and if it is kick him out of the game
 
@@ -959,6 +1004,7 @@ var controller = (function(game, UICtrl) {
 
 
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
+
 // add free parking spot to give all the money spent
 // add menu just under board
 // game ends after 30mins?
