@@ -1,4 +1,4 @@
-// Using IIFE for data privacy (this is ES5, there are blocks for ES6) and MVC architecture for keeping code clean!
+// Using IIFE for data privacy (this is ES5, there are blocks for ES6) and module pattern architecture for keeping code clean!
 
 var gameLogic = (function() {
   // I'm using here Classical Inheritance. Old school ES5 style.
@@ -1005,7 +1005,7 @@ var controller = (function(game, UICtrl) {
 
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 
-// add free parking spot to give all the money spent
+// (add free parking spot to give all the money spent) add now maybe on the center of the board money
 // add menu just under board
 // game ends after 30mins?
 // houses and hotels!!!

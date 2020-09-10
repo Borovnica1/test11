@@ -263,6 +263,14 @@ If you want players to be in the center of a property!!
   word-break: break-word;
 }
 
+.map__moneyPot {
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 30%;
+  z-index: 20;
+}
+
 .map__pot {
   display: block;
   font-size: 14px;
