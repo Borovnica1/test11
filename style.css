@@ -265,7 +265,7 @@ If you want players to be in the center of a property!!
 
 .map__moneyPot {
   top: 45%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(45deg);
   width: 30%;
   height: 30%;
   z-index: 20;

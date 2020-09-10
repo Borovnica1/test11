@@ -210,6 +210,10 @@ var UIController = (function() {
   var mapContainer = document.querySelector('.map');
   var mapText = document.querySelector('.map__text');
 
+  var random = function() {
+    return Math.floor(Math.random() * 100) + 1;
+  }
+
   return {
     getDomStrings: function() {
       return DOMstrings;
@@ -459,6 +463,24 @@ var UIController = (function() {
     showParkingChange: function(addValue) {
       document.querySelector('.map__addPotBudget').innerHTML = '+$'+addValue;
       document.querySelector('.map__addPotBudget').style.display = 'block'
+      // 220
+      var left,
+          html,
+          bills = [500,100,50,20,10,5,1],
+          billsCount;
+      for (var i = 0; i < bills.length; i++) {
+        if (addValue >= bills[i]) {
+          left = addValue % bills[i];
+          billsCount = ((addValue - left) / bills[i]);
+          addValue = left; 
+        }
+        while (billsCount > 0) {
+          html = '<img src="dices/money'+bills[i]+'.png" style="position:absolute;transform:translate(-50%,-50%) rotate('+(random()-100)+'deg);top:'+random()+'%;left:'+random()+'%;width:40%">';
+          document.querySelector('.map__moneyPot').insertAdjacentHTML('beforeend', html);
+          billsCount--;
+        }
+      }
+
     },
     hideParkingChange: function(potBudget) {
       document.querySelector('.map__addPotBudget').style.display = 'none'
@@ -470,6 +492,7 @@ var UIController = (function() {
     },
     hideParking: function() {
       document.querySelector('.map__freeMoney').style.display = 'none';
+      document.querySelector('.map__moneyPot').innerHTML = '';
     },
 
     
@@ -903,7 +926,6 @@ var controller = (function(game, UICtrl) {
               bidders.push(playersArr[k]);
             }
             while (bidders.length !== 1) {
-              console.log(bidders);
               bidders.length - 1 == n ? n = 0 : n++;
               bidder = bidders[n];
               UICtrl.showCard(playersArr[i].mapSpot, typeOfCard, bidValue, bidder);
