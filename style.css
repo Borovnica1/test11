@@ -387,7 +387,7 @@ If you want players to be in the center of a property!!
   border-radius: 10px;
   width: 0px;
   height: 0px;
-  z-index: 20;
+  z-index: 120;
   transition: all .2s linear;
   flex-direction: column;
   justify-content: center;

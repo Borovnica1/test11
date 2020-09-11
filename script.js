@@ -21,64 +21,75 @@ var gameLogic = (function() {
   var players = [];
   var diceRolls = [];
   var dices = [];
-  var charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
-  var chances = ['Advance to "Go".', 'Advance to Illinois Avenue.', 'Advance to St. Charles Place. If you pass Go, collect $200.', 'Bank pays you dividend of $50.', 'Go Back 3 Spaces.', 'Go directly to Jail', 'Take a walk on the Board walk.', 'You have been elected Chairman of the Board. Pay each player $50.', 'Your building and loan matures. Collect $150.', 'You have won a crossword competition. Collect $100.'];
-  var communityChests = ['Advance to "Go".', 'Bank error in your favor. Collect $200.', 'From sale of stock you get $45.', 'Xmas Fund matures. Collect $100.', 'Hospital Fees. Pay hospital $100.', 'Pay school tax of $150', 'You inherit $100.', 'Receive for services $25.', 'It\'s your birthday. Collect $10 from every player.', 'Grand Opera Opening. Collect $50 from every player for opening night seats.'];
-  var bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
+  let propertyIDs;
+  var charsArr;
+  var chances;
+  var communityChests;
+  var bankProperties;
+  var parkingMoney;
+  var makeData = function() {
+    charsArr = ['&#9877;', '&#10086;', '&#9885;', '&#9882;', '&#9884;', '&#9992;', '&#9763;', '&#9876;'];
+    chances = ['Advance to "Go".', 'Advance to Illinois Avenue.', 'Advance to St. Charles Place. If you pass Go, collect $200.', 'Bank pays you dividend of $50.', 'Go Back 3 Spaces.', 'Go directly to Jail', 'Take a walk on the Board walk.', 'You have been elected Chairman of the Board. Pay each player $50.', 'Your building and loan matures. Collect $150.', 'You have won a crossword competition. Collect $100.'];
+    communityChests = ['Advance to "Go".', 'Bank error in your favor. Collect $200.', 'From sale of stock you get $45.', 'Xmas Fund matures. Collect $100.', 'Hospital Fees. Pay hospital $100.', 'Pay school tax of $150', 'You inherit $100.', 'Receive for services $25.', 'It\'s your birthday. Collect $10 from every player.', 'Grand Opera Opening. Collect $50 from every player for opening night seats.'];
+    bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
 
-  var Property = function(id, title, value) {
-    this.id = id;
-    this.title = title;
-    this.value = value;
+    
+  
+    var Property = function(id, title, value) {
+      this.id = id;
+      this.title = title;
+      this.value = value;
+    }
+    var id = 0;
+    var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
+    for (var i = 0; i < bankProperties.length; i++) {
+      // Skip the non property card!!
+      id++;
+      if (nonPropertyCards.includes(id)) id++;
+      var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1]);
+      bankProperties.push(newProperty);
+      bankProperties.shift();
+    }
+  
+    propertyIDs = bankProperties.map(x => x.id);
+    //console.log(bankProperties.indexOf(bankProperties.find(x => x.id == 18)));
+  
+    var Chance = function(id, text) {
+      this.id = id;
+      this.text = text;
+    }
+    for (var i = 0; i < chances.length; i++) {
+      var newChance = new Chance(i+1, chances[0]);
+      chances.push(newChance);
+      chances.shift();
+    }
+    // Now to randomize the order!
+    for (var j = 0; j < chances.length; j++) {
+      var random = Math.floor(Math.random() * (chances.length - j));
+      chances.push(chances[random]);
+      chances.splice(random, 1);
+    }
+  
+    var CommunityChest = function(id, text) {
+      this.id = id;
+      this.text = text;
+    }
+    for (var i = 0; i < communityChests.length; i++) {
+      var newCommunityChest = new CommunityChest(i+1, communityChests[0]);
+      communityChests.push(newCommunityChest);
+      communityChests.shift();
+    }
+    // Now to randomize the order!
+    for (var j = 0; j < communityChests.length; j++) {
+      var random = Math.floor(Math.random() * (communityChests.length - j));
+      communityChests.push(communityChests[random]);
+      communityChests.splice(random, 1);
+    }
+    
+    parkingMoney = 0;
   }
-  var id = 0;
-  var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
-  for (var i = 0; i < bankProperties.length; i++) {
-    // Skip the non property card!!
-    id++;
-    if (nonPropertyCards.includes(id)) id++;
-    var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1]);
-    bankProperties.push(newProperty);
-    bankProperties.shift();
-  }
-
-  let propertyIDs = bankProperties.map(x => x.id);
-  //console.log(bankProperties.indexOf(bankProperties.find(x => x.id == 18)));
-
-  var Chance = function(id, text) {
-    this.id = id;
-    this.text = text;
-  }
-  for (var i = 0; i < chances.length; i++) {
-    var newChance = new Chance(i+1, chances[0]);
-    chances.push(newChance);
-    chances.shift();
-  }
-  // Now to randomize the order!
-  for (var j = 0; j < chances.length; j++) {
-    var random = Math.floor(Math.random() * (chances.length - j));
-    chances.push(chances[random]);
-    chances.splice(random, 1);
-  }
-
-  var CommunityChest = function(id, text) {
-    this.id = id;
-    this.text = text;
-  }
-  for (var i = 0; i < communityChests.length; i++) {
-    var newCommunityChest = new CommunityChest(i+1, communityChests[0]);
-    communityChests.push(newCommunityChest);
-    communityChests.shift();
-  }
-  // Now to randomize the order!
-  for (var j = 0; j < communityChests.length; j++) {
-    var random = Math.floor(Math.random() * (communityChests.length - j));
-    communityChests.push(communityChests[random]);
-    communityChests.splice(random, 1);
-  }
-
-  var parkingMoney = 0;
-
+ /*  makeData();
+ */
   return {
     addPlayer: function(id, name, char) {
       var newPlayer = new Player(id, name, char, 1500, 21, 0, 0, []);
@@ -194,6 +205,14 @@ var gameLogic = (function() {
 
     getParkingMoney: function(){
       return parkingMoney;
+    },
+    
+    // Maybe make one big function init and add clearGame and creation of chances!!!
+    clearGame: function() {
+      players = [];
+      diceRolls = [];
+      dices = [];
+      makeData();
     }
   }
 
@@ -508,6 +527,7 @@ var controller = (function(game, UICtrl) {
 
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
     document.querySelector(DOM.startGame).addEventListener('click', createGame);
+    document.querySelector(DOM.startGame+2).addEventListener('click', createGame);
     document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
     document.querySelectorAll('.menu__menu').forEach(el => {
       el.addEventListener('click', async () => {
@@ -600,6 +620,10 @@ var controller = (function(game, UICtrl) {
   }
 
   async function createGame() {
+    //////////////////////////
+    /// We have to clear all visual in UICtrl before we continue. (when we reset the game)
+
+    game.clearGame();
     UICtrl.showPlayerPanel();
     updateEventListener();
     
@@ -607,7 +631,8 @@ var controller = (function(game, UICtrl) {
     while (!numberIsPicked) {
       await new Promise(r => setTimeout(r, 0100));
     }
-
+    numberIsPicked = false;
+    console.log('safasfasfasfsafasfsa');
     // making broj2 so i can make 2 while loops!!
     var broj2 = broj; 
 
