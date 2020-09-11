@@ -532,7 +532,7 @@ var controller = (function(game, UICtrl) {
     document.querySelectorAll('.menu__menu').forEach(el => {
       el.addEventListener('click', async () => {
         document.querySelector('.menu__exp').classList.toggle('menu__expClick');
-        if (!expended) await new Promise(r => setTimeout(r, 0170));
+        if (!expended) await new Promise(r => setTimeout(r, 0200));
         document.querySelectorAll('.menu__exp__btn').forEach(el => {
           el.classList.toggle('menu__exp__btnClick');
         })
@@ -622,7 +622,7 @@ var controller = (function(game, UICtrl) {
   async function createGame() {
     //////////////////////////
     /// We have to clear all visual in UICtrl before we continue. (when we reset the game)
-
+    /// before we reset data
     game.clearGame();
     UICtrl.showPlayerPanel();
     updateEventListener();
