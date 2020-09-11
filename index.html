@@ -10,78 +10,95 @@
 </head>
 <body>
   <div class="container">
-    <div class="map">
-      <div class="map__box" data-id="1">
-        <div class="map__pot card">
-          <h2>POT:</h2>
-          <h2 class="map__potBudget"style="white-space: nowrap;">$0</h2>
-          <h2 class="map__addPotBudget"style="white-space: nowrap;">+$62</h2>
+    <section>
+      <div class="map">
+        <div class="map__box" data-id="1">
+          <div class="map__pot card">
+            <h2>POT:</h2>
+            <h2 class="map__potBudget"style="white-space: nowrap;">$0</h2>
+            <h2 class="map__addPotBudget"style="white-space: nowrap;">+$62</h2>
+          </div>
+        </div>
+        <div class="map__box map__box-bottom" data-id="2"></div>
+        <div class="map__box map__box-bottom" data-id="3"></div>
+        <div class="map__box map__box-bottom" data-id="4"></div>
+        <div class="map__box map__box-bottom" data-id="5"></div>
+        <div class="map__box map__box-bottom" data-id="6"></div>
+        <div class="map__box map__box-bottom" data-id="7"></div>
+        <div class="map__box map__box-bottom" data-id="8"></div>
+        <div class="map__box map__box-bottom" data-id="9"></div>
+        <div class="map__box map__box-bottom" data-id="10"></div>
+        <div class="map__box" data-id="11"></div>
+        <div class="map__box map__box-left" data-id="12"></div>
+        <div class="map__box map__box-left" data-id="13"></div>
+        <div class="map__box map__box-left" data-id="14"></div>
+        <div class="map__box map__box-left" data-id="15"></div>
+        <div class="map__box map__box-left" data-id="16"></div>
+        <div class="map__box map__box-left" data-id="17"></div>
+        <div class="map__box map__box-left" data-id="18"></div>
+        <div class="map__box map__box-left" data-id="19"></div>
+        <div class="map__box map__box-left" data-id="20"></div>
+        <div class="map__box" data-id="21"></div>
+        <div class="map__box map__box-top" data-id="30"></div>
+        <div class="map__box map__box-top" data-id="29"></div>
+        <div class="map__box map__box-top" data-id="28"></div>
+        <div class="map__box map__box-top" data-id="27"></div>
+        <div class="map__box map__box-top" data-id="26"></div>
+        <div class="map__box map__box-top" data-id="25"></div>
+        <div class="map__box map__box-top" data-id="24"></div>
+        <div class="map__box map__box-top" data-id="23"></div>
+        <div class="map__box map__box-top" data-id="22"></div>
+        <div class="map__box" data-id="31"></div>
+        <div class="map__box map__box-right" data-id="32"></div>
+        <div class="map__box map__box-right" data-id="33"></div>
+        <div class="map__box map__box-right" data-id="34"></div>
+        <div class="map__box map__box-right" data-id="35"></div>
+        <div class="map__box map__box-right" data-id="36"></div>
+        <div class="map__box map__box-right" data-id="37"></div>
+        <div class="map__box map__box-right" data-id="38"></div>
+        <div class="map__box map__box-right" data-id="39"></div>
+        <div class="map__box map__box-right" data-id="40"></div>
+        <button class="startGame btn">New Game</button>
+        <button class="endTurn btn">End Turn</button>
+        <button class="rent btn"></button>
+        <button class="aBitLeft btn qOption">Buy Property</button>
+        <button class="aBitRight btn qOption">Auction</button>
+        <button class="cardTaken startGame btn">Take a Card</button>
+        <div class="map__text btn" style="cursor:default">Chance or Community Chest</div>
+        <div class="rollDice1"></div>
+        <div class="playerNumber"></div>
+        <div class="rollDice2"></div>
+        <span class="map__overlay"></span>
+        <div class="map__toJail card"><p><span class="map__toJailName" style="color:rgb(0, 174, 255)"></span>&nbsp;It's time to relax a bit :)</p><img src="dices/policeman.jpeg" alt="policeman" style="margin-top: 3rem;border-radius: 10px;"></div>
+        <div class="map__inJail card"><span class="map__inJailTurns" style="color:rgb(0, 174, 255)"></span>&nbsp;Turns left in Jail!</div>
+        <div class="map__card card"><h2></h2><img src="" alt="image of a card"><h2 style="white-space: nowrap;"></h2></div>
+        <div class="map__freeMoney card"><p><span class="map__freeMoneyName" style="color:rgb(0, 174, 255)"></span>&nbsp;Congrats!! :)</p><img src="dices/freemoney.jpg" alt="patrick star" style="margin-top: 3rem;border-radius: 10px;"></div>
+        <div class="map__moneyPot card" style="display: block;">
+          
         </div>
       </div>
-      <div class="map__box map__box-bottom" data-id="2"></div>
-      <div class="map__box map__box-bottom" data-id="3"></div>
-      <div class="map__box map__box-bottom" data-id="4"></div>
-      <div class="map__box map__box-bottom" data-id="5"></div>
-      <div class="map__box map__box-bottom" data-id="6"></div>
-      <div class="map__box map__box-bottom" data-id="7"></div>
-      <div class="map__box map__box-bottom" data-id="8"></div>
-      <div class="map__box map__box-bottom" data-id="9"></div>
-      <div class="map__box map__box-bottom" data-id="10"></div>
-      <div class="map__box" data-id="11"></div>
-      <div class="map__box map__box-left" data-id="12"></div>
-      <div class="map__box map__box-left" data-id="13"></div>
-      <div class="map__box map__box-left" data-id="14"></div>
-      <div class="map__box map__box-left" data-id="15"></div>
-      <div class="map__box map__box-left" data-id="16"></div>
-      <div class="map__box map__box-left" data-id="17"></div>
-      <div class="map__box map__box-left" data-id="18"></div>
-      <div class="map__box map__box-left" data-id="19"></div>
-      <div class="map__box map__box-left" data-id="20"></div>
-      <div class="map__box" data-id="21"></div>
-      <div class="map__box map__box-top" data-id="30"></div>
-      <div class="map__box map__box-top" data-id="29"></div>
-      <div class="map__box map__box-top" data-id="28"></div>
-      <div class="map__box map__box-top" data-id="27"></div>
-      <div class="map__box map__box-top" data-id="26"></div>
-      <div class="map__box map__box-top" data-id="25"></div>
-      <div class="map__box map__box-top" data-id="24"></div>
-      <div class="map__box map__box-top" data-id="23"></div>
-      <div class="map__box map__box-top" data-id="22"></div>
-      <div class="map__box" data-id="31"></div>
-      <div class="map__box map__box-right" data-id="32"></div>
-      <div class="map__box map__box-right" data-id="33"></div>
-      <div class="map__box map__box-right" data-id="34"></div>
-      <div class="map__box map__box-right" data-id="35"></div>
-      <div class="map__box map__box-right" data-id="36"></div>
-      <div class="map__box map__box-right" data-id="37"></div>
-      <div class="map__box map__box-right" data-id="38"></div>
-      <div class="map__box map__box-right" data-id="39"></div>
-      <div class="map__box map__box-right" data-id="40"></div>
-      <button class="startGame btn">New Game</button>
-      <button class="endTurn btn">End Turn</button>
-      <button class="rent btn"></button>
-      <button class="aBitLeft btn qOption">Buy Property</button>
-      <button class="aBitRight btn qOption">Auction</button>
-      <button class="cardTaken startGame btn">Take a Card</button>
-      <div class="map__text btn" style="cursor:default">Chance or Community Chest</div>
-      <div class="rollDice1"></div>
-      <div class="playerNumber"></div>
-      <div class="rollDice2"></div>
-      <span class="map__overlay"></span>
-      <div class="map__toJail card"><p><span class="map__toJailName" style="color:rgb(0, 174, 255)"></span>&nbsp;It's time to relax a bit :)</p><img src="dices/policeman.jpeg" alt="policeman" style="margin-top: 3rem;border-radius: 10px;"></div>
-      <div class="map__inJail card"><span class="map__inJailTurns" style="color:rgb(0, 174, 255)"></span>&nbsp;Turns left in Jail!</div>
-      <div class="map__card card"><h2></h2><img src="" alt="image of a card"><h2 style="white-space: nowrap;"></h2></div>
-      <div class="map__freeMoney card"><p><span class="map__freeMoneyName" style="color:rgb(0, 174, 255)"></span>&nbsp;Congrats!! :)</p><img src="dices/freemoney.jpg" alt="patrick star" style="margin-top: 3rem;border-radius: 10px;"></div>
-      <div class="map__moneyPot card" style="display: block;">
+
+      <div class="menu">
+        <button class="rollDice btn">Roll Dice</button>
         
+
+        <div class="menu__exp">
+          <button class=" menu__exp__btn">Start New Game</button>
+          <button class=" menu__exp__btn">Pause</button>
+          <button class="menu__menu menu__exp__btn">Menu</button>
+         
+        </div>
+        <button class="menu__menu menu__btn">Menu</button>
+        <button class="build menu__btn">Build</button>
+        <button class=" menu__btn">Sell</button>
+        <button class=" menu__btn">Trade</button>
       </div>
-    </div>
-    <div class="stats">
       
+    </section>
+    <div class="stats">
+        
     </div>
-  </div>
-  <div class="menu">
-    <button class="rollDice btn">Roll Dice</button>
+    
   </div>
 
   <script src="script.js"></script>

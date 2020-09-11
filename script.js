@@ -43,7 +43,6 @@ var gameLogic = (function() {
   }
 
   let propertyIDs = bankProperties.map(x => x.id);
-  console.log(propertyIDs);
   //console.log(bankProperties.indexOf(bankProperties.find(x => x.id == 18)));
 
   var Chance = function(id, text) {
@@ -505,11 +504,21 @@ var controller = (function(game, UICtrl) {
   
   var setupEventListeners = function() {
     var DOM = UICtrl.getDomStrings();
+    var expended = false;
 
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
     document.querySelector(DOM.startGame).addEventListener('click', createGame);
     document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
-
+    document.querySelectorAll('.menu__menu').forEach(el => {
+      el.addEventListener('click', async () => {
+        document.querySelector('.menu__exp').classList.toggle('menu__expClick');
+        if (!expended) await new Promise(r => setTimeout(r, 0170));
+        document.querySelectorAll('.menu__exp__btn').forEach(el => {
+          el.classList.toggle('menu__exp__btnClick');
+        })
+        expended == false ? expended = true : expended = false;
+      })
+    })
   };
 
   var broj = 0;
@@ -934,7 +943,7 @@ var controller = (function(game, UICtrl) {
               }
               actionTaken = false;
               if (actionBuy) {
-                bidValue = Math.floor(bidValue + (bidValue / 5));
+                bidValue < 10000 ? bidValue = Math.floor(bidValue + (bidValue / 5)) : bidValue = 10000;
                 actionBuy = false;
               } else {
                 bidders.splice(n, 1);
@@ -1021,13 +1030,14 @@ var controller = (function(game, UICtrl) {
   setupEventListeners();
 })(gameLogic, UIController);
 
+
+// SNSOPOLY EDITION?!?!?!
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
 
-
-// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
-
-// (add free parking spot to give all the money spent) add now maybe on the center of the board money
 // add menu just under board
 // game ends after 30mins?
+// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
+
 // houses and hotels!!!
+// trade feature!!!

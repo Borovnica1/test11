@@ -14,13 +14,13 @@ body {
 
 .container {
   height: 94vh;
-  max-width: 1300px;
+  width: 1300px;
   display: flex;
   margin: 2rem auto 0 auto;
   background-color: rgb(238, 218, 255);
   user-select: none;
 }
-
+/* Responsive maybe with 62vw?? */
 .map {
   min-height: 870px;
   min-width: 870px;
@@ -134,11 +134,6 @@ If you want players to be in the center of a property!!
   margin-left: auto;
   background-color: rgb(130, 131, 226);
   padding: .5rem;
-}
-
-.menu {
-  width: max-content;
-  margin: 0 auto;
 }
 
 .endTurn, .rent {
@@ -353,6 +348,85 @@ If you want players to be in the center of a property!!
   transition: .05s;
   -webkit-text-stroke: .1px black;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.menu {
+  display: block;
+  width: fit-content;
+  height: auto;
+  margin: .4rem auto;
+  position: relative;
+}
+
+.menu__btn {
+  outline: none;
+  border-radius: 10px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  width: 100px;
+  height: 44px;
+  transition: .05s;
+  margin-right: .4rem;
+  padding: .5rem 1rem;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.menu__btn:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.menu__exp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(22, 117, 161, 0.856);
+  border-radius: 10px;
+  width: 0px;
+  height: 0px;
+  z-index: 20;
+  transition: all .2s linear;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  visibility: hidden;
+}
+.menu__expClick {
+  visibility: visible;
+  width: 210px;
+  height: 210px;  
+/*   -webkit-transform: rotateX(43200deg) rotateY(14400deg);
+  -moz-transform: rotateX(43200deg) rotateY(14400deg);
+  -ms-transform: rotateX(43200deg) rotateY(14400deg);
+  -o-transform: rotateX(43200deg) rotateY(14400deg);
+  transform: rotateX(43200deg) rotateY(14400deg);  */
+}
+
+.menu__exp__btn {
+  outline: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  width: 90%;
+  margin-top: .6rem;
+  padding: .5rem 1rem;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+  display: none;
+}
+.menu__exp__btnClick {
+  display: block;
+}
+.menu__exp__btn:hover {
+  background-color: rgb(0, 174, 255);
 }
 
 .map__done:hover {
