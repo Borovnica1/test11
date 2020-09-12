@@ -33,8 +33,7 @@ var gameLogic = (function() {
     communityChests = ['Advance to "Go".', 'Bank error in your favor. Collect $200.', 'From sale of stock you get $45.', 'Xmas Fund matures. Collect $100.', 'Hospital Fees. Pay hospital $100.', 'Pay school tax of $150', 'You inherit $100.', 'Receive for services $25.', 'It\'s your birthday. Collect $10 from every player.', 'Grand Opera Opening. Collect $50 from every player for opening night seats.'];
     bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
 
-    
-  
+
     var Property = function(id, title, value) {
       this.id = id;
       this.title = title;
@@ -207,7 +206,6 @@ var gameLogic = (function() {
       return parkingMoney;
     },
     
-    // Maybe make one big function init and add clearGame and creation of chances!!!
     clearGame: function() {
       players = [];
       diceRolls = [];
@@ -240,7 +238,7 @@ var UIController = (function() {
     
     showPlayerPanel: function() {
       // removes StartTheGame button!
-      document.querySelector(DOMstrings.startGame).parentNode.removeChild(document.querySelector(DOMstrings.startGame));
+      document.querySelector(DOMstrings.startGame).style.display = 'none';/* parentNode.removeChild(document.querySelector(DOMstrings.startGame)); */
 
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2rem;">'
       + '<h1 class="map__title">' + 'Number of players?' + '</h1>' 
@@ -334,6 +332,7 @@ var UIController = (function() {
     showDicesNextToPlayerName: function(dices, sortedPlayer) {
       htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png" style="width: 25px; height:25px; border-radius:5px;margin: 0 .3rem">';
       htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 25px; height:25px;border-radius:5px;margin-right:.3rem">';
+      console.log(dices, sortedPlayer);
       document.querySelector('.stats__rolled'+sortedPlayer).innerHTML = '<h2>Rolled: ' + (dices[0] + dices[1]) + '</h2>' + htmlDice1 + htmlDice2;
     },
 
@@ -513,7 +512,18 @@ var UIController = (function() {
       document.querySelector('.map__moneyPot').innerHTML = '';
     },
 
-    
+    clearGame: function(players) {
+      for (var i = 1; i <= players.length; i++) {
+        document.querySelector('.map__player'+i).parentNode.removeChild(document.querySelector('.map__player'+i));
+      };
+      var list = document.querySelector('.map').querySelectorAll('button, .card');
+      list.forEach(el => {
+        el.style.display = 'none';
+      })
+      document.querySelector('.map__moneyPot').style.display = 'block';
+      document.querySelector('.map__pot').style.display = 'block';
+      document.querySelector('.map__moneyPot').innerHTML = '';
+    },
 
   }
 })();
@@ -623,7 +633,15 @@ var controller = (function(game, UICtrl) {
     //////////////////////////
     /// We have to clear all visual in UICtrl before we continue. (when we reset the game)
     /// before we reset data
+    diceClicked = true;
+    await new Promise(r => setTimeout(r, 0100));
+    UICtrl.hideDices();
+    UICtrl.clearGame(game.getPlayers());
     game.clearGame();
+    diceClicked = false;
+    
+
+    
     UICtrl.showPlayerPanel();
     updateEventListener();
     
@@ -632,7 +650,6 @@ var controller = (function(game, UICtrl) {
       await new Promise(r => setTimeout(r, 0100));
     }
     numberIsPicked = false;
-    console.log('safasfasfasfsafasfsa');
     // making broj2 so i can make 2 while loops!!
     var broj2 = broj; 
 
@@ -675,23 +692,25 @@ var controller = (function(game, UICtrl) {
     UICtrl.showPlayerDashboard(playersArr);
     var rolledDices = game.getRolledDices();
     console.log(rolledDices, playersArr);
-    for (var i = 0; i < rolledDices.length; i++) {
-      UICtrl.showDicesNextToPlayerName(rolledDices[i], i);
+    for (var h = 0; h < rolledDices.length; h++) {
+      UICtrl.showDicesNextToPlayerName(rolledDices[h], h);
     }
     // And now we can play the game!!
-    gameIsPlaying();
+    i = 0;
+    gameIsPlaying(i);
   };
 
   // Keeps track of which player is on turn!!
-  var i = 0;
+  let i = 0;
   var endTurn = false;
   var doubleRolls = 0;
   // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
-  var gameIsPlaying = async function() {
+  var gameIsPlaying = async function(i) {
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
     // Highlights current player
     UICtrl.highlightCurrent(playersArr[i].id);
+    endTurn = false;
     doubleRolls = 0;
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
@@ -887,7 +906,6 @@ var controller = (function(game, UICtrl) {
           playersArr[i].mapSpot == 25 ? moneyDiff = 200 : moneyDiff = 100;
           UICtrl.showCard(playersArr[i].mapSpot, typeOfCard);
           game.updateBudget(playersArr[i], moneyDiff, sign);
-          console.log(playersArr[i]);
           UICtrl.showMoneyChange(playersArr[i].id, moneyDiff, sign);
           await new Promise(r => setTimeout(r, 3000));
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
@@ -1020,7 +1038,7 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
-      gameIsPlaying();
+      gameIsPlaying(i);
     } else {
       // this is when jail happens (else if)!!! not end of the game!
       UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
@@ -1039,7 +1057,7 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
-      gameIsPlaying();
+      gameIsPlaying(i);
     }
   };
 
