@@ -332,7 +332,6 @@ var UIController = (function() {
     showDicesNextToPlayerName: function(dices, sortedPlayer) {
       htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png" style="width: 25px; height:25px; border-radius:5px;margin: 0 .3rem">';
       htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 25px; height:25px;border-radius:5px;margin-right:.3rem">';
-      console.log(dices, sortedPlayer);
       document.querySelector('.stats__rolled'+sortedPlayer).innerHTML = '<h2>Rolled: ' + (dices[0] + dices[1]) + '</h2>' + htmlDice1 + htmlDice2;
     },
 
@@ -523,6 +522,8 @@ var UIController = (function() {
       document.querySelector('.map__moneyPot').style.display = 'block';
       document.querySelector('.map__pot').style.display = 'block';
       document.querySelector('.map__moneyPot').innerHTML = '';
+      document.querySelector('.map__potBudget').innerHTML = '$0';
+      document.querySelector('.stats').innerHTML = '';
     },
 
   }
@@ -629,18 +630,27 @@ var controller = (function(game, UICtrl) {
     })
   }
 
+  var throwError = false;
   async function createGame() {
     //////////////////////////
     /// We have to clear all visual in UICtrl before we continue. (when we reset the game)
     /// before we reset data
+    // This diceClicked makes it throw an error and cleans the previous game funcion executions
     diceClicked = true;
+    // So with bunch of these trues i can make game throw an error so it resets itself properly visually!!
+    throwError = true;
+    actionTaken = true;
+    cardTaken = true;
+    endTurn = true;
     await new Promise(r => setTimeout(r, 0100));
     UICtrl.hideDices();
     UICtrl.clearGame(game.getPlayers());
     game.clearGame();
     diceClicked = false;
-    
-
+    throwError = false; 
+    actionTaken = false;
+    cardTaken = false;
+    endTurn = false;
     
     UICtrl.showPlayerPanel();
     updateEventListener();
@@ -706,6 +716,7 @@ var controller = (function(game, UICtrl) {
   var doubleRolls = 0;
   // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
   var gameIsPlaying = async function(i) {
+    if (throwError) document.querySelector('.loool'+errorrrrrr);
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
     // Highlights current player
@@ -940,6 +951,8 @@ var controller = (function(game, UICtrl) {
           while (!actionTaken) {
             await new Promise(r => setTimeout(r, 0100));
           }
+          // throws an error so i can reset the game for a new one
+          if (throwError) document.querySelector('.loool'+errorrrrrr);
           actionTaken = false;
           UICtrl.hideCard();
           if (actionRent) {
