@@ -127,13 +127,26 @@ If you want players to be in the center of a property!!
   grid-area: 11 / 1 / 12 / 3;
 } 
 
+.section__stats {
+  width: 30%;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .stats {
   height: 870px;
   border-radius: 5px;
-  width: 30%;
-  margin-left: auto;
+  width: 100%;
   background-color: rgb(130, 131, 226);
   padding: .5rem;
+}
+.clock {
+  background-color: lightyellow;
+  border-radius: 10px;
+  letter-spacing: .5rem;
+  font-size: 1.1rem;
+  padding: 1rem;
 }
 
 .endTurn, .rent {
@@ -314,6 +327,45 @@ If you want players to be in the center of a property!!
   font-size: 12px;
   font-weight: 300;
   cursor: default;
+}
+
+.map__mode {
+  width: 46%;
+  cursor: pointer;
+  display: inline-block;
+  margin: 2rem 2%;
+  padding: .15rem;
+  background-color: rgba(172, 172, 172, 0.151);
+  border-radius: 10px;
+}
+.map__mode:hover {
+  background-color:rgba(0, 174, 255, 0.308);
+}
+.map__mode * {font-size: 1.1rem;}
+.map__mode li {
+  position: relative;
+  left: 10px;
+}
+.map__mode li span {
+  position: relative;
+  left: -7px;
+}
+.map__mode-number {
+  outline: none;
+  width: 70px;
+  height: 25px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.map__modal img {
+  border-radius: 10px;
+  width: 100%;
+  height: 170px;
 }
 
 .map__modal .player__name {

@@ -254,6 +254,27 @@ var UIController = (function() {
       mapContainer.insertAdjacentHTML('beforeend', html);
     },
 
+    showModePanel: function() {
+      html = '<div class="map__modal" style="width: 70%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2rem;">'
+      + '<h1 class="map__title" style="text-align:center;font-size:1.5rem">' + 'Gamemode: ?' + '</h1>'
+      + '<div class="map__mode" data-id="lastmode">' 
+      + '<img src="dices/lastman.jpg">'
+      + '<li>' + '<span>Last Man Standing mode!</span>' + '</li>'
+      + '<li>' + '<span>When player goes below $0 he is kicked out!</span>' + '</li>'
+      + '<li>' + '<span>No time limit!</span>' + '</li>'
+      + '<span style="display:block;">' + '&nbsp' + '</span>'
+      + '</div>'
+      + '<div class="map__mode" data-id="timemode">' 
+      + '<img src="dices/timemode.jpg">'
+      + '<li>' + '<span>Time mode!</span>' + '</li>'
+      + '<li>' + '<span>Player with most money after <input class="map__mode-number" type="number" value="0" min="1" max="1000"> minutes wins!</span>' + '</li>'
+      + '<li>' + '<span>Player can go in debt!</span>' + '</li>'
+      + '<span class="map__mode-number-warning" style="font-size:.9rem;color:red;">' + '&nbsp' + '</span>'
+      + '</div>'
+      + '</div>';
+      mapContainer.insertAdjacentHTML('beforeend', html);
+    },
+
     showPlayerCreate: function(playerNumber, charsArr) {
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
       + '<h1>' + 'Player ' + playerNumber + '</h1>'
@@ -629,7 +650,34 @@ var controller = (function(game, UICtrl) {
       actionRent = true;
     })
   }
+  var mode = '';
+  var gameTime;
+  var modeIsPicked = false;
+  function updateEventListener6() {
+    var modes = document.querySelectorAll('.map__mode');
+    // Put on every single mode button CLICK event and calls function with that mode
+    modes.forEach(item => {
+      item.addEventListener('click', exe => {
+        mode = item.getAttribute('data-id');
+        gameTime = document.querySelector('.map__mode-number').value;
+        console.log(mode, gameTime);
+        if (mode == 'lastmode') {
+          modeIsPicked = true;
+          document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
+        } else {
+          if (gameTime >= 1 && gameTime <= 1000) {
+            modeIsPicked = true;
+            document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
+          } else {
+            document.querySelector('.map__mode-number-warning').innerHTML = 'Positive number between 1 and 1000!'
+          }
+        }
+      });
+    });
+  }
 
+  var startTime,
+      endTime;
   var throwError = false;
   async function createGame() {
     //////////////////////////
@@ -660,6 +708,15 @@ var controller = (function(game, UICtrl) {
       await new Promise(r => setTimeout(r, 0100));
     }
     numberIsPicked = false;
+
+    UICtrl.showModePanel();
+    updateEventListener6();
+    while (!modeIsPicked) {
+      await new Promise(r => setTimeout(r, 0100));
+    }
+    modeIsPicked = false;
+
+
     // making broj2 so i can make 2 while loops!!
     var broj2 = broj; 
 
@@ -707,9 +764,16 @@ var controller = (function(game, UICtrl) {
     }
     // And now we can play the game!!
     i = 0;
+    if (mode == 'timemode') {
+      startTimer(gameTime);
+    } else {
+      startClock();
+    }
+    console.log(mode);
+    
     gameIsPlaying(i);
   };
-
+  console.log(new Date() / 1000);
   // Keeps track of which player is on turn!!
   let i = 0;
   var endTurn = false;
@@ -1073,6 +1137,37 @@ var controller = (function(game, UICtrl) {
       gameIsPlaying(i);
     }
   };
+  
+  function getGameTime(theTime) {
+    var seconds = Math.floor(theTime % 60);
+    var minutes = Math.floor((theTime / 60) % 60);
+    var hours = Math.floor((theTime * 60 * 60) % 24);
+    var total = theTime;
+    return {
+      total,
+      hours,
+      minutes,
+      seconds
+    }
+  }
+
+  var startTimer = function(gameTime) {
+    // make seconds out of minutes
+    console.log('asfsafasfsafsa');
+    gameTime = gameTime * 60;
+    const timeInterval = setInterval(() => {
+      gameTime--;
+      const time = getGameTime(gameTime);
+      document.querySelector('.clock').innerHTML = 'LOL ' + time.hours + ':' + time.minutes + ':' + time.seconds;
+      if (time.total < 0) {
+        clearInterval(timeInterval);
+      }
+    }, 1000);
+  }
+
+  var startClock = async function() {
+
+  }
 
   var checkIfPlayerPassedGO = function() {
 
@@ -1091,8 +1186,9 @@ var controller = (function(game, UICtrl) {
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
 
-// add menu just under board
+// add menu just under the board
 // game ends after 30mins?
+
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 
 // houses and hotels!!!
