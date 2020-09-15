@@ -6,24 +6,28 @@
   box-sizing: border-box;
 }
 
+html {
+  position: relative;
+}
+
 body {
   background-color: rgb(255, 239, 214);
   font-size: 62.5%;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  position: relative;
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.45);
   position: absolute;
   z-index: 9999;
-  top: -2rem;
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% + 2rem);
+  height: 100vh;
   display: none;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 .overlay .unpause {
   width: auto;
@@ -35,9 +39,10 @@ body {
   height: 94vh;
   width: 1300px;
   display: flex;
-  margin: 2rem auto 0 auto;
+  margin: auto;
   background-color: rgb(238, 218, 255);
   user-select: none;
+  margin: 2rem auto 0 auto;
 }
 /* Responsive maybe with 62vw?? */
 .map {
