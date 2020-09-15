@@ -572,6 +572,15 @@ var controller = (function(game, UICtrl) {
         expended == false ? expended = true : expended = false;
       })
     })
+
+    document.querySelector('.pause').addEventListener('click', () => {
+      document.querySelector('.overlay').style.display = 'flex';
+      clearInterval(timeInterval);
+    });
+    document.querySelector('.unpause').addEventListener('click', () => {
+      document.querySelector('.overlay').style.display = 'none';
+      startTimer(gameTime);
+    })
   };
 
   var broj = 0;
@@ -769,7 +778,9 @@ var controller = (function(game, UICtrl) {
     // And now we can play the game!!
     i = 0;
     if (mode == 'timemode') {
-      startTimer(gameTime);
+      // make seconds out of minutes
+      gameTime = gameTime * 60;
+      startTimer();
     } else {
       startClock();
     }
@@ -1160,10 +1171,7 @@ var controller = (function(game, UICtrl) {
     }
   }
 
-  var startTimer = function(gameTime) {
-    // make seconds out of minutes
-    
-    gameTime = gameTime * 60;
+  var startTimer = function() {
      timeInterval = setInterval(() => {
       gameTime--;
       const time = getGameTime(gameTime);
@@ -1172,7 +1180,7 @@ var controller = (function(game, UICtrl) {
         clearInterval(timeInterval);
         // odje nadji najbogatijeg i recider koji je lol
         console.log('kao pametan sam lol');
-        document.querySelector('.overlay').style.display = 'block';
+        document.querySelector('.overlay').style.display = 'flex';
       }
     }, 1000);
   }
