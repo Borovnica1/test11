@@ -1141,7 +1141,7 @@ var controller = (function(game, UICtrl) {
   function getGameTime(theTime) {
     var seconds = Math.floor(theTime % 60);
     var minutes = Math.floor((theTime / 60) % 60);
-    var hours = Math.floor((theTime * 60 * 60) % 24);
+    var hours = Math.floor((theTime / 60 / 60));
     var total = theTime;
     return {
       total,
@@ -1153,20 +1153,35 @@ var controller = (function(game, UICtrl) {
 
   var startTimer = function(gameTime) {
     // make seconds out of minutes
-    console.log('asfsafasfsafsa');
     gameTime = gameTime * 60;
     const timeInterval = setInterval(() => {
       gameTime--;
       const time = getGameTime(gameTime);
       document.querySelector('.clock').innerHTML = 'LOL ' + time.hours + ':' + time.minutes + ':' + time.seconds;
-      if (time.total < 0) {
+      if (time.total <= 0) {
         clearInterval(timeInterval);
+        // odje nadji najbogatijeg i recider koji je lol
+        console.log('kao pametan sam lol');
       }
     }, 1000);
   }
 
-  var startClock = async function() {
+  function getTime() {
+    var hours = new Date().getHours();
+    var minutes = new Date().getMinutes();
+    var seconds = new Date().getSeconds();
+    return {
+      hours,
+      minutes,
+      seconds
+    }
+  }
 
+  var startClock = function() {
+    const timeInterval = setInterval(() => {
+      const time = getTime();
+      document.querySelector('.clock').innerHTML = time.hours + ':' + time.minutes +':'+ time.seconds;
+    }, 1000);
   }
 
   var checkIfPlayerPassedGO = function() {
