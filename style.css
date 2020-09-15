@@ -142,9 +142,10 @@ If you want players to be in the center of a property!!
   padding: .5rem;
 }
 .clock {
-  background-color: lightyellow;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
   border-radius: 10px;
-  letter-spacing: .5rem;
+  letter-spacing: .3rem;
   font-size: 1.1rem;
   padding: 1rem;
 }

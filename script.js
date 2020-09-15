@@ -545,6 +545,7 @@ var UIController = (function() {
       document.querySelector('.map__moneyPot').innerHTML = '';
       document.querySelector('.map__potBudget').innerHTML = '$0';
       document.querySelector('.stats').innerHTML = '';
+      mapText.style.display = 'none';
     },
 
   }
@@ -676,6 +677,7 @@ var controller = (function(game, UICtrl) {
     });
   }
 
+  let timeInterval;
   var startTime,
       endTime;
   var throwError = false;
@@ -690,6 +692,8 @@ var controller = (function(game, UICtrl) {
     actionTaken = true;
     cardTaken = true;
     endTurn = true;
+    clearInterval(timeInterval);
+    document.querySelector('.clock').innerHTML = '00:00:00'
     await new Promise(r => setTimeout(r, 0100));
     UICtrl.hideDices();
     UICtrl.clearGame(game.getPlayers());
@@ -1143,6 +1147,9 @@ var controller = (function(game, UICtrl) {
     var minutes = Math.floor((theTime / 60) % 60);
     var hours = Math.floor((theTime / 60 / 60));
     var total = theTime;
+    hours = ('0' + hours).slice(-2);
+    minutes = ('0' + minutes).slice(-2);
+    seconds = ('0' + seconds).slice(-2);
     return {
       total,
       hours,
@@ -1154,10 +1161,10 @@ var controller = (function(game, UICtrl) {
   var startTimer = function(gameTime) {
     // make seconds out of minutes
     gameTime = gameTime * 60;
-    const timeInterval = setInterval(() => {
+     timeInterval = setInterval(() => {
       gameTime--;
       const time = getGameTime(gameTime);
-      document.querySelector('.clock').innerHTML = 'LOL ' + time.hours + ':' + time.minutes + ':' + time.seconds;
+      document.querySelector('.clock').innerHTML = 'Remaining: ' + time.hours + ':' + time.minutes + ':' + time.seconds;
       if (time.total <= 0) {
         clearInterval(timeInterval);
         // odje nadji najbogatijeg i recider koji je lol
@@ -1170,6 +1177,9 @@ var controller = (function(game, UICtrl) {
     var hours = new Date().getHours();
     var minutes = new Date().getMinutes();
     var seconds = new Date().getSeconds();
+    hours = ('0' + hours).slice(-2);
+    minutes = ('0' + minutes).slice(-2);
+    seconds = ('0' + seconds).slice(-2);
     return {
       hours,
       minutes,
@@ -1178,7 +1188,7 @@ var controller = (function(game, UICtrl) {
   }
 
   var startClock = function() {
-    const timeInterval = setInterval(() => {
+     timeInterval = setInterval(() => {
       const time = getTime();
       document.querySelector('.clock').innerHTML = time.hours + ':' + time.minutes +':'+ time.seconds;
     }, 1000);
