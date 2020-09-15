@@ -1103,7 +1103,9 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideParkingChange(game.getParkingMoney());
           UICtrl.hideParking();
         }
+        ////////////////////////////////
         // check if players budget is below 0 and if it is kick him out of the game
+
 
       } while(dices[0] == [dices[1]]);
 
@@ -1160,6 +1162,7 @@ var controller = (function(game, UICtrl) {
 
   var startTimer = function(gameTime) {
     // make seconds out of minutes
+    
     gameTime = gameTime * 60;
      timeInterval = setInterval(() => {
       gameTime--;
@@ -1169,6 +1172,7 @@ var controller = (function(game, UICtrl) {
         clearInterval(timeInterval);
         // odje nadji najbogatijeg i recider koji je lol
         console.log('kao pametan sam lol');
+        document.querySelector('.overlay').style.display = 'block';
       }
     }, 1000);
   }
