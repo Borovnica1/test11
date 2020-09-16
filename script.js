@@ -91,7 +91,7 @@ var gameLogic = (function() {
  */
   return {
     addPlayer: function(id, name, char) {
-      var newPlayer = new Player(id, name, char, 1500, 21, 0, 0, []);
+      var newPlayer = new Player(id, name, char, 600, 21, 0, 0, []);
       players.unshift(newPlayer);
       console.log(players);
     },
@@ -282,6 +282,7 @@ var UIController = (function() {
     showPlayerCreate: function(playerNumber, charsArr) {
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
       + '<h1>' + 'Player ' + playerNumber + '</h1>'
+      // onkeypress attribute allows only letters to be typed
       + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" placeholder="Player Name" style="display:block;height:1.9rem;outline:none;border:none;">'
       + '<h2 style="margin-top: .4rem">' + 'Choose a character:' + '</h2>'
       for (var i = 0; i < charsArr.length; i++) {
@@ -311,7 +312,7 @@ var UIController = (function() {
         + '<h1>' + players[i].name + '</h1>'
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
-        + '<div class="stats__rolled'+i+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
+        + '<div class="stats__rolled'+players[i].id+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
         + '</div>';
         if (!rankings) {
           document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
@@ -360,7 +361,7 @@ var UIController = (function() {
       document.querySelector('.endTurn').style.display = 'none';
     },
 
-    showDices: function(dices, index) {
+    showDices: function(dices, id) {
       htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png" style="width: 100px; height:100px;border-radius:10px">';
       htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 100px; height:100px;border-radius:10px">';
       document.querySelector('.rollDice1').insertAdjacentHTML('beforeend', htmlDice1);
@@ -372,7 +373,7 @@ var UIController = (function() {
       // Now changing size of dices
       htmlDice1 = '<img src="dices/dice-'+dices[0]+'.png" style="width: 25px; height:25px; border-radius:5px;margin: 0 .3rem">';
       htmlDice2 = '<img src="dices/dice-'+dices[1]+'.png" style="width: 25px; height:25px;border-radius:5px;">';
-      document.querySelector('.stats__rolled'+index).innerHTML = '<h2>Rolled: ' + (dices[0] + dices[1]) + '</h2>' + htmlDice1 + htmlDice2;
+      document.querySelector('.stats__rolled'+id).innerHTML = '<h2>Rolled: ' + (dices[0] + dices[1]) + '</h2>' + htmlDice1 + htmlDice2;
     },
 
     showDicesNextToPlayerName: function(dices, sortedPlayer) {
@@ -572,6 +573,15 @@ var UIController = (function() {
       document.querySelector('.stats').innerHTML = '';
       mapText.style.display = 'none';
     },
+
+    showBankruptcy: function(name) {
+      document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s budget just went below $0!' +  '</h1>';
+    },
+
+    removePlayer: function(id) {
+      document.querySelector('.map__player'+id).parentNode.removeChild(document.querySelector('.map__player'+id));
+      document.querySelector('.stats__player'+id).parentNode.removeChild(document.querySelector('.stats__player'+id));
+    }
 
   }
 })();
@@ -797,7 +807,7 @@ var controller = (function(game, UICtrl) {
       }
       game.addDiceRoll(playersArr[broj2 - 1], gameIsActive);
       var dices = game.getDices();
-      UICtrl.showDices(dices, broj2 - 1);
+      UICtrl.showDices(dices, broj2);
       await new Promise(r => setTimeout(r, 0500));
       UICtrl.hideDices();
       diceClicked = false;
@@ -808,8 +818,22 @@ var controller = (function(game, UICtrl) {
     UICtrl.showPlayerDashboard(playersArr);
     var rolledDices = game.getRolledDices();
     console.log(rolledDices, playersArr);
+    var lastNumberSame = 0;
+    var sameNumbers;
+    var id = 0;
+    var p = 0;
     for (var h = 0; h < rolledDices.length; h++) {
-      UICtrl.showDicesNextToPlayerName(rolledDices[h], h);
+      if (h !== 0) {
+        lastNumberSame = playersArr.find(x => x.rolledNumber == (rolledDices[h-1][0] + rolledDices[h-1][1])).id;
+      }
+      id = playersArr.find(x => x.rolledNumber == (rolledDices[h][0] + rolledDices[h][1])).id;
+      if (lastNumberSame == playersArr.find(x => x.rolledNumber == (rolledDices[h][0] + rolledDices[h][1])).id) {
+        sameNumbers = playersArr.filter(x => x.rolledNumber == (rolledDices[h-1][0] + rolledDices[h-1][1]));
+        p++;
+        id = sameNumbers[p].id;
+      }
+      console.log(sameNumbers, id);
+      UICtrl.showDicesNextToPlayerName(rolledDices[h], id);
     }
     // And now we can play the game!!
     i = 0;
@@ -830,7 +854,9 @@ var controller = (function(game, UICtrl) {
   var doubleRolls = 0;
   // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
   var gameIsPlaying = async function(i) {
+    // This throws an error when i want to create New Game and clears the previous game execution!!
     if (throwError) document.querySelector('.loool'+errorrrrrr);
+    
     var gameIsActive = game.getGameIsActive();
     var playersArr = game.getPlayers();
     // Highlights current player
@@ -853,7 +879,8 @@ var controller = (function(game, UICtrl) {
         diceClicked = false;
         game.addDiceRoll(playersArr[i], gameIsActive);
         var dices = game.getDices();
-        UICtrl.showDices(dices, i);
+        console.log(i);
+        UICtrl.showDices(dices, playersArr[i].id);
         await new Promise(r => setTimeout(r, 0500));
         UICtrl.hideDices();
         UICtrl.updatePlayerSpot(playersArr[i]);
@@ -1151,7 +1178,16 @@ var controller = (function(game, UICtrl) {
         }
         ////////////////////////////////
         // check if players budget is below 0 and if it is kick him out of the game
-
+        var indexOfPlayer;
+        if (playersArr[i].budget < 0) {
+          UICtrl.showBankruptcy(playersArr[i].name);
+          await new Promise(r => setTimeout(r, 2000));
+          UICtrl.removePlayer(playersArr[i].id);
+          indexOfPlayer = playersArr.indexOf(playersArr.find(x => x.id == playersArr[i].id));
+          console.log(indexOfPlayer);
+          playersArr.splice(indexOfPlayer, 1);
+          i--;
+        }
 
       } while(dices[0] == [dices[1]]);
 
@@ -1163,6 +1199,7 @@ var controller = (function(game, UICtrl) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
+      UICtrl.highlightCurrent(playersArr[i].id);
       UICtrl.removeCurrent(playersArr[i].id);
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
@@ -1213,7 +1250,6 @@ var controller = (function(game, UICtrl) {
       document.querySelector('.clock').innerHTML = 'Remaining: ' + time.hours + ':' + time.minutes + ':' + time.seconds;
       if (time.total <= 0) {
         clearInterval(timeInterval);
-        // odje nadji najbogatijeg i recider koji je lol
 
         game.sortByRankings(game.getPlayers());
         document.querySelector('.overlay').style.display = 'flex';
