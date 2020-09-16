@@ -118,6 +118,10 @@ var gameLogic = (function() {
       diceRolls.sort((a, b) => (b[0] + b[1]) - (a[0] + a[1]));
     },
 
+    sortByRankings: function(playersArr) {
+      playersArr.sort((a, b) => a.budget - b.budget); 
+    },
+
     removeChar: function(charsIndex) {
       // Removes chosen char from our array of available chars!!
       charsArr.splice(charsIndex, 1);
@@ -267,7 +271,7 @@ var UIController = (function() {
       + '<div class="map__mode" data-id="timemode">' 
       + '<img src="dices/timemode.jpg">'
       + '<li>' + '<span>Time mode!</span>' + '</li>'
-      + '<li>' + '<span>Player with most money after <input class="map__mode-number" type="number" value="0" min="1" max="1000"> minutes wins!</span>' + '</li>'
+      + '<li>' + '<span>Player with most money after <input class="map__mode-number" type="number" value="" min="1" max="1000"> minutes wins!</span>' + '</li>'
       + '<li>' + '<span>Player can go in debt!</span>' + '</li>'
       + '<span class="map__mode-number-warning" style="font-size:.9rem;color:red;">' + '&nbsp' + '</span>'
       + '</div>'
@@ -278,7 +282,7 @@ var UIController = (function() {
     showPlayerCreate: function(playerNumber, charsArr) {
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
       + '<h1>' + 'Player ' + playerNumber + '</h1>'
-      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" style="display:block;height:1.9rem;outline:none;border:none;">'
+      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" placeholder="Player Name" style="display:block;height:1.9rem;outline:none;border:none;">'
       + '<h2 style="margin-top: .4rem">' + 'Choose a character:' + '</h2>'
       for (var i = 0; i < charsArr.length; i++) {
         html += '<div class="map__box2 arrayIndex'+i+'" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center;margin-right:.2rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 30px;">'  + charsArr[i] + '</span>' + '</div>'
@@ -291,13 +295,17 @@ var UIController = (function() {
       document.querySelector('.player__name').focus();
     },
 
-    showPlayerDashboard: function(players) {
+    showPlayerDashboard: function(players, rankings) {
+      console.log(rankings);
       // Clears the previous created dashboard of players!! (after sorting i believe)
       document.querySelector('.stats').innerHTML = '';
-      document.querySelector('[data-id="'+players[0].mapSpot+'"]').innerHTML = '';
+      if (!rankings) {
+        document.querySelector('[data-id="'+players[0].mapSpot+'"]').innerHTML = '';
+      }
+      var placeCount = players.length;
 
       for (var i = 0; i < players.length; i++) {
-        html = '<div class="stats__player'+players[i].id+'" style="height=300px;background-color:lightblue;display:flex;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue">'
+        html = '<div class="stats__player'+players[i].id+'" style="height:70px;background-color:lightblue;display:flex;align-items:center;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue">'
         + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
         + '<div style="margin-left: .3rem;overflow:hidden;width:46%;white-space: nowrap;">'
         + '<h1>' + players[i].name + '</h1>'
@@ -305,13 +313,30 @@ var UIController = (function() {
         + '</div>'
         + '<div class="stats__rolled'+i+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
         + '</div>';
-        document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
+        if (!rankings) {
+          document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
+        } else {
+          document.querySelector('.overlay__rankings').insertAdjacentHTML('afterbegin', html);
+          var place;
+          if (placeCount <= 3) {
+            place = '<img src="dices/rankings'+(placeCount)+'.png" alt="award image" style="width:40px;height:50px">'
+          } else {
+            place = '&#1011'+(placeCount+1)+';'
+            document.querySelector('.stats__rolled'+i).style.marginRight = '.55rem'
+          }
+          document.querySelector('.stats__rolled'+i).style.fontSize = '1.8rem';
+          document.querySelector('.stats__rolled'+i).insertAdjacentHTML('beforeend', place);
+          placeCount--;
+        }
+        
 
 
         html = '<div class="map__player'+players[i].id+'" style="display:inline-flex;padding: .1rem;">'
         + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
         + '</div>';
-        document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
+        if (!rankings) {
+          document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
+        }
       }
     },
 
@@ -512,7 +537,7 @@ var UIController = (function() {
           addValue = left; 
         }
         while (billsCount > 0) {
-          html = '<img src="dices/money'+bills[i]+'.png" style="position:absolute;transform:translate(-50%,-50%) rotate('+(random()-100)+'deg);top:'+random()+'%;left:'+random()+'%;width:40%">';
+          html = '<img draggable="false" src="dices/money'+bills[i]+'.png" style="position:absolute;transform:translate(-50%,-50%) rotate('+(random()-100)+'deg);top:'+random()+'%;left:'+random()+'%;width:40%">';
           document.querySelector('.map__moneyPot').insertAdjacentHTML('beforeend', html);
           billsCount--;
         }
@@ -576,10 +601,15 @@ var controller = (function(game, UICtrl) {
     document.querySelector('.pause').addEventListener('click', () => {
       document.querySelector('.overlay').style.display = 'flex';
       clearInterval(timeInterval);
+      clearInterval(timeInterval2);
     });
     document.querySelector('.unpause').addEventListener('click', () => {
       document.querySelector('.overlay').style.display = 'none';
-      startTimer(gameTime);
+      if (mode == 'timemode') {
+        startTimer(gameTime);
+      } else {
+        startClock();
+      }
     })
   };
 
@@ -687,6 +717,7 @@ var controller = (function(game, UICtrl) {
   }
 
   let timeInterval;
+  let timeInterval2;
   var startTime,
       endTime;
   var throwError = false;
@@ -701,7 +732,12 @@ var controller = (function(game, UICtrl) {
     actionTaken = true;
     cardTaken = true;
     endTurn = true;
+    document.querySelector('.overlay').style.display = 'none';
+    document.querySelector('.overlay__rankings').style.display = 'none';
+    document.querySelector('.overlay__rankings').innerHTML = '<button class="startGame3 startGame btn">New Game</button>';
+    document.querySelector('.startGame3').addEventListener('click', createGame);
     clearInterval(timeInterval);
+    clearInterval(timeInterval2);
     document.querySelector('.clock').innerHTML = '00:00:00'
     await new Promise(r => setTimeout(r, 0100));
     UICtrl.hideDices();
@@ -784,7 +820,6 @@ var controller = (function(game, UICtrl) {
     } else {
       startClock();
     }
-    console.log(mode);
     
     gameIsPlaying(i);
   };
@@ -1179,8 +1214,11 @@ var controller = (function(game, UICtrl) {
       if (time.total <= 0) {
         clearInterval(timeInterval);
         // odje nadji najbogatijeg i recider koji je lol
-        console.log('kao pametan sam lol');
+
+        game.sortByRankings(game.getPlayers());
         document.querySelector('.overlay').style.display = 'flex';
+        document.querySelector('.overlay__rankings').style.display = 'flex';
+        UICtrl.showPlayerDashboard(game.getPlayers(), true);
       }
     }, 1000);
   }
@@ -1200,7 +1238,7 @@ var controller = (function(game, UICtrl) {
   }
 
   var startClock = function() {
-     timeInterval = setInterval(() => {
+     timeInterval2 = setInterval(() => {
       const time = getTime();
       document.querySelector('.clock').innerHTML = time.hours + ':' + time.minutes +':'+ time.seconds;
     }, 1000);
