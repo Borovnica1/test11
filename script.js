@@ -832,7 +832,6 @@ var controller = (function(game, UICtrl) {
         p++;
         id = sameNumbers[p].id;
       }
-      console.log(sameNumbers, id);
       UICtrl.showDicesNextToPlayerName(rolledDices[h], id);
     }
     // And now we can play the game!!
@@ -852,13 +851,14 @@ var controller = (function(game, UICtrl) {
   let i = 0;
   var endTurn = false;
   var doubleRolls = 0;
+  var playersArr;
   // Some sort of recursion going on here lol (not sure if this is the best way to do it :S? Why doesn't this throw stack overflow error?)
   var gameIsPlaying = async function(i) {
     // This throws an error when i want to create New Game and clears the previous game execution!!
     if (throwError) document.querySelector('.loool'+errorrrrrr);
     
     var gameIsActive = game.getGameIsActive();
-    var playersArr = game.getPlayers();
+    playersArr = game.getPlayers();
     // Highlights current player
     UICtrl.highlightCurrent(playersArr[i].id);
     endTurn = false;
@@ -878,8 +878,7 @@ var controller = (function(game, UICtrl) {
         }
         diceClicked = false;
         game.addDiceRoll(playersArr[i], gameIsActive);
-        var dices = game.getDices();
-        console.log(i);
+        var dices = game.getDices();;
         UICtrl.showDices(dices, playersArr[i].id);
         await new Promise(r => setTimeout(r, 0500));
         UICtrl.hideDices();
@@ -1063,6 +1062,17 @@ var controller = (function(game, UICtrl) {
           UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
           UICtrl.hideCard();
         }
+        // Player landed on Parking
+        if (playersArr[i].mapSpot == 1 && game.getParkingMoney() !== 0) {
+          game.updateBudget(playersArr[i], game.getParkingMoney(), sign = '+');
+          UICtrl.showParking(playersArr[i].name);
+          UICtrl.showMoneyChange(playersArr[i].id, game.getParkingMoney(), sign = '+');
+          game.updateParkingMoney(-game.getParkingMoney());
+          await new Promise(r => setTimeout(r, 2500));
+          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
+          UICtrl.hideParkingChange(game.getParkingMoney());
+          UICtrl.hideParking();
+        }
         // check card and display it and maybe buy?
         breakme: if (propertiesIDs.includes(playersArr[i].mapSpot)) {
           var typeOfCard;
@@ -1162,32 +1172,24 @@ var controller = (function(game, UICtrl) {
             bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
+            // CHECK AFTER THIS ACUTION IF THE PLAYER WHO WON WENT BELOW $0!!!
+            if (bidders[0].budget < 0) {
+              removePlayer(bidders[0]);
+              await new Promise(r => setTimeout(r, 2000));
+            }
           }
           
         }
-        // Player landed on Parking
-        if (playersArr[i].mapSpot == 1 && game.getParkingMoney() !== 0) {
-          game.updateBudget(playersArr[i], game.getParkingMoney(), sign = '+');
-          UICtrl.showParking(playersArr[i].name);
-          UICtrl.showMoneyChange(playersArr[i].id, game.getParkingMoney(), sign = '+');
-          game.updateParkingMoney(-game.getParkingMoney());
-          await new Promise(r => setTimeout(r, 2500));
-          UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
-          UICtrl.hideParkingChange(game.getParkingMoney());
-          UICtrl.hideParking();
-        }
         ////////////////////////////////
         // check if players budget is below 0 and if it is kick him out of the game
-        var indexOfPlayer;
-        if (playersArr[i].budget < 0) {
-          UICtrl.showBankruptcy(playersArr[i].name);
+        if (playersArr[i].budget < 0 && bidders == undefined) {
+          removePlayer(playersArr[i]);
           await new Promise(r => setTimeout(r, 2000));
-          UICtrl.removePlayer(playersArr[i].id);
-          indexOfPlayer = playersArr.indexOf(playersArr.find(x => x.id == playersArr[i].id));
-          console.log(indexOfPlayer);
-          playersArr.splice(indexOfPlayer, 1);
           i--;
         }
+        if (bidders !== undefined) i--;
+        bidders = undefined;
+
 
       } while(dices[0] == [dices[1]]);
 
@@ -1199,8 +1201,15 @@ var controller = (function(game, UICtrl) {
         await new Promise(r => setTimeout(r, 0100));
       }
       endTurn = false;
-      UICtrl.highlightCurrent(playersArr[i].id);
-      UICtrl.removeCurrent(playersArr[i].id);
+
+      // make this same as in jail!!!
+      if (i == -1) {
+        UICtrl.highlightCurrent(playersArr[i+1].id);
+        UICtrl.removeCurrent(playersArr[i+1].id);
+      } else {
+        UICtrl.highlightCurrent(playersArr[i].id);
+        UICtrl.removeCurrent(playersArr[i].id);
+      }
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
@@ -1226,6 +1235,14 @@ var controller = (function(game, UICtrl) {
       gameIsPlaying(i);
     }
   };
+
+  var removePlayer = async function(player) {
+    UICtrl.showBankruptcy(player.name);
+    await new Promise(r => setTimeout(r, 2000));
+    UICtrl.removePlayer(player.id);
+    var indexOfPlayer = playersArr.indexOf(playersArr.find(x => x.id == player.id));
+    playersArr.splice(indexOfPlayer, 1);
+  }
   
   function getGameTime(theTime) {
     var seconds = Math.floor(theTime % 60);
