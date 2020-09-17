@@ -1093,7 +1093,7 @@ var controller = (function(game, UICtrl) {
               owner = playersArr[n];
               n++;
             }
-            rent = (property.value / 10);
+            rent = (property.value);
           }
           // Stop the execution of this roll cuz property is already owned by me
           if (owner == playersArr[i]) break breakme;
@@ -1116,6 +1116,15 @@ var controller = (function(game, UICtrl) {
             UICtrl.hideMoneyChange(playersArr[i].id, playersArr[i].budget);
             UICtrl.hideMoneyChange(owner.id, owner.budget);
             actionRent = false;
+            // Give properties to the player you lost to if your budget is below $0
+            if (playersArr[i].budget < 0) {
+              for (var ggg = 0; ggg < playersArr[i].properties.length; ggg++) {
+                owner.properties.push(playersArr[i].properties[ggg]);
+              }
+              while (playersArr[i].properties.length !== 0) {
+                playersArr[i].properties.pop();
+              }
+            }
           } else if (actionBuy) {
             sign = '-';
             moneyDiff = property.value;
@@ -1173,9 +1182,19 @@ var controller = (function(game, UICtrl) {
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
             // CHECK AFTER THIS ACUTION IF THE PLAYER WHO WON WENT BELOW $0!!!
+            var bidderOut = false;
             if (bidders[0].budget < 0) {
+              if (bidders[0].id == playersArr[i].id) {
+                // dices[0] is changed here so if the removed player rolled double it doesnt count.
+                dices[0] = 42;
+              }
               removePlayer(bidders[0]);
               await new Promise(r => setTimeout(r, 2000));
+              bidderOut = true;
+              // give properties back to the bank
+              for (var g = 0; g < bidders[0].properties.length; g++) {
+                bankProperties.push(bidders[0].properties[g]);
+              }
             }
           }
           
@@ -1183,11 +1202,17 @@ var controller = (function(game, UICtrl) {
         ////////////////////////////////
         // check if players budget is below 0 and if it is kick him out of the game
         if (playersArr[i].budget < 0 && bidders == undefined) {
+          for (var gg = 0; gg < playersArr[i].properties.length; gg++) {
+            bankProperties.push(playersArr[i].properties[gg]);
+          }
           removePlayer(playersArr[i]);
           await new Promise(r => setTimeout(r, 2000));
           i--;
+          // dices[0] is changed here so if the removed player rolled double it doesnt count.
+          dices[0] = 42;
         }
-        if (bidders !== undefined) i--;
+        if (bidderOut) i--;
+        bidderOut = false
         bidders = undefined;
 
 
