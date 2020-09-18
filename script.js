@@ -323,10 +323,10 @@ var UIController = (function() {
             place = '<img src="dices/rankings'+(placeCount)+'.png" alt="award image" style="width:40px;height:50px">'
           } else {
             place = '&#1011'+(placeCount+1)+';'
-            document.querySelector('.stats__rolled'+i).style.marginRight = '.55rem'
+            document.querySelector('.stats__rolled'+players[i].id).style.marginRight = '.55rem'
           }
-          document.querySelector('.stats__rolled'+i).style.fontSize = '1.8rem';
-          document.querySelector('.stats__rolled'+i).insertAdjacentHTML('beforeend', place);
+          document.querySelector('.stats__rolled'+players[i].id).style.fontSize = '1.8rem';
+          document.querySelector('.stats__rolled'+players[i].id).insertAdjacentHTML('beforeend', place);
           placeCount--;
         }
         
@@ -559,8 +559,8 @@ var UIController = (function() {
     },
 
     clearGame: function(players) {
-      for (var i = 1; i <= players.length; i++) {
-        document.querySelector('.map__player'+i).parentNode.removeChild(document.querySelector('.map__player'+i));
+      for (var i = 0; i < players.length; i++) {
+        document.querySelector('.map__player'+players[i].id).parentNode.removeChild(document.querySelector('.map__player'+players[i].id));
       };
       var list = document.querySelector('.map').querySelectorAll('button, .card');
       list.forEach(el => {
@@ -581,6 +581,11 @@ var UIController = (function() {
     removePlayer: function(id) {
       document.querySelector('.map__player'+id).parentNode.removeChild(document.querySelector('.map__player'+id));
       document.querySelector('.stats__player'+id).parentNode.removeChild(document.querySelector('.stats__player'+id));
+    },
+
+    showWinner: function(player) {
+      document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + player.name + '</span>' + ' won the game!!' +  '</h1>';
+      document.querySelector('.map__winDisplay').style.display = 'block';  
     }
 
   }
@@ -742,6 +747,7 @@ var controller = (function(game, UICtrl) {
     actionTaken = true;
     cardTaken = true;
     endTurn = true;
+    document.querySelector('.map__winDisplay').style.display = 'none';  
     document.querySelector('.overlay').style.display = 'none';
     document.querySelector('.overlay__rankings').style.display = 'none';
     document.querySelector('.overlay__rankings').innerHTML = '<button class="startGame3 startGame btn">New Game</button>';
@@ -866,13 +872,7 @@ var controller = (function(game, UICtrl) {
     UICtrl.highlightCurrent(playersArr[i].id);
     endTurn = false;
     doubleRolls = 0;
-    //////
-    //
-    //
-    //
-    //mjbj giuhiuh khh k hkhiuhihkh khk hkkbjb
 
-    /////
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
       do {
@@ -1272,6 +1272,8 @@ var controller = (function(game, UICtrl) {
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
       gameIsPlaying(i);
+    } else {
+      UICtrl.showWinner(playersArr[i]);
     }
   };
 
@@ -1281,6 +1283,7 @@ var controller = (function(game, UICtrl) {
     UICtrl.removePlayer(player.id);
     var indexOfPlayer = playersArr.indexOf(playersArr.find(x => x.id == player.id));
     playersArr.splice(indexOfPlayer, 1);
+    endTurn = true;
   }
   
   function getGameTime(theTime) {
