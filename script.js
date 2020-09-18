@@ -831,7 +831,10 @@ var controller = (function(game, UICtrl) {
         sameNumbers = playersArr.filter(x => x.rolledNumber == (rolledDices[h-1][0] + rolledDices[h-1][1]));
         p++;
         id = sameNumbers[p].id;
+      } else {
+        p = 0;
       }
+
       UICtrl.showDicesNextToPlayerName(rolledDices[h], id);
     }
     // And now we can play the game!!
@@ -863,6 +866,13 @@ var controller = (function(game, UICtrl) {
     UICtrl.highlightCurrent(playersArr[i].id);
     endTurn = false;
     doubleRolls = 0;
+    //////
+    //
+    //
+    //
+    //mjbj giuhiuh khh k hkhiuhihkh khk hkkbjb
+
+    /////
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
       do {
@@ -1188,6 +1198,7 @@ var controller = (function(game, UICtrl) {
                 // dices[0] is changed here so if the removed player rolled double it doesnt count.
                 dices[0] = 42;
               }
+              console.log(playersArr.indexOf(bidders[0]));
               removePlayer(bidders[0]);
               await new Promise(r => setTimeout(r, 2000));
               bidderOut = true;
@@ -1199,19 +1210,22 @@ var controller = (function(game, UICtrl) {
           }
           
         }
-        ////////////////////////////////
-        // check if players budget is below 0 and if it is kick him out of the game
-        if (playersArr[i].budget < 0 && bidders == undefined) {
-          for (var gg = 0; gg < playersArr[i].properties.length; gg++) {
-            bankProperties.push(playersArr[i].properties[gg]);
-          }
-          removePlayer(playersArr[i]);
-          await new Promise(r => setTimeout(r, 2000));
+        if (bidderOut) {
           i--;
-          // dices[0] is changed here so if the removed player rolled double it doesnt count.
-          dices[0] = 42;
+        } else {
+          ////////////////////////////////
+          // check if players budget is below 0 and if it is kick him out of the game
+          if (playersArr[i].budget < 0 && bidders == undefined) {
+            for (var gg = 0; gg < playersArr[i].properties.length; gg++) {
+              bankProperties.push(playersArr[i].properties[gg]);
+            }
+            removePlayer(playersArr[i]);
+            await new Promise(r => setTimeout(r, 2000));
+            i--;
+            // dices[0] is changed here so if the removed player rolled double it doesnt count.
+            dices[0] = 42;
+          }
         }
-        if (bidderOut) i--;
         bidderOut = false
         bidders = undefined;
 
@@ -1239,7 +1253,7 @@ var controller = (function(game, UICtrl) {
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
       gameIsPlaying(i);
-    } else {
+    } else if (gameIsActive) {
       // this is when jail happens (else if)!!! not end of the game!
       UICtrl.showGoToJail(playersArr[i].name, playersArr[i].inJail);
       playersArr[i].inJail--;
