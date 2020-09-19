@@ -306,13 +306,50 @@ var UIController = (function() {
       var placeCount = players.length;
 
       for (var i = 0; i < players.length; i++) {
-        html = '<div class="stats__player'+players[i].id+'" style="height:70px;background-color:lightblue;display:flex;align-items:center;margin-bottom: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue">'
+        html = '<div class="stats__player'+players[i].id+'" style="height:70px;background-color:lightblue;display:flex;align-items:center;margin-top: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue;position:relative">'
         + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
         + '<div style="margin-left: .3rem;overflow:hidden;width:46%;white-space: nowrap;">'
         + '<h1>' + players[i].name + '</h1>'
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
         + '<div class="stats__rolled'+players[i].id+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
+        + '</div>'
+        + '<div style="display:flex;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
+        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid brown"></span>' + '<span card-id="24" style="border:1px solid brown"></span>' + 
+        '<span></span>' + '<span></span>' +
+        '<span card-id="27" style="border:1px solid lightblue"></span>' + 
+        '<span card-id="29" style="border:1px solid lightblue"></span>' + 
+        '<span card-id="30" style="border:1px solid lightblue"></span>' + 
+        '<span></span>' +
+        '<span card-id="32" style="border:1px solid purple"></span>' + 
+        '<span card-id="34" style="border:1px solid purple"></span>' + 
+        '<span card-id="35" style="border:1px solid purple"></span>' +
+        '<span></span>' +
+        '<span card-id="37" style="border:1px solid orange"></span>' + 
+        '<span card-id="39" style="border:1px solid orange"></span>' + 
+        '<span card-id="40" style="border:1px solid orange"></span>' +
+        '<span></span>' +
+        '<span card-id="2" style="border:1px solid red"></span>' + 
+        '<span card-id="4" style="border:1px solid red"></span>' + 
+        '<span card-id="5" style="border:1px solid red"></span>' +
+         '</div>'
+        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="7" style="border:1px solid yellow"></span>' + '<span card-id="8" style="border:1px solid yellow"></span>' +
+        '<span card-id="10" style="border:1px solid yellow"></span>' +
+        '<span></span>' +
+        '<span card-id="12" style="border:1px solid green"></span>' + 
+        '<span card-id="13" style="border:1px solid green"></span>' + 
+        '<span card-id="15" style="border:1px solid green"></span>' +
+        '<span></span>' +
+        '<span card-id="18" style="border:1px solid blue"></span>' + 
+        '<span card-id="20" style="border:1px solid blue"></span>' +
+        '<span></span>' + '<span></span>' +
+        '<span card-id="4" style="border:1px solid white"></span>' + 
+        '<span card-id="5" style="border:1px solid white"></span>' +
+        '<span></span>' + '<span></span>' +
+        '<span card-id="26" style="border:1px solid grey"></span>' + 
+        '<span card-id="36" style="border:1px solid grey"></span>' + 
+        '<span card-id="6" style="border:1px solid grey"></span>' + 
+        '<span card-id="16" style="border:1px solid grey"></span>' +  '</div>'
         + '</div>';
         if (!rankings) {
           document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
@@ -1355,9 +1392,6 @@ var controller = (function(game, UICtrl) {
 // SNSOPOLY EDITION?!?!?!
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
-
-// add menu just under the board
-// game ends after 30mins?
 
 // DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 

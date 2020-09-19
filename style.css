@@ -183,6 +183,7 @@ If you want players to be in the center of a property!!
   width: 100%;
   background-color: rgb(130, 131, 226);
   padding: .5rem;
+  padding-top: 0;
 }
 .clock {
   background-color: rgba(47, 206, 255, 0.699);
