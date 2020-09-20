@@ -171,7 +171,7 @@ If you want players to be in the center of a property!!
 } 
 
 .section__stats {
-  width: 30%;
+  width: 31%;
   margin-left: auto;
   display: flex;
   flex-direction: column;
@@ -184,6 +184,7 @@ If you want players to be in the center of a property!!
   background-color: rgb(130, 131, 226);
   padding: .5rem;
   padding-top: 0;
+  overflow: auto;
 }
 .clock {
   background-color: rgba(47, 206, 255, 0.699);

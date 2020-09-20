@@ -313,46 +313,46 @@ var UIController = (function() {
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
         + '<div class="stats__rolled'+players[i].id+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
-        + '<div class="stats__arrow" style="font-size:1.2rem;position:absolute;top:88%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:10px solid transparent;border-top:10px solid black;"></div>'
+        + '<div class="stats__arrow" style="font-size:1.2rem;position:absolute;top:90%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:10px solid transparent;border-top:10px solid black;"></div>'
         + '</div>'
 
 
         + '<div class="stats__cards'+players[i].id+'" style="display:none;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
-        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid brown"></span>' + '<span card-id="24" style="border:1px solid brown"></span>' + 
+        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid #955436"></span>' + '<span card-id="24" style="border:1px solid #955436"></span>' + 
         '<span></span>' + '<span></span>' +
-        '<span card-id="27" style="border:1px solid lightblue"></span>' + 
-        '<span card-id="29" style="border:1px solid lightblue"></span>' + 
-        '<span card-id="30" style="border:1px solid lightblue"></span>' + 
+        '<span card-id="27" style="border:1px solid #aae0fa"></span>' + 
+        '<span card-id="29" style="border:1px solid #aae0fa"></span>' + 
+        '<span card-id="30" style="border:1px solid #aae0fa"></span>' + 
         '<span></span>' +
-        '<span card-id="32" style="border:1px solid purple"></span>' + 
-        '<span card-id="34" style="border:1px solid purple"></span>' + 
-        '<span card-id="35" style="border:1px solid purple"></span>' +
+        '<span card-id="32" style="border:1px solid #d93a96"></span>' + 
+        '<span card-id="34" style="border:1px solid #d93a96"></span>' + 
+        '<span card-id="35" style="border:1px solid #d93a96"></span>' +
         '<span></span>' +
-        '<span card-id="37" style="border:1px solid orange"></span>' + 
-        '<span card-id="39" style="border:1px solid orange"></span>' + 
-        '<span card-id="40" style="border:1px solid orange"></span>' +
+        '<span card-id="37" style="border:1px solid #f7941d"></span>' + 
+        '<span card-id="39" style="border:1px solid #f7941d"></span>' + 
+        '<span card-id="40" style="border:1px solid #f7941d"></span>' +
         '<span></span>' +
-        '<span card-id="2" style="border:1px solid red"></span>' + 
-        '<span card-id="4" style="border:1px solid red"></span>' + 
-        '<span card-id="5" style="border:1px solid red"></span>' +
+        '<span card-id="2" style="border:1px solid #ed1b24"></span>' + 
+        '<span card-id="4" style="border:1px solid #ed1b24"></span>' + 
+        '<span card-id="5" style="border:1px solid #ed1b24"></span>' +
          '</div>'
-        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="7" style="border:1px solid yellow"></span>' + '<span card-id="8" style="border:1px solid yellow"></span>' +
-        '<span card-id="10" style="border:1px solid yellow"></span>' +
+        + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="7" style="border:1px solid #fef200"></span>' + '<span card-id="8" style="border:1px solid #fef200"></span>' +
+        '<span card-id="10" style="border:1px solid #fef200"></span>' +
         '<span></span>' +
-        '<span card-id="12" style="border:1px solid green"></span>' + 
-        '<span card-id="13" style="border:1px solid green"></span>' + 
-        '<span card-id="15" style="border:1px solid green"></span>' +
+        '<span card-id="12" style="border:1px solid #1fb25a"></span>' + 
+        '<span card-id="13" style="border:1px solid #1fb25a"></span>' + 
+        '<span card-id="15" style="border:1px solid #1fb25a"></span>' +
         '<span></span>' +
-        '<span card-id="18" style="border:1px solid blue"></span>' + 
-        '<span card-id="20" style="border:1px solid blue"></span>' +
+        '<span card-id="18" style="border:1px solid #0072bb"></span>' + 
+        '<span card-id="20" style="border:1px solid #0072bb"></span>' +
         '<span></span>' + '<span></span>' +
-        '<span card-id="4" style="border:1px solid white"></span>' + 
-        '<span card-id="5" style="border:1px solid white"></span>' +
+        '<span card-id="33" style="border:1px solid white"></span>' + 
+        '<span card-id="9" style="border:1px solid white"></span>' +
         '<span></span>' + '<span></span>' +
-        '<span card-id="26" style="border:1px solid grey"></span>' + 
-        '<span card-id="36" style="border:1px solid grey"></span>' + 
-        '<span card-id="6" style="border:1px solid grey"></span>' + 
-        '<span card-id="16" style="border:1px solid grey"></span>' +  '</div>'
+        '<span card-id="26" style="border:1px solid lightgrey"></span>' + 
+        '<span card-id="36" style="border:1px solid lightgrey"></span>' + 
+        '<span card-id="6" style="border:1px solid lightgrey"></span>' + 
+        '<span card-id="16" style="border:1px solid lightgrey"></span>' +  '</div>'
         + '</div>';
         if (!rankings) {
           document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
@@ -621,12 +621,22 @@ var UIController = (function() {
     removePlayer: function(id) {
       document.querySelector('.map__player'+id).parentNode.removeChild(document.querySelector('.map__player'+id));
       document.querySelector('.stats__player'+id).parentNode.removeChild(document.querySelector('.stats__player'+id));
+      document.querySelector('.stats__cards'+id).parentNode.removeChild(document.querySelector('.stats__cards'+id));
     },
 
     showWinner: function(player) {
       document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + player.name + '</span>' + ' won the game!!' +  '</h1>';
       document.querySelector('.map__winDisplay').style.display = 'block';  
-    }
+    },
+
+    updateStatsCards: function(properties, id) {
+      var cards = document.querySelector('.stats__cards'+id);
+      var bordCol;
+      for (var i = 0; i < properties.length; i++) {
+        bordCol = cards.querySelector('[card-id="'+properties[i].id+'"').style.borderColor;
+        cards.querySelector('[card-id="'+properties[i].id+'"').style.backgroundColor = bordCol;
+      }
+    },
 
   }
 })();
@@ -774,7 +784,6 @@ var controller = (function(game, UICtrl) {
     var list = document.querySelectorAll('[class*="stats__player"]');
     list.forEach(element => {
       element.addEventListener('click', () => {
-        console.log(element.className.charAt(element.className.length - 1));
         var id = element.className.charAt(element.className.length - 1);
         var cards = document.querySelector('.stats__cards'+id);
         var arrow = element.querySelector('.stats__arrow');
@@ -1197,6 +1206,7 @@ var controller = (function(game, UICtrl) {
               while (playersArr[i].properties.length !== 0) {
                 playersArr[i].properties.pop();
               }
+              UICtrl.updateStatsCards(owner.properties, owner.id);
             }
           } else if (actionBuy) {
             sign = '-';
@@ -1213,6 +1223,8 @@ var controller = (function(game, UICtrl) {
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
             actionBuy = false;
+            console.log(playersArr[i].properties);
+            UICtrl.updateStatsCards(playersArr[i].properties, playersArr[i].id);
             // ADD visuals which show who owns what
           } else {
             typeOfCard = 'auction';
@@ -1254,6 +1266,7 @@ var controller = (function(game, UICtrl) {
             bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
+            UICtrl.updateStatsCards(bidders[0].properties, bidders[0].id);
             // CHECK AFTER THIS ACUTION IF THE PLAYER WHO WON WENT BELOW $0!!!
             var bidderOut = false;
             if (bidders[0].budget < 0) {
