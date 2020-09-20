@@ -313,7 +313,10 @@ var UIController = (function() {
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
         + '<div class="stats__rolled'+players[i].id+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
+        + '<div style="font-size:1.2rem;position:absolute;top:88%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:10px solid transparent;border-top:10px solid black;"></div>'
         + '</div>'
+
+
         + '<div style="display:flex;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
         + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid brown"></span>' + '<span card-id="24" style="border:1px solid brown"></span>' + 
         '<span></span>' + '<span></span>' +
