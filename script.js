@@ -306,18 +306,18 @@ var UIController = (function() {
       var placeCount = players.length;
 
       for (var i = 0; i < players.length; i++) {
-        html = '<div class="stats__player'+players[i].id+'" style="height:70px;background-color:lightblue;display:flex;align-items:center;margin-top: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue;position:relative">'
+        html = '<div class="stats__player'+players[i].id+'" style="cursor:pointer;height:70px;background-color:lightblue;display:flex;align-items:center;margin-top: .4rem;border-radius:5px;padding:.5rem 1rem;border:2px solid lightblue;position:relative">'
         + '<div class="map__box2" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
         + '<div style="margin-left: .3rem;overflow:hidden;width:46%;white-space: nowrap;">'
         + '<h1>' + players[i].name + '</h1>'
         + '<h2 style="margin-left: .8rem;margin-top:.2rem;color:darkgreen">' + '$' + players[i].budget + '</h2>'
         + '</div>'
         + '<div class="stats__rolled'+players[i].id+'" style="margin-left:auto;display:flex;justify-content:center;align-items:center;">' + '' + '</div>'
-        + '<div style="font-size:1.2rem;position:absolute;top:88%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:10px solid transparent;border-top:10px solid black;"></div>'
+        + '<div class="stats__arrow" style="font-size:1.2rem;position:absolute;top:88%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:10px solid transparent;border-top:10px solid black;"></div>'
         + '</div>'
 
 
-        + '<div style="display:flex;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
+        + '<div class="stats__cards'+players[i].id+'" style="display:none;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
         + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid brown"></span>' + '<span card-id="24" style="border:1px solid brown"></span>' + 
         '<span></span>' + '<span></span>' +
         '<span card-id="27" style="border:1px solid lightblue"></span>' + 
@@ -770,6 +770,28 @@ var controller = (function(game, UICtrl) {
       });
     });
   }
+  function updateEventListener7() {
+    var list = document.querySelectorAll('[class*="stats__player"]');
+    list.forEach(element => {
+      element.addEventListener('click', () => {
+        console.log(element.className.charAt(element.className.length - 1));
+        var id = element.className.charAt(element.className.length - 1);
+        var cards = document.querySelector('.stats__cards'+id);
+        var arrow = element.querySelector('.stats__arrow');
+        if (cards.style.display === 'none')  {
+          cards.style.display = 'flex';
+          arrow.style.borderBottom = '10px solid black';
+          arrow.style.borderTop = '10px solid transparent';
+          arrow.style.top = '70%'
+        } else {
+          cards.style.display = 'none'
+          arrow.style.borderTop = '10px solid black';
+          arrow.style.borderBottom = '10px solid transparent';
+          arrow.style.top = '90%'
+        }
+      })
+    })
+  }
 
   let timeInterval;
   let timeInterval2;
@@ -864,6 +886,7 @@ var controller = (function(game, UICtrl) {
     UICtrl.showPlayerDashboard(playersArr);
     var rolledDices = game.getRolledDices();
     console.log(rolledDices, playersArr);
+    updateEventListener7();
     var lastNumberSame = 0;
     var sameNumbers;
     var id = 0;
