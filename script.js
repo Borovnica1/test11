@@ -614,6 +614,12 @@ var UIController = (function() {
       mapText.style.display = 'none';
     },
 
+    clearMapCards: function(properties) {
+      for (var i = 0; i < properties.length; i++) {
+        document.querySelector('.map').querySelector('[data-id="'+properties[i].id+'"]').children[0].innerHTML = '';
+      }
+    },
+
     showBankruptcy: function(name) {
       document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s budget just went below $0!' +  '</h1>';
     },
@@ -854,6 +860,7 @@ var controller = (function(game, UICtrl) {
     UICtrl.hideDices();
     UICtrl.clearGame(game.getPlayers());
     game.clearGame();
+    UICtrl.clearMapCards(game.getBankProperties());
     diceClicked = false;
     throwError = false; 
     actionTaken = false;
@@ -1455,8 +1462,6 @@ var controller = (function(game, UICtrl) {
 // SNSOPOLY EDITION?!?!?!
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
-
-// DODAJ I DA MOZE DA SE OTVORI SVAKI IGRAC I VIDE KARTICE!!
 
 // houses and hotels!!!
 // trade feature!!!
