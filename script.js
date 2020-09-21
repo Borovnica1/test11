@@ -346,13 +346,13 @@ var UIController = (function() {
         '<span card-id="18" style="border:1px solid #0072bb"></span>' + 
         '<span card-id="20" style="border:1px solid #0072bb"></span>' +
         '<span></span>' + '<span></span>' +
-        '<span card-id="33" style="border:1px solid white"></span>' + 
-        '<span card-id="9" style="border:1px solid white"></span>' +
+        '<span card-id="33" style="border:1px solid #ffffff"></span>' + 
+        '<span card-id="9" style="border:1px solid #ffffff"></span>' +
         '<span></span>' + '<span></span>' +
-        '<span card-id="26" style="border:1px solid lightgrey"></span>' + 
-        '<span card-id="36" style="border:1px solid lightgrey"></span>' + 
-        '<span card-id="6" style="border:1px solid lightgrey"></span>' + 
-        '<span card-id="16" style="border:1px solid lightgrey"></span>' +  '</div>'
+        '<span card-id="26" style="border:1px solid #d3d3d3"></span>' + 
+        '<span card-id="36" style="border:1px solid #d3d3d3"></span>' + 
+        '<span card-id="6" style="border:1px solid #d3d3d3"></span>' + 
+        '<span card-id="16" style="border:1px solid #d3d3d3"></span>' +  '</div>'
         + '</div>';
         if (!rankings) {
           document.querySelector('.stats').insertAdjacentHTML('beforeend', html);
@@ -622,6 +622,7 @@ var UIController = (function() {
       document.querySelector('.map__player'+id).parentNode.removeChild(document.querySelector('.map__player'+id));
       document.querySelector('.stats__player'+id).parentNode.removeChild(document.querySelector('.stats__player'+id));
       document.querySelector('.stats__cards'+id).parentNode.removeChild(document.querySelector('.stats__cards'+id));
+      // for petlja gde brise sve properije na mapi
     },
 
     showWinner: function(player) {
@@ -629,12 +630,33 @@ var UIController = (function() {
       document.querySelector('.map__winDisplay').style.display = 'block';  
     },
 
-    updateStatsCards: function(properties, id) {
+    updateStatsCards: function(properties, id, char) {
       var cards = document.querySelector('.stats__cards'+id);
+      var mapCard;
+      var html;
       var bordCol;
+      var rgb;
+      var position;
+      //mapCard.children[0].style.display = 'block';
+
       for (var i = 0; i < properties.length; i++) {
+        mapCard = document.querySelector('.map').querySelector('[data-id="'+properties[i].id+'"]');
         bordCol = cards.querySelector('[card-id="'+properties[i].id+'"').style.borderColor;
-        cards.querySelector('[card-id="'+properties[i].id+'"').style.backgroundColor = bordCol;
+        cards.querySelector('[card-id="'+properties[i].id+'"]').style.backgroundColor = bordCol;
+        rgb = bordCol.slice(4, bordCol.length - 1);
+        if ([22,24,26,27,29,30].includes(properties[i].id)) {
+          position = 'bottom';
+        } else if ([32,33,34,35,36,37,39,40].includes(properties[i].id)) {
+          position = 'right';
+        } else if ([2,4,5,6,7,8,9,10].includes(properties[i].id)) {
+          position = 'top';
+        } else {
+          position = 'left'
+        }
+        html = '<div class="map__cards map__cards-'+position+' map__cards'+id+'" style="background-color: rgba('+rgb+', 0.7);">'
+        + '<div class="map__box2" style="border: 1px solid #000; width:  23px; height: 23px; border-radius:50%;display:flex;justify-content: center;background-color:'+bordCol+';margin:auto;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + char + '</span>' + '</div>'
+        + '</div>'
+        mapCard.children[0].innerHTML = html;
       }
     },
 
@@ -1206,7 +1228,7 @@ var controller = (function(game, UICtrl) {
               while (playersArr[i].properties.length !== 0) {
                 playersArr[i].properties.pop();
               }
-              UICtrl.updateStatsCards(owner.properties, owner.id);
+              UICtrl.updateStatsCards(owner.properties, owner.id, owner.char);
             }
           } else if (actionBuy) {
             sign = '-';
@@ -1223,8 +1245,7 @@ var controller = (function(game, UICtrl) {
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
             actionBuy = false;
-            console.log(playersArr[i].properties);
-            UICtrl.updateStatsCards(playersArr[i].properties, playersArr[i].id);
+            UICtrl.updateStatsCards(playersArr[i].properties, playersArr[i].id, playersArr[i].char);
             // ADD visuals which show who owns what
           } else {
             typeOfCard = 'auction';
@@ -1266,7 +1287,7 @@ var controller = (function(game, UICtrl) {
             bidders[0].properties.push(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             indexOfProperty = bankProperties.indexOf(bankProperties.find(x => x.id == playersArr[i].mapSpot));
             bankProperties.splice(indexOfProperty, 1);
-            UICtrl.updateStatsCards(bidders[0].properties, bidders[0].id);
+            UICtrl.updateStatsCards(bidders[0].properties, bidders[0].id, bidders[0].char);
             // CHECK AFTER THIS ACUTION IF THE PLAYER WHO WON WENT BELOW $0!!!
             var bidderOut = false;
             if (bidders[0].budget < 0) {

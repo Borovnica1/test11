@@ -88,6 +88,45 @@ body {
   border: 2px solid #000;
 }
 
+.map__cards {
+  position: absolute;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  width: 97%;
+  padding: .1rem 0;
+  clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+}
+
+.map__cards-bottom {
+  top: -12%;
+  left: 50%;
+}
+
+.map__cards-right {
+  top: 50%;
+  left: 112%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  width: 60%;
+}
+
+.map__cards-top {
+  top: 112%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(180deg);
+  width: 97%;
+}
+
+.map__cards-left {
+  top: 50%;
+  left: -12%;
+  transform: translate(-50%, -50%) rotate(270deg);
+  width: 60%;
+}
+
+.map__box {
+  position: relative;
+}
+
 .map__box[data-id="1"] {
   background-color: coral;
   grid-area: 1 / 1 / 3 / 3;
