@@ -618,11 +618,13 @@ var UIController = (function() {
       document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + name + '</span>' + '\'s budget just went below $0!' +  '</h1>';
     },
 
-    removePlayer: function(id) {
+    removePlayer: function(id, properties) {
       document.querySelector('.map__player'+id).parentNode.removeChild(document.querySelector('.map__player'+id));
       document.querySelector('.stats__player'+id).parentNode.removeChild(document.querySelector('.stats__player'+id));
       document.querySelector('.stats__cards'+id).parentNode.removeChild(document.querySelector('.stats__cards'+id));
-      // for petlja gde brise sve properije na mapi
+      for (var i = 0; i < properties.length; i++) {
+        document.querySelector('.map').querySelector('[data-id="'+properties[i].id+'"]').children[0].innerHTML = '';
+      }
     },
 
     showWinner: function(player) {
@@ -1296,13 +1298,14 @@ var controller = (function(game, UICtrl) {
                 dices[0] = 42;
               }
               console.log(playersArr.indexOf(bidders[0]));
-              removePlayer(bidders[0]);
-              await new Promise(r => setTimeout(r, 2000));
-              bidderOut = true;
               // give properties back to the bank
               for (var g = 0; g < bidders[0].properties.length; g++) {
                 bankProperties.push(bidders[0].properties[g]);
               }
+              removePlayer(bidders[0], bankProperties);
+              await new Promise(r => setTimeout(r, 2000));
+              bidderOut = true;
+
             }
           }
           
@@ -1316,7 +1319,7 @@ var controller = (function(game, UICtrl) {
             for (var gg = 0; gg < playersArr[i].properties.length; gg++) {
               bankProperties.push(playersArr[i].properties[gg]);
             }
-            removePlayer(playersArr[i]);
+            removePlayer(playersArr[i], bankProperties);
             await new Promise(r => setTimeout(r, 2000));
             i--;
             // dices[0] is changed here so if the removed player rolled double it doesnt count.
@@ -1374,10 +1377,10 @@ var controller = (function(game, UICtrl) {
     }
   };
 
-  var removePlayer = async function(player) {
+  var removePlayer = async function(player, bankProperties) {
     UICtrl.showBankruptcy(player.name);
     await new Promise(r => setTimeout(r, 2000));
-    UICtrl.removePlayer(player.id);
+    UICtrl.removePlayer(player.id, bankProperties);
     var indexOfPlayer = playersArr.indexOf(playersArr.find(x => x.id == player.id));
     playersArr.splice(indexOfPlayer, 1);
     endTurn = true;
