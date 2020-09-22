@@ -34,10 +34,11 @@ var gameLogic = (function() {
     bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
 
 
-    var Property = function(id, title, value) {
+    var Property = function(id, title, value, houses) {
       this.id = id;
       this.title = title;
       this.value = value;
+      this.houses = houses;
     }
     var id = 0;
     var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
@@ -45,7 +46,7 @@ var gameLogic = (function() {
       // Skip the non property card!!
       id++;
       if (nonPropertyCards.includes(id)) id++;
-      var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1]);
+      var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1], 0);
       bankProperties.push(newProperty);
       bankProperties.shift();
     }
@@ -681,6 +682,15 @@ var controller = (function(game, UICtrl) {
     document.querySelector(DOM.dice).addEventListener('click', hiLol);
     document.querySelector(DOM.startGame).addEventListener('click', createGame);
     document.querySelector(DOM.startGame+2).addEventListener('click', createGame);
+    document.querySelector('.build').addEventListener('click', () => {
+      var build = document.querySelector('.build').innerHTML;
+      buildSellHouses(build);
+    });
+    document.querySelector('.sell').addEventListener('click', () => {
+      var sell = document.querySelector('.sell').innerHTML;
+      buildSellHouses(sell);
+    })
+
     document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
     document.querySelectorAll('.menu__menu').forEach(el => {
       el.addEventListener('click', async () => {
@@ -961,6 +971,7 @@ var controller = (function(game, UICtrl) {
   console.log(new Date() / 1000);
   // Keeps track of which player is on turn!!
   let i = 0;
+  let currentPlayer = 0;
   var endTurn = false;
   var doubleRolls = 0;
   var playersArr;
@@ -1359,6 +1370,7 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
+      playersArr.length - 1 == currentPlayer ? currentPlayer = 0 : currentPlayer++;
       gameIsPlaying(i);
     } else if (gameIsActive) {
       // this is when jail happens (else if)!!! not end of the game!
@@ -1378,6 +1390,8 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
+      playersArr.length - 1 == currentPlayer ? currentPlayer = 0 : currentPlayer++;
+      updateCounter(i);
       gameIsPlaying(i);
     } else {
       UICtrl.showWinner(playersArr[i]);
@@ -1449,6 +1463,40 @@ var controller = (function(game, UICtrl) {
       const time = getTime();
       document.querySelector('.clock').innerHTML = time.hours + ':' + time.minutes +':'+ time.seconds;
     }, 1000);
+  }
+
+  var buildSellHouses = function(buildOrSell) {
+    console.log(buildOrSell);
+    console.log(playersArr[currentPlayer].name, playersArr[currentPlayer].properties);
+    var propIds = [];
+    for (var i = 0; i < playersArr[currentPlayer].properties.length; i++) {
+      propIds.push(playersArr[currentPlayer].properties[i].id);
+    }
+    console.log(propIds);
+    if (propIds.includes(22) && propIds.includes(24)) {
+      UICtrl.availHouseSpots()
+    }
+    if (propIds.includes(27) && propIds.includes(29) && propIds.includes(30)) {
+
+    }
+    if (propIds.includes(32) && propIds.includes(34) && propIds.includes(35)) {
+
+    }
+    if (propIds.includes(37) && propIds.includes(39) && propIds.includes(40)) {
+
+    }
+    if (propIds.includes(2) && propIds.includes(4) && propIds.includes(5)) {
+
+    }
+    if (propIds.includes(7) && propIds.includes(8) && propIds.includes(10)) {
+
+    }
+    if (propIds.includes(12) && propIds.includes(13) && propIds.includes(15)) {
+
+    }
+    if (propIds.includes(18) && propIds.includes(20)) {
+
+    }
   }
 
   var checkIfPlayerPassedGO = function() {
