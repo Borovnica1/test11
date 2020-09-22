@@ -157,6 +157,12 @@ If you want players to be in the center of a property!!
   flex-wrap: wrap;
 } */
 
+/* .map__box {
+  position: relative;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.45) !important;
+} */
+
 .map__box-bottom {
   background-color: rgb(226, 186, 172);
   grid-row: 1 / 3;

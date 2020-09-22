@@ -702,7 +702,7 @@ var controller = (function(game, UICtrl) {
       document.querySelector('.overlay').style.display = 'none';
       if (mode == 'timemode') {
         startTimer(gameTime);
-      } else {
+      } else if (mode == 'lastmode'){
         startClock();
       }
     })
@@ -1421,6 +1421,11 @@ var controller = (function(game, UICtrl) {
         document.querySelector('.overlay').style.display = 'flex';
         document.querySelector('.overlay__rankings').style.display = 'flex';
         UICtrl.showPlayerDashboard(game.getPlayers(), true);
+        for (var i = 0; i < game.getPlayers().length; i++) {
+          console.log(i);
+          UICtrl.updateStatsCards(playersArr[i].properties, playersArr[i].id, playersArr[i].char);
+        }
+        updateEventListener7();
       }
     }, 1000);
   }
@@ -1465,3 +1470,4 @@ var controller = (function(game, UICtrl) {
 
 // houses and hotels!!!
 // trade feature!!!
+// responsive oon mobile
