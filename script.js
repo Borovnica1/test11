@@ -669,6 +669,18 @@ var UIController = (function() {
       }
     },
 
+    availHouseSpots: function(propIds) {
+      var card;
+      for (var i = 0; i < propIds.length; i++) {
+        card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]');
+        card.style.backgroundColor = 'rgba(0,0,0,.6)';
+        card.style.position = 'relative';
+        card.style.zIndex = '100';
+        card.style.cursor = 'pointer';
+      }
+      
+    }
+
   }
 })();
 
@@ -1474,28 +1486,28 @@ var controller = (function(game, UICtrl) {
     }
     console.log(propIds);
     if (propIds.includes(22) && propIds.includes(24)) {
-      UICtrl.availHouseSpots()
+      UICtrl.availHouseSpots([22, 24]);
     }
     if (propIds.includes(27) && propIds.includes(29) && propIds.includes(30)) {
-
+      UICtrl.availHouseSpots([27, 29, 30]);
     }
     if (propIds.includes(32) && propIds.includes(34) && propIds.includes(35)) {
-
+      UICtrl.availHouseSpots([32, 34, 35]);
     }
     if (propIds.includes(37) && propIds.includes(39) && propIds.includes(40)) {
-
+      UICtrl.availHouseSpots([37, 39, 40]);
     }
     if (propIds.includes(2) && propIds.includes(4) && propIds.includes(5)) {
-
+      UICtrl.availHouseSpots([2, 4, 5]);
     }
     if (propIds.includes(7) && propIds.includes(8) && propIds.includes(10)) {
-
+      UICtrl.availHouseSpots([7, 8, 10]);
     }
     if (propIds.includes(12) && propIds.includes(13) && propIds.includes(15)) {
-
+      UICtrl.availHouseSpots([12, 13, 15]);
     }
     if (propIds.includes(18) && propIds.includes(20)) {
-
+      UICtrl.availHouseSpots([18, 20]);
     }
   }
 
