@@ -1348,7 +1348,7 @@ var controller = (function(game, UICtrl) {
         bidders = undefined;
 
 
-      } while(dices[0] == [dices[1]]);
+      } while(dices[0] == [dices[1]] && playersArr[i].inJail == 0);
 
       /////////////////////////////////
       ////////////// SAME //////////
