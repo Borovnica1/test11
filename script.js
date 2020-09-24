@@ -686,7 +686,6 @@ var UIController = (function() {
 
 
 var controller = (function(game, UICtrl) {
-  
   var setupEventListeners = function() {
     var DOM = UICtrl.getDomStrings();
     var expended = false;
@@ -696,12 +695,22 @@ var controller = (function(game, UICtrl) {
     document.querySelector(DOM.startGame+2).addEventListener('click', createGame);
     document.querySelector('.build').addEventListener('click', () => {
       var build = document.querySelector('.build').innerHTML;
+      document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'none');
+      document.querySelector('.done').style.display = 'block';
       buildSellHouses(build);
     });
     document.querySelector('.sell').addEventListener('click', () => {
       var sell = document.querySelector('.sell').innerHTML;
+      document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'none');
+      document.querySelector('.done').style.display = 'block';
       buildSellHouses(sell);
+    });
+    document.querySelector('.done').addEventListener('click', () => {
+      document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'block');
+      document.querySelector('.done').style.display = 'none';
+      // when done is clicked clean housing overlays
     })
+
 
     document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
     document.querySelectorAll('.menu__menu').forEach(el => {
@@ -1523,6 +1532,7 @@ var controller = (function(game, UICtrl) {
   setupEventListeners();
 })(gameLogic, UIController);
 
+// Maybe make it online multiplayer?
 
 // SNSOPOLY EDITION?!?!?!
 // make video cut extension and display on the board random cuts
