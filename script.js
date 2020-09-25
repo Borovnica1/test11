@@ -374,7 +374,7 @@ var UIController = (function() {
 
 
         html = '<div class="map__player'+players[i].id+'" style="display:inline-flex;padding: .1rem;">'
-        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
+        + '<div class="map__box2 index100" style="border: 1px solid #000; width:  27px; height: 27px;background-color:lightblue; border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' 
         + '</div>';
         if (!rankings) {
           document.querySelector('[data-id="'+players[i].mapSpot+'"]').insertAdjacentHTML('beforeend', html);
@@ -438,7 +438,7 @@ var UIController = (function() {
 
       // Puts him to new spot
       html = '<div class="map__player'+player.id+'" style="display:inline-flex;padding: .1rem;">'
-        + '<div class="map__box2 index100" style="cursor:pointer; border: 1px solid #000; width:  27px; height: 27px;background-color:orange;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
+        + '<div class="map__box2 index100" style="border: 1px solid #000; width:  27px; height: 27px;background-color:orange;border-radius:50%; overflow:hidden; display:inline-flex;justify-content: center;">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + player.char + '</span>' 
         + '</div>';
         document.querySelector('[data-id="'+player.mapSpot+'"]').insertAdjacentHTML('beforeend', html);
     },
@@ -669,16 +669,56 @@ var UIController = (function() {
       }
     },
 
-    availHouseSpots: function(propIds) {
+    availHouseSpots: function(propIds, buildSell) {
+      var color;
       var card;
+      var cardClone;
+
+      buildSell == 'Build' ? color = 'rgba(0,169,0,.6)' : color = 'rgba(169,0,0,.6)'
       for (var i = 0; i < propIds.length; i++) {
-        card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]');
-        card.style.backgroundColor = 'rgba(0,0,0,.6)';
-        card.style.position = 'relative';
+        card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]').children[2];
+        card.style.backgroundColor = 'rgba(0,0,0,.6)';;
         card.style.zIndex = '100';
         card.style.cursor = 'pointer';
+        console.log(card);
+
+        card.addEventListener('mouseenter', (event) => {
+          console.log(event.target.parentNode.getAttribute('data-id'));
+          // make sure i put bg color only on the card overlay
+          if (event.target.parentNode.getAttribute('data-id') > 0) {
+            event.target.style.backgroundColor = color;
+          }
+        });
+        card.addEventListener('mouseleave', (event) => {
+          console.log(event.target.parentNode.getAttribute('data-id'));
+          // make sure i put bg color only on the card overlay
+          if (event.target.parentNode.getAttribute('data-id') > 0) {
+            event.target.style.backgroundColor = 'rgba(0,0,0,.6)';
+          }
+        });
       }
       
+    },
+
+    removeHouseSpots: function(propIds) {
+      var card;
+      var cardClone;
+      console.log(propIds.length);
+      for (var i = 0; i < propIds.length; i++) {
+        card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]').children[2];
+        card.style.backgroundColor = 'rgba(0,0,0,.0)';
+        card.style.zIndex = '';
+        card.style.cursor = 'default';
+        cardClone = card.cloneNode(true);
+        card.parentNode.replaceChild(cardClone, card);
+      }
+    }, 
+
+    addRemoveHouse: function(id, addRemove) {
+      var card;
+      card = mapContainer.querySelector('[data-id="'+id+'"]').children[1];
+      html = '<div class="" style="width: 19px; height: 19px; background-color: rgba(0, 140,0,0.4);">'+'</div>';
+      card.insertAdjacentHTML('beforeend', html);
     }
 
   }
@@ -708,7 +748,7 @@ var controller = (function(game, UICtrl) {
     document.querySelector('.done').addEventListener('click', () => {
       document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'block');
       document.querySelector('.done').style.display = 'none';
-      // when done is clicked clean housing overlays
+      UICtrl.removeHouseSpots(propIds);
     })
 
 
@@ -1391,7 +1431,7 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
-      playersArr.length - 1 == currentPlayer ? currentPlayer = 0 : currentPlayer++;
+      currentPlayer = i;
       gameIsPlaying(i);
     } else if (gameIsActive) {
       // this is when jail happens (else if)!!! not end of the game!
@@ -1411,8 +1451,7 @@ var controller = (function(game, UICtrl) {
       UICtrl.hideEndTurn();
       // When we get to last player in order we reset the circle with setting i = 0;
       playersArr.length - 1 == i ? i = 0 : i++;
-      playersArr.length - 1 == currentPlayer ? currentPlayer = 0 : currentPlayer++;
-      updateCounter(i);
+      currentPlayer = i;
       gameIsPlaying(i);
     } else {
       UICtrl.showWinner(playersArr[i]);
@@ -1486,38 +1525,58 @@ var controller = (function(game, UICtrl) {
     }, 1000);
   }
 
+  var propIds;
   var buildSellHouses = function(buildOrSell) {
-    console.log(buildOrSell);
     console.log(playersArr[currentPlayer].name, playersArr[currentPlayer].properties);
-    var propIds = [];
+    var card;
+    var availSpots;
+    propIds = [29, 30, 27,40,39,37];
     for (var i = 0; i < playersArr[currentPlayer].properties.length; i++) {
       propIds.push(playersArr[currentPlayer].properties[i].id);
     }
     console.log(propIds);
+    availSpots = findAvailSpots(propIds);
+    UICtrl.availHouseSpots(availSpots, buildOrSell);
+    availSpots.forEach(id => {
+      card = document.querySelector('.map').querySelector('[data-id="'+id+'"]').children[2];
+      card.addEventListener('click', (event) => {
+        if (event.target.parentNode.getAttribute('data-id') > 0) {
+          console.log(event.target.parentNode.getAttribute('data-id'));
+          UICtrl.addRemoveHouse(event.target.parentNode.getAttribute('data-id'), buildOrSell);
+          UICtrl.removeHouseSpots([event.target.parentNode.getAttribute('data-id')]);
+          console.log(event.target.parentNode);
+        }
+      });
+    })
+  }
+
+  var findAvailSpots = function(propIds) {
+    var ids = [];
     if (propIds.includes(22) && propIds.includes(24)) {
-      UICtrl.availHouseSpots([22, 24]);
+      ids.push(22,24);
     }
     if (propIds.includes(27) && propIds.includes(29) && propIds.includes(30)) {
-      UICtrl.availHouseSpots([27, 29, 30]);
+      ids.push(27,29,30);
     }
     if (propIds.includes(32) && propIds.includes(34) && propIds.includes(35)) {
-      UICtrl.availHouseSpots([32, 34, 35]);
+      ids.push(32,34,35);
     }
     if (propIds.includes(37) && propIds.includes(39) && propIds.includes(40)) {
-      UICtrl.availHouseSpots([37, 39, 40]);
+      ids.push(37,39,40);
     }
     if (propIds.includes(2) && propIds.includes(4) && propIds.includes(5)) {
-      UICtrl.availHouseSpots([2, 4, 5]);
+      ids.push(2,4,5);
     }
     if (propIds.includes(7) && propIds.includes(8) && propIds.includes(10)) {
-      UICtrl.availHouseSpots([7, 8, 10]);
+      ids.push(7,8,10);
     }
     if (propIds.includes(12) && propIds.includes(13) && propIds.includes(15)) {
-      UICtrl.availHouseSpots([12, 13, 15]);
+      ids.push(12,13,15);
     }
     if (propIds.includes(18) && propIds.includes(20)) {
-      UICtrl.availHouseSpots([18, 20]);
+    ids.push(18,20);
     }
+    return ids;
   }
 
   var checkIfPlayerPassedGO = function() {

@@ -123,6 +123,41 @@ body {
   width: 60%;
 }
 
+.map__houses {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  padding: .2rem;
+  margin: auto;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-start;
+}
+.map__houses * {
+  margin: .1rem;
+}
+.map__houses-top {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+.map__houses-left {
+  transform: translate(-50%, -50%) rotate(90deg);
+  height: 170%;
+}
+.map__houses-right {
+  transform: translate(-50%, -50%) rotate(-90deg);
+  height: 170%;
+}
+
+.map__buildSell {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
 .map__box {
   position: relative;
 }
