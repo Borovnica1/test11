@@ -34,11 +34,12 @@ var gameLogic = (function() {
     bankProperties = [['Kentucky Avenue', 220], ['Indiana Avenue', 220], ['Illinois Avenue', 240], ['B. & O. Railroad', 200], ['Atlantic Avenue', 260], ['Ventnor Avenue', 260], ['Water Works', 150], ['Marvin Gardens', 280], ['Pacific Avenue', 300], ['North Carolina Avenue', 300], ['Pennsylvania Avenue', 320], ['Short Line', 200], ['Park Place', 350], ['Boardwalk', 400], ['Mediterranean Avenue', 60], ['Baltic Avenue', 60],['Reading Railroad', 200], ['Oriental Avenue', 100], ['Vermont Avenue', 100], ['Connecticut Avenue', 120], ['St. Charles Place', 140], ['Electric Company', 150], ['States Avenue', 140], ['Virginia Avenue', 160], ['Pennsylvania Railroad', 200], ['St. James Place', 180], ['Tennessee Avenue', 180], ['New York Avenue', 200]];
 
 
-    var Property = function(id, title, value, houses) {
+    var Property = function(id, title, value, houses, built) {
       this.id = id;
       this.title = title;
       this.value = value;
       this.houses = houses;
+      this.built = built;
     }
     var id = 0;
     var nonPropertyCards = [1,3,11,14,17,19,21,23,25,28,31,38];
@@ -46,7 +47,7 @@ var gameLogic = (function() {
       // Skip the non property card!!
       id++;
       if (nonPropertyCards.includes(id)) id++;
-      var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1], 0);
+      var newProperty = new Property (id, bankProperties[0][0], bankProperties[0][1], 0, false);
       bankProperties.push(newProperty);
       bankProperties.shift();
     }
@@ -680,17 +681,14 @@ var UIController = (function() {
         card.style.backgroundColor = 'rgba(0,0,0,.6)';;
         card.style.zIndex = '100';
         card.style.cursor = 'pointer';
-        console.log(card);
 
         card.addEventListener('mouseenter', (event) => {
-          console.log(event.target.parentNode.getAttribute('data-id'));
           // make sure i put bg color only on the card overlay
           if (event.target.parentNode.getAttribute('data-id') > 0) {
             event.target.style.backgroundColor = color;
           }
         });
         card.addEventListener('mouseleave', (event) => {
-          console.log(event.target.parentNode.getAttribute('data-id'));
           // make sure i put bg color only on the card overlay
           if (event.target.parentNode.getAttribute('data-id') > 0) {
             event.target.style.backgroundColor = 'rgba(0,0,0,.6)';
@@ -704,6 +702,7 @@ var UIController = (function() {
       var card;
       var cardClone;
       console.log(propIds.length);
+      console.log(propIds);
       for (var i = 0; i < propIds.length; i++) {
         card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]').children[2];
         card.style.backgroundColor = 'rgba(0,0,0,.0)';
@@ -714,11 +713,20 @@ var UIController = (function() {
       }
     }, 
 
-    addRemoveHouse: function(id, addRemove) {
+    addRemoveHouse: function(id, addRemove, houses) {
       var card;
+      var color;
+      houses == 4 && addRemove == 'Build' ? color = 'rgba(140, 0,0,0.4)' : color = 'rgba(0, 140,0,0.4)';
       card = mapContainer.querySelector('[data-id="'+id+'"]').children[1];
-      html = '<div class="" style="width: 19px; height: 19px; background-color: rgba(0, 140,0,0.4);">'+'</div>';
-      card.insertAdjacentHTML('beforeend', html);
+      html = '<div class="" style="width: 19px; height: 19px; background-color: '+color+';">'+'</div>';
+      if (addRemove == 'Build') {
+        card.insertAdjacentHTML('beforeend', html);
+      } else {
+        card.innerHTML = '';
+        for (var i = 0; i < houses - 1; i++) {
+          card.insertAdjacentHTML('beforeend', html);
+        }
+      }
     }
 
   }
@@ -748,7 +756,7 @@ var controller = (function(game, UICtrl) {
     document.querySelector('.done').addEventListener('click', () => {
       document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'block');
       document.querySelector('.done').style.display = 'none';
-      UICtrl.removeHouseSpots(propIds);
+      UICtrl.removeHouseSpots(availSpots);
     })
 
 
@@ -1047,6 +1055,11 @@ var controller = (function(game, UICtrl) {
     UICtrl.highlightCurrent(playersArr[i].id);
     endTurn = false;
     doubleRolls = 0;
+
+    // refresh all properties so we can build in this turn!
+    playersArr[i].properties.forEach(el => {
+      el.built = false;
+    })
 
     if (gameIsActive && playersArr[i].inJail == 0) {
       // Roll while player keeps getting double dice!
@@ -1526,25 +1539,50 @@ var controller = (function(game, UICtrl) {
   }
 
   var propIds;
+  var availSpots;
   var buildSellHouses = function(buildOrSell) {
     console.log(playersArr[currentPlayer].name, playersArr[currentPlayer].properties);
     var card;
-    var availSpots;
-    propIds = [29, 30, 27,40,39,37];
+    var propIdsOpen;
+    propIds = [];
+    availSpots = [];
     for (var i = 0; i < playersArr[currentPlayer].properties.length; i++) {
       propIds.push(playersArr[currentPlayer].properties[i].id);
     }
-    console.log(propIds);
-    availSpots = findAvailSpots(propIds);
+    propIdsOpen = findAvailSpots(propIds);
+    // check if we already built on this property and if we did we drop it
+    var indexOf;
+    var id;
+    propIdsOpen.forEach(id => {
+      console.log(availSpots);
+      indexOf = playersArr[currentPlayer].properties.indexOf(playersArr[currentPlayer].properties.find(el => el.id == id));
+
+      if (playersArr[currentPlayer].properties[indexOf].built == false && playersArr[currentPlayer].properties[indexOf].houses < 5 && buildOrSell == 'Build') {
+        availSpots.push(id);
+      } else if (buildOrSell == 'Sell' && playersArr[currentPlayer].properties[indexOf].houses <= 5 && playersArr[currentPlayer].properties[indexOf].houses >= 1) {
+        availSpots.push(id);
+      }
+    });
+    console.log(availSpots);
     UICtrl.availHouseSpots(availSpots, buildOrSell);
+
+    
     availSpots.forEach(id => {
       card = document.querySelector('.map').querySelector('[data-id="'+id+'"]').children[2];
       card.addEventListener('click', (event) => {
-        if (event.target.parentNode.getAttribute('data-id') > 0) {
-          console.log(event.target.parentNode.getAttribute('data-id'));
-          UICtrl.addRemoveHouse(event.target.parentNode.getAttribute('data-id'), buildOrSell);
-          UICtrl.removeHouseSpots([event.target.parentNode.getAttribute('data-id')]);
-          console.log(event.target.parentNode);
+        id = event.target.parentNode.getAttribute('data-id');
+        if (id > 0) {
+          indexOf = playersArr[currentPlayer].properties.indexOf(playersArr[currentPlayer].properties.find(el => el.id == id));
+          UICtrl.addRemoveHouse(id, buildOrSell, playersArr[currentPlayer].properties[indexOf].houses);
+
+          UICtrl.removeHouseSpots([id]);
+          
+          if (buildOrSell == 'Build') {
+            playersArr[currentPlayer].properties[indexOf].built = true;
+            playersArr[currentPlayer].properties[indexOf].houses++;
+          } else {
+            playersArr[currentPlayer].properties[indexOf].houses--;
+          }
         }
       });
     })
