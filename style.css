@@ -144,11 +144,11 @@ body {
   transform: translate(-50%, -50%) rotate(180deg);
 }
 .map__houses-left {
-  transform: translate(-50%, -50%) rotate(90deg);
+  transform: translate(-55%, -50%) rotate(90deg);
   height: 170%;
 }
 .map__houses-right {
-  transform: translate(-50%, -50%) rotate(-90deg);
+  transform: translate(-45%, -50%) rotate(-90deg);
   height: 170%;
 }
 

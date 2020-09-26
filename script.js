@@ -285,7 +285,7 @@ var UIController = (function() {
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.6rem 2rem;">' 
       + '<h1>' + 'Player ' + playerNumber + '</h1>'
       // onkeypress attribute allows only letters to be typed
-      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" placeholder="Player Name" style="display:block;height:1.9rem;outline:none;border:none;">'
+      + '<h2 style="margin-top: .4rem">' + 'Name:' + '</h2>' + '<input type="text" class="player__name" required maxlength="14" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123 || (event.charCode == 32))" placeholder="Player Name" style="display:block;height:1.9rem;outline:none;border:none;">'
       + '<h2 style="margin-top: .4rem">' + 'Choose a character:' + '</h2>'
       for (var i = 0; i < charsArr.length; i++) {
         html += '<div class="map__box2 arrayIndex'+i+'" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%; overflow:hidden; display: inline-flex; justify-content: center;margin-right:.2rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 30px;">'  + charsArr[i] + '</span>' + '</div>'
@@ -619,6 +619,13 @@ var UIController = (function() {
     clearMapCards: function(properties) {
       for (var i = 0; i < properties.length; i++) {
         document.querySelector('.map').querySelector('[data-id="'+properties[i].id+'"]').children[0].innerHTML = '';
+
+        // We just skip railroads and electric and water works because they dont have house divs
+        if (properties[i].id == 6 || properties[i].id == 16 || properties[i].id == 26 || properties[i].id == 36 || properties[i].id == 33 ||  properties[i].id == 9) {
+
+        } else {
+          document.querySelector('.map').querySelector('[data-id="'+properties[i].id+'"]').children[1].innerHTML = '';
+        }
       }
     },
 
@@ -1290,7 +1297,7 @@ var controller = (function(game, UICtrl) {
               owner = playersArr[n];
               n++;
             }
-            rent = (property.value);
+            rent = ((property.value / 10) * (2 ** property.houses));
           }
           // Stop the execution of this roll cuz property is already owned by me
           if (owner == playersArr[i]) break breakme;
@@ -1565,23 +1572,32 @@ var controller = (function(game, UICtrl) {
     console.log(availSpots);
     UICtrl.availHouseSpots(availSpots, buildOrSell);
 
-    
+    var moneyDiff;
+    var sign;
     availSpots.forEach(id => {
       card = document.querySelector('.map').querySelector('[data-id="'+id+'"]').children[2];
-      card.addEventListener('click', (event) => {
+      card.addEventListener('click', async (event) => {
         id = event.target.parentNode.getAttribute('data-id');
         if (id > 0) {
           indexOf = playersArr[currentPlayer].properties.indexOf(playersArr[currentPlayer].properties.find(el => el.id == id));
           UICtrl.addRemoveHouse(id, buildOrSell, playersArr[currentPlayer].properties[indexOf].houses);
 
           UICtrl.removeHouseSpots([id]);
-          
           if (buildOrSell == 'Build') {
             playersArr[currentPlayer].properties[indexOf].built = true;
             playersArr[currentPlayer].properties[indexOf].houses++;
+            moneyDiff = playersArr[currentPlayer].properties[indexOf].value / 4;
+            sign = '-';
           } else {
             playersArr[currentPlayer].properties[indexOf].houses--;
+            moneyDiff = playersArr[currentPlayer].properties[indexOf].value / 8;
+            sign = '+';
           }
+
+          game.updateBudget(playersArr[currentPlayer], moneyDiff, sign);
+          UICtrl.showMoneyChange(playersArr[currentPlayer].id, moneyDiff, sign);
+            await new Promise(r => setTimeout(r, 1000));
+          UICtrl.hideMoneyChange(playersArr[currentPlayer].id, playersArr[currentPlayer].budget);
         }
       });
     })
@@ -1635,5 +1651,8 @@ var controller = (function(game, UICtrl) {
 // svaka stranka druga boja i special effect???!?!?!?!?
 
 // houses and hotels!!!
+// make houses maybe 3d somehow lol
+// when i hover over property in build mode tell me the price of a house 
+
 // trade feature!!!
 // responsive oon mobile
