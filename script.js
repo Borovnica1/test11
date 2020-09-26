@@ -673,7 +673,6 @@ var UIController = (function() {
     availHouseSpots: function(propIds, buildSell) {
       var color;
       var card;
-      var cardClone;
 
       buildSell == 'Build' ? color = 'rgba(0,169,0,.6)' : color = 'rgba(169,0,0,.6)'
       for (var i = 0; i < propIds.length; i++) {
@@ -716,7 +715,7 @@ var UIController = (function() {
     addRemoveHouse: function(id, addRemove, houses) {
       var card;
       var color;
-      houses == 4 && addRemove == 'Build' ? color = 'rgba(140, 0,0,0.4)' : color = 'rgba(0, 140,0,0.4)';
+      houses == 4 && addRemove == 'Build' ? color = 'rgba(169, 0,0,0.9)' : color = 'rgba(0, 140,0,0.4)';
       card = mapContainer.querySelector('[data-id="'+id+'"]').children[1];
       html = '<div class="" style="width: 19px; height: 19px; background-color: '+color+';">'+'</div>';
       if (addRemove == 'Build') {
