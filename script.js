@@ -643,7 +643,7 @@ var UIController = (function() {
     },
 
     showWinner: function(player) {
-      document.querySelector('.playerNumber').innerHTML = '<h1 style="width:600px">' + '<span style="color:rgb(0, 174, 255)">' + player.name + '</span>' + ' won the game!!' +  '</h1>';
+      document.querySelector('.playerNumber').innerHTML = '<h1 style="white-space:nowrap;">' + '<span style="color:rgb(0, 174, 255)">' + player.name + '</span>' + ' won the game!!' +  '</h1>';
       document.querySelector('.map__winDisplay').style.display = 'block';  
     },
 
