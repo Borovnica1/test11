@@ -158,6 +158,48 @@ body {
   position: absolute;
 }
 
+.houseSide {
+  position: absolute;
+  height: 102%;
+  width: 110%;
+}
+
+.houseSide__front {
+  transform: translateZ(10px);
+}
+.houseSide__back {
+  transform: translateZ(-10px);
+}
+.houseSide__left {
+  transform: translateX(10px) rotateY(270deg);
+}
+.houseSide__right {
+  transform: translateX(-10px) rotateY(270deg);
+}
+.houseSide__bottom {
+  transform: translateY(-10px) rotateX(90deg);
+}
+.houseSide__roof {
+  height: 120%;
+  width: 120%;
+  transform: translateY(22px) rotateX(90deg);
+}
+
+.houseContainer {
+  animation: rotate 16s linear infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  to {
+    transform: rotateY(1080deg) rotateX(360deg);
+  }
+}
+
+
 .map__box {
   position: relative;
 }
