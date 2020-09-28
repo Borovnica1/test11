@@ -724,7 +724,7 @@ var UIController = (function() {
       var color;
       houses == 4 && addRemove == 'Build' ? color = 'rgba(169, 0,0,0.9)' : color = 'rgba(0, 140,0,0.4)';
       card = mapContainer.querySelector('[data-id="'+id+'"]').children[1];
-      html = '<div class="" style="width: 19px; height: 19px; background-color: '+color+';">'+'</div>';
+      html = '<div class="houseContainer" style="background-color:'+color+'"><div class="houseSide houseSide__front"></div><div class="houseSide houseSide__right"></div><div class="houseSide houseSide__back"></div><div class="houseSide houseSide__left"></div><div class="houseSide houseSide__bottom"></div><div class="houseSide houseSide__roof"><div class="houseRoof houseRoof__right"></div><div class="houseRoof houseRoof__left"></div><div class="houseRoof houseRoof__topRight"></div><div class="houseRoof houseRoof__topLeft"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div><div class="houseRoof houseChimney"></div></div></div>';
       if (addRemove == 'Build') {
         card.insertAdjacentHTML('beforeend', html);
       } else {
