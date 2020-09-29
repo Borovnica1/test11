@@ -680,24 +680,63 @@ var UIController = (function() {
     availHouseSpots: function(propIds, buildSell) {
       var color;
       var card;
+      var price;
+      var priceColor;
 
       buildSell == 'Build' ? color = 'rgba(0,169,0,.6)' : color = 'rgba(169,0,0,.6)'
       for (var i = 0; i < propIds.length; i++) {
         card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]').children[2];
-        card.style.backgroundColor = 'rgba(0,0,0,.6)';;
+        card.style.backgroundColor = 'rgba(0,0,0,.6)';
         card.style.zIndex = '100';
         card.style.cursor = 'pointer';
+
+        priceColor = 'darkgreen'
+        if ([22, 24].includes(propIds[i])) {
+          price = 60 / 4;
+        } else if ([27, 29, 30].includes(propIds[i])) {
+          price = 100 / 4;
+          if (30 == propIds[i]) price = 120 / 4;
+        } else if ([32, 34, 35].includes(propIds[i])) {
+          price = 140 / 4;
+          if (35 == propIds[i]) price = 160 / 4;
+        } else if ([37, 39, 40].includes(propIds[i])) {
+          price = 180 / 4;
+          if (40 == propIds[i]) price = 200 / 4;
+        } else if ([2, 4, 5].includes(propIds[i])) {
+          price = 220 / 4;
+          if (5 == propIds[i]) price = 240 / 4;
+        } else if ([7, 8, 10].includes(propIds[i])) {
+          price = 260 / 4;
+          if (10 == propIds[i]) price = 280 / 4;
+        } else if ([12, 13, 15].includes(propIds[i])) {
+          price = 300 / 4;
+          if (15 == propIds[i]) price = 320 / 4;
+        } else if (18 == propIds[i]) {
+          price = 350 / 4;
+        } else if (20 == propIds[i]) {
+          price = 400 / 4;
+        }
+        if (buildSell == 'Sell') {
+          price = price / 2;
+          priceColor = 'red';
+        }
+
+        card.children[0].children[0].innerHTML = '$'+price;
+        card.children[0].children[0].style.color = priceColor;
 
         card.addEventListener('mouseenter', (event) => {
           // make sure i put bg color only on the card overlay
           if (event.target.parentNode.getAttribute('data-id') > 0) {
             event.target.style.backgroundColor = color;
+            event.target.children[0].style.display = 'block';
+            console.log(event, event.target.children[0]);
           }
         });
         card.addEventListener('mouseleave', (event) => {
           // make sure i put bg color only on the card overlay
           if (event.target.parentNode.getAttribute('data-id') > 0) {
             event.target.style.backgroundColor = 'rgba(0,0,0,.6)';
+            event.target.children[0].style.display = 'none';
           }
         });
       }
@@ -1650,8 +1689,6 @@ var controller = (function(game, UICtrl) {
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
 
-// houses and hotels!!!
-// make houses maybe 3d somehow lol
 // when i hover over property in build mode tell me the price of a house 
 
 // trade feature!!!

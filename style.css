@@ -161,6 +161,26 @@ body {
   position: absolute;
 }
 
+.housePrice {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  color: rgb(231, 255, 249);
+  font-size: 14px;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+}
+
+.housePrice span {
+  -webkit-text-stroke: .1px rgba(0, 0, 0, 0.24);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
+  font-size: 18px;
+}
+
 .houseSide {
   position: absolute;
   height: 102%;
