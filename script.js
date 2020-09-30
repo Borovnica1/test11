@@ -682,6 +682,7 @@ var UIController = (function() {
       var card;
       var price;
       var priceColor;
+      var text;
 
       buildSell == 'Build' ? color = 'rgba(0,169,0,.6)' : color = 'rgba(169,0,0,.6)'
       for (var i = 0; i < propIds.length; i++) {
@@ -690,6 +691,7 @@ var UIController = (function() {
         card.style.zIndex = '100';
         card.style.cursor = 'pointer';
 
+        text = 'Build house for: ';
         priceColor = 'darkgreen'
         if ([22, 24].includes(propIds[i])) {
           price = 60 / 4;
@@ -719,8 +721,10 @@ var UIController = (function() {
         if (buildSell == 'Sell') {
           price = price / 2;
           priceColor = 'red';
+          text = 'Sell house for: ';
         }
 
+        card.children[0].innerHTML = text + '<span></span>';
         card.children[0].children[0].innerHTML = '$'+price;
         card.children[0].children[0].style.color = priceColor;
 
@@ -729,7 +733,6 @@ var UIController = (function() {
           if (event.target.parentNode.getAttribute('data-id') > 0) {
             event.target.style.backgroundColor = color;
             event.target.children[0].style.display = 'block';
-            console.log(event, event.target.children[0]);
           }
         });
         card.addEventListener('mouseleave', (event) => {
@@ -746,13 +749,13 @@ var UIController = (function() {
     removeHouseSpots: function(propIds) {
       var card;
       var cardClone;
-      console.log(propIds.length);
-      console.log(propIds);
+
       for (var i = 0; i < propIds.length; i++) {
         card = mapContainer.querySelector('[data-id="'+propIds[i]+'"]').children[2];
         card.style.backgroundColor = 'rgba(0,0,0,.0)';
         card.style.zIndex = '';
         card.style.cursor = 'default';
+        card.children[0].style.display = 'none';
         cardClone = card.cloneNode(true);
         card.parentNode.replaceChild(cardClone, card);
       }
@@ -1599,7 +1602,6 @@ var controller = (function(game, UICtrl) {
     var indexOf;
     var id;
     propIdsOpen.forEach(id => {
-      console.log(availSpots);
       indexOf = playersArr[currentPlayer].properties.indexOf(playersArr[currentPlayer].properties.find(el => el.id == id));
 
       if (playersArr[currentPlayer].properties[indexOf].built == false && playersArr[currentPlayer].properties[indexOf].houses < 5 && buildOrSell == 'Build') {
@@ -1608,7 +1610,6 @@ var controller = (function(game, UICtrl) {
         availSpots.push(id);
       }
     });
-    console.log(availSpots);
     UICtrl.availHouseSpots(availSpots, buildOrSell);
 
     var moneyDiff;

@@ -165,6 +165,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
+  max-width: 50px;
   transform: translate(-50%, -50%);
   display: none;
   z-index: 100;
@@ -173,6 +174,18 @@ body {
   -webkit-text-stroke: .1px black;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   text-align: center;
+}
+.housePrice-bottom {
+  top: 150%;
+}
+.housePrice-left {
+  left: -50%;
+}
+.housePrice-top {
+  top: -50%;
+}
+.housePrice-right {
+  left: 150%;
 }
 
 .housePrice span {
@@ -283,10 +296,10 @@ body {
     transform: rotateY(0deg) rotateX(0deg);
   }
   50% {
-    transform: rotateY(540deg) rotateX(50deg);
+    transform: rotateY(180deg) rotateX(50deg);
   }
   to {
-    transform: rotateY(1080deg) rotateX(0deg);
+    transform: rotateY(360deg) rotateX(0deg);
   }
 }
 
