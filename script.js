@@ -775,6 +775,10 @@ var UIController = (function() {
           card.insertAdjacentHTML('beforeend', html);
         }
       }
+    },
+
+    showTradePlayers: function() {
+      
     }
 
   }
@@ -807,6 +811,11 @@ var controller = (function(game, UICtrl) {
       UICtrl.removeHouseSpots(availSpots);
     })
 
+    document.querySelector('.trade').addEventListener('click', () => {
+      document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'none');
+      //document.querySelector('.done').style.display = 'block';
+      trade();
+    })
 
     document.querySelector('.endTurn').addEventListener('click', () => endTurn = true);
     document.querySelectorAll('.menu__menu').forEach(el => {
@@ -1672,6 +1681,11 @@ var controller = (function(game, UICtrl) {
     return ids;
   }
 
+  var trade = function() {
+    document.querySelector('.trade__overlay').style.display = 'block';
+    UICtrl.showTradePlayers();
+  }
+
   var checkIfPlayerPassedGO = function() {
 
   };
@@ -1690,7 +1704,7 @@ var controller = (function(game, UICtrl) {
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
 
-// when i hover over property in build mode tell me the price of a house 
-
 // trade feature!!!
+
+
 // responsive oon mobile
