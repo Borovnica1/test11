@@ -777,8 +777,16 @@ var UIController = (function() {
       }
     },
 
-    showTradePlayers: function() {
-      
+    showTradePlayers: function(players) {
+      html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.5rem;">'
+      + '<h1 class="map__title">' + 'Trade with: ?' + '</h1>' 
+      for (var i = 0; i < players.length; i++) {
+        html += '<div class="map__box3" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:inline-flex;justify-content: center;background-color:#82cdff;margin-right:.4rem;margin-top:.8rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
+      }
+      html += '<button class="map__trade btn" style="font-size: 20px;display:flex;margin:auto;padding:.4rem .7rem;margin-top:1rem">' + 'Trade' + '</button>'
+      + '</div>';
+
+      mapContainer.insertAdjacentHTML('beforeend', html);
     }
 
   }
@@ -965,6 +973,26 @@ var controller = (function(game, UICtrl) {
           arrow.style.top = '90%'
         }
       })
+    })
+  }
+
+  var traderChosen = false;
+  function updateEventListener8() {
+    var playerL = document.querySelectorAll('.map__box3');
+    var lastItem = document.querySelector('.map__box3');
+    var canTrade = false;
+    playerL.forEach(item => {
+      item.addEventListener('click', exe => {
+        lastItem.style.border = "1px solid #000";
+        lastItem.style.backgroundColor = '#82cdff';
+        item.style.border = "2px solid orangered";
+        item.style.backgroundColor = 'pink';
+        lastItem = item;
+        canTrade = true;
+      })
+    })
+    document.querySelector('.map__trade').addEventListener('click', () => {
+      if (canTrade == true) traderChosen = true;
     })
   }
 
@@ -1681,9 +1709,15 @@ var controller = (function(game, UICtrl) {
     return ids;
   }
 
-  var trade = function() {
+  var trade = async function() {
     document.querySelector('.trade__overlay').style.display = 'block';
-    UICtrl.showTradePlayers();
+    var tradePlayers = playersArr.filter(x => x.id !== playersArr[currentPlayer].id);
+    UICtrl.showTradePlayers(tradePlayers);
+    updateEventListener8();
+    while(!traderChosen) {
+      await new Promise(r => setTimeout(r, 0100));
+    }
+    console.log('trading is open!!');
   }
 
   var checkIfPlayerPassedGO = function() {

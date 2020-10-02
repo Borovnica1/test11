@@ -603,7 +603,7 @@ If you want players to be in the center of a property!!
 }
 
 .map__modal {
-  z-index: 100;
+  z-index: 110;
   background-color: rgba(255, 255, 47, 0.699);
   border-radius: 10px;
   font-size: 12px;
@@ -785,4 +785,8 @@ input::-webkit-inner-spin-button {
   top: -4px;
   right: 4px;
   font-style: normal;
+}
+
+.map__trade:hover {
+  background-color: rgb(211, 211, 211);
 }
