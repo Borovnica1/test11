@@ -1711,12 +1711,16 @@ var controller = (function(game, UICtrl) {
 
   var trade = async function() {
     document.querySelector('.trade__overlay').style.display = 'block';
-    var tradePlayers = playersArr.filter(x => x.id !== playersArr[currentPlayer].id);
-    UICtrl.showTradePlayers(tradePlayers);
-    updateEventListener8();
-    while(!traderChosen) {
-      await new Promise(r => setTimeout(r, 0100));
+    if (playersArr.length >= 3) {
+      var tradePlayers = playersArr.filter(x => x.id !== playersArr[currentPlayer].id);
+      UICtrl.showTradePlayers(tradePlayers);
+      updateEventListener8();
+      while(!traderChosen) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      traderChosen = false;
     }
+    
     console.log('trading is open!!');
   }
 
