@@ -781,12 +781,16 @@ var UIController = (function() {
       html = '<div class="map__modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.5rem;">'
       + '<h1 class="map__title">' + 'Trade with: ?' + '</h1>' 
       for (var i = 0; i < players.length; i++) {
-        html += '<div class="map__box3" style="cursor:pointer; border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:inline-flex;justify-content: center;background-color:#82cdff;margin-right:.4rem;margin-top:.8rem">' + '<span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
+        html += '<div class="map__box3" player-id="'+players[i].id+'" style="cursor:pointer; width:  40px; height: 40px; border-radius:50%;display:inline-flex;justify-content: center;background-color:#82cdff;margin-right:.4rem;margin-top:.8rem">' + '<span class="map__char" style="border-radius:50%;border: 1px solid #000;display:inline-grid;width:100%;text-align:center;align-items: center; font-size: 22px;">'  + players[i].char + '</span>' + '</div>'
       }
       html += '<button class="map__trade btn" style="font-size: 20px;display:flex;margin:auto;padding:.4rem .7rem;margin-top:1rem">' + 'Trade' + '</button>'
       + '</div>';
 
       mapContainer.insertAdjacentHTML('beforeend', html);
+    },
+
+    removeTradePlayers: function() {
+      document.querySelector('.map__modal').parentNode.removeChild(document.querySelector('.map__modal'));
     }
 
   }
@@ -880,7 +884,7 @@ var controller = (function(game, UICtrl) {
       item.addEventListener('click', exe => {
         lastItem.style.border = "1px solid #000";
         lastItem.style.backgroundColor = '';
-        item.style.border = "2px solid orangered";
+        item.style.border = "1px solid orangered";
         item.style.backgroundColor = 'lightblue';
         lastItem = item;
         char = item.firstChild.innerHTML;
@@ -977,18 +981,22 @@ var controller = (function(game, UICtrl) {
   }
 
   var traderChosen = false;
+  var traderId;
   function updateEventListener8() {
     var playerL = document.querySelectorAll('.map__box3');
     var lastItem = document.querySelector('.map__box3');
     var canTrade = false;
     playerL.forEach(item => {
       item.addEventListener('click', exe => {
-        lastItem.style.border = "1px solid #000";
-        lastItem.style.backgroundColor = '#82cdff';
-        item.style.border = "2px solid orangered";
-        item.style.backgroundColor = 'pink';
+        lastItem.children[0].style.border = "1px solid #000";
+        lastItem.children[0].style.backgroundColor = '#82cdff';
+        item.children[0].style.border = "1px solid orangered";
+        item.children[0].style.backgroundColor = 'pink';
         lastItem = item;
         canTrade = true;
+        console.log(exe);
+        console.log(exe.target.parentNode.getAttribute('player-id'));
+        traderId = exe.target.parentNode.getAttribute('player-id');
       })
     })
     document.querySelector('.map__trade').addEventListener('click', () => {
@@ -1719,9 +1727,12 @@ var controller = (function(game, UICtrl) {
         await new Promise(r => setTimeout(r, 0100));
       }
       traderChosen = false;
+      UICtrl.removeTradePlayers();
     }
+    var indexOfTrader = playersArr.indexOf(playersArr.find(x => x.id == traderId));
+    var trader = playersArr[indexOfTrader];
     
-    console.log('trading is open!!');
+    console.log('trading is open!!', trader);
   }
 
   var checkIfPlayerPassedGO = function() {

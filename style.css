@@ -88,13 +88,44 @@ body {
   border: 2px solid #000;
 }
 .trade__overlay {
-  display: none;
+  display: flex;
   position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,.4);
   z-index: 105;
   border: 2px solid #000;
+}
+
+.trade__modal {
+  width: 70%;
+  height: 70%;
+  background-color: rgba(255, 217, 0, 0.555);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  border-radius: 20px;
+  padding: 1rem;
+  display: flex;
+}
+
+.trade__modal .currentPlayer {
+  width: 35%;
+  height: 100%;
+  background-color: rgba(139, 0, 139, 0.856);
+}
+.trade__modal .offer {
+  width: 30%;
+  height: 100%;
+  background-color: rgba(0, 25, 139, 0.856);
+  margin: 0 1rem;
+}
+.trade__modal .tradePlayer {
+  width: 35%;
+  height: 100%;
+  background-color: rgba(139, 0, 139, 0.856);
 }
 
 .map__cards {
