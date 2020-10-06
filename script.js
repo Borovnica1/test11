@@ -236,9 +236,9 @@ var UIController = (function() {
     return Math.floor(Math.random() * 100) + 1;
   }
 
-  function statsCardsHTML(id) {
-    return '<div class="stats__cards'+id+'" style="display:none;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;">'
-    + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="22" style="border:1px solid #955436"></span>' + '<span card-id="24" style="border:1px solid #955436"></span>' + 
+  function statsCardsHTML(id, tradeOption, widthHeihtMarginTop) {
+    return '<div class="stats__cards'+id+'" style="display:none;justify-content:space-around;align-items:center;height:220px;background-color:#82cdff;border-radius: 0 0 10px 10px;margin-top:-5px;'+tradeOption+'">'
+    + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;'+widthHeihtMarginTop+'">' + '<span card-id="22" style="border:1px solid #955436"></span>' + '<span card-id="24" style="border:1px solid #955436"></span>' + 
     '<span></span>' + '<span></span>' +
     '<span card-id="27" style="border:1px solid #aae0fa"></span>' + 
     '<span card-id="29" style="border:1px solid #aae0fa"></span>' + 
@@ -256,7 +256,7 @@ var UIController = (function() {
     '<span card-id="4" style="border:1px solid #ed1b24"></span>' + 
     '<span card-id="5" style="border:1px solid #ed1b24"></span>' +
      '</div>'
-    + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;">' + '<span card-id="7" style="border:1px solid #fef200"></span>' + '<span card-id="8" style="border:1px solid #fef200"></span>' +
+    + '<div style="background-color:;width:40%;height:90%;display:grid;grid-template-columns:repeat(4, 1fr);grid-template-rows:repeat(5, 1fr);grid-gap:4px;'+widthHeihtMarginTop+'">' + '<span card-id="7" style="border:1px solid #fef200"></span>' + '<span card-id="8" style="border:1px solid #fef200"></span>' +
     '<span card-id="10" style="border:1px solid #fef200"></span>' +
     '<span></span>' +
     '<span card-id="12" style="border:1px solid #1fb25a"></span>' + 
@@ -799,14 +799,17 @@ var UIController = (function() {
 
     showTrade: function(bothPlayers) {
       document.querySelector('.trade__modal').style.display = 'flex';
-      console.log(bothPlayers);
-      var bothPanels;
-      bothPanels += document.querySelector('.currentPlayer');
-      bothPanels += document.querySelector('.tradePlayer');
-      console.log(bothPanels);
+      document.querySelector('.offer__buttons').children[0].style.display = 'block';
+      document.querySelector('.offer__buttons').children[1].style.display = 'block';
+      var domHolder = '.currentPlayer';
+
       for (var i = 0; i < bothPlayers.length; i++) {
-        /// ispopunjavaj ovo kako valja lol
-        statsCardsHTML(bothPlayers[i].id);
+        html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">' + bothPlayers[i].name + '</h1>'
+          + '<div class="map__box2" style="margin:.6rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
+          + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:1rem')
+          + '<span>Money Amount: <input class="map__mode-number" type="number" value="" min="1" max="1000"></span>';
+        document.querySelector(domHolder).insertAdjacentHTML('beforeend', html);
+        domHolder = '.tradePlayer';
       }
       
     }
@@ -1012,8 +1015,6 @@ var controller = (function(game, UICtrl) {
         item.children[0].style.backgroundColor = 'pink';
         lastItem = item;
         canTrade = true;
-        console.log(exe);
-        console.log(exe.target.parentNode.getAttribute('player-id'));
         traderId = exe.target.parentNode.getAttribute('player-id');
       })
     })
