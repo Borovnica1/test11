@@ -802,16 +802,25 @@ var UIController = (function() {
       document.querySelector('.offer__buttons').children[0].style.display = 'block';
       document.querySelector('.offer__buttons').children[1].style.display = 'block';
       var domHolder = '.currentPlayer';
+      var cards;
+      var bordCol;
 
       for (var i = 0; i < bothPlayers.length; i++) {
         html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">' + bothPlayers[i].name + '</h1>'
-          + '<div class="map__box2" style="margin:.6rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
-          + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:1rem')
+          + '<div class="map__box2" style="margin:1rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
+          + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:.4rem')
           + '<span>Money Amount: <input class="map__mode-number" type="number" value="" min="1" max="1000"></span>';
         document.querySelector(domHolder).insertAdjacentHTML('beforeend', html);
         domHolder = '.tradePlayer';
+
+        cards = document.querySelector('.stats__cards'+(bothPlayers[i].id + 10));
+        for (var j = 0; j < bothPlayers[i].properties.length; j++) {
+          bordCol = cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"').style.borderColor;
+          cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').style.backgroundColor = bordCol;
+          cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').style.cursor = 'pointer';
+          // dodaj na click da toggle klasu gde se pokazuje strelica !!! MOZDA BOLJE TO U CONTROLLERU DA DODAM ZBOG TOGA STO MORAM NEGDE DA SKUPLJAM STA JE ZA TRANSAKCIJU!!!
+        }
       }
-      
     }
 
   }
