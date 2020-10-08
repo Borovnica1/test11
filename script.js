@@ -805,11 +805,13 @@ var UIController = (function() {
       var cards;
       var bordCol;
 
+      document.querySelector('.offer__display').children[0].innerHTML = bothPlayers[0].name;
+
       for (var i = 0; i < bothPlayers.length; i++) {
         html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">' + bothPlayers[i].name + '</h1>'
           + '<div class="map__box2" style="margin:1rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
           + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:.4rem')
-          + '<span>Money Amount: <input class="map__mode-number" type="number" value="" min="1" max="1000"></span>';
+          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="map__mode-number" type="number" value="" min="1" max="1000"></span>';
         document.querySelector(domHolder).insertAdjacentHTML('beforeend', html);
         domHolder = '.tradePlayer';
 
