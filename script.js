@@ -808,10 +808,10 @@ var UIController = (function() {
       document.querySelector('.offer__display').children[0].innerHTML = bothPlayers[0].name;
 
       for (var i = 0; i < bothPlayers.length; i++) {
-        html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">' + bothPlayers[i].name + '</h1>'
+        html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;overflow:hidden">' + bothPlayers[i].name + '</h1>'
           + '<div class="map__box2" style="margin:1rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
           + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:.4rem')
-          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="map__mode-number" type="number" value="" min="1" max="1000"></span>';
+          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="offer__money" type="number" style="outline:none;" value="" min="1" max="1000"> $</span>';
         document.querySelector(domHolder).insertAdjacentHTML('beforeend', html);
         domHolder = '.tradePlayer';
 
@@ -1031,6 +1031,17 @@ var controller = (function(game, UICtrl) {
     })
     document.querySelector('.map__trade').addEventListener('click', () => {
       if (canTrade == true) traderChosen = true;
+    })
+  }
+
+
+  var tradeOffered = false;
+  function tradeEventListener1() {
+    document.querySelector('.offer__buttons').children[0].addEventListener('click', () => {
+      tradeOffered = true;
+    })
+    document.querySelector('.offer__buttons').children[1].addEventListener('click', () => {
+      
     })
   }
 
@@ -1765,6 +1776,13 @@ var controller = (function(game, UICtrl) {
     console.log('trading is open!!', trader);
 
     UICtrl.showTrade([playersArr[currentPlayer], trader]);
+    tradeEventListener1();
+    while(!tradeOffered) {
+      await new Promise(r => setTimeout(r, 0100));
+    }
+
+    console.log('trading offered!!!!!!!');
+    
   }
 
   var checkIfPlayerPassedGO = function() {
