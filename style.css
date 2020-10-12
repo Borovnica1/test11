@@ -173,6 +173,19 @@ body {
   border-radius: 10px;
 }
 
+.trade__arrow--left {
+  background-image: url(dices/green-arrow-left.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.trade__arrow--right {
+  background-image: url(dices/green-arrow-right.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .map__cards {
   position: absolute;
   z-index: 100;

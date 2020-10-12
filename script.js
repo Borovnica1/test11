@@ -804,6 +804,7 @@ var UIController = (function() {
       var domHolder = '.currentPlayer';
       var cards;
       var bordCol;
+      var direction;
 
       document.querySelector('.offer__display').children[0].innerHTML = bothPlayers[0].name;
 
@@ -820,6 +821,15 @@ var UIController = (function() {
           bordCol = cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"').style.borderColor;
           cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').style.backgroundColor = bordCol;
           cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').style.cursor = 'pointer';
+          if (i == 0) {
+            cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').addEventListener('click', event => {
+              event.target.classList.toggle('trade__arrow--right');
+            });
+          } else {
+            cards.querySelector('[card-id="'+bothPlayers[i].properties[j].id+'"]').addEventListener('click', event => {
+              event.target.classList.toggle('trade__arrow--left');
+            });
+          }
           // dodaj na click da toggle klasu gde se pokazuje strelica !!! MOZDA BOLJE TO U CONTROLLERU DA DODAM ZBOG TOGA STO MORAM NEGDE DA SKUPLJAM STA JE ZA TRANSAKCIJU!!!
         }
       }
@@ -1759,6 +1769,8 @@ var controller = (function(game, UICtrl) {
   }
 
   var trade = async function() {
+    var indexOfTrader;
+    var trader
     document.querySelector('.trade__overlay').style.display = 'block';
     if (playersArr.length >= 3) {
       var tradePlayers = playersArr.filter(x => x.id !== playersArr[currentPlayer].id);
@@ -1769,9 +1781,13 @@ var controller = (function(game, UICtrl) {
       }
       traderChosen = false;
       UICtrl.removeTradePlayers();
+      indexOfTrader = playersArr.indexOf(playersArr.find(x => x.id == traderId));
+      trader = playersArr[indexOfTrader];
+    } else {
+      indexOfTrader = playersArr.indexOf(playersArr.find(x => x.id !== playersArr[currentPlayer].id));
+      trader = playersArr[indexOfTrader];
     }
-    var indexOfTrader = playersArr.indexOf(playersArr.find(x => x.id == traderId));
-    var trader = playersArr[indexOfTrader];
+    
     
     console.log('trading is open!!', trader);
 
