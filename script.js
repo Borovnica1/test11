@@ -812,7 +812,7 @@ var UIController = (function() {
         html = '<h1 style="font-size:20px;color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;overflow:hidden">' + bothPlayers[i].name + '</h1>'
           + '<div class="map__box2" style="margin:.6rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
           + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:.4rem')
-          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="offer__money'+(bothPlayers[i].id + 10)+'" value="0" type="number" style="color:darkgreen;outline:none;" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" name="itemConsumption" value="" min="1" max="1000"> $</span>';
+          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="offer__money'+(bothPlayers[i].id + 10)+'" value="0" type="number" style="color:darkgreen;outline:none;" oninput="return (this.value > '+bothPlayers[i].budget+') ? this.value = 0 : this.value" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" name="itemConsumption" value="" min="1" max="1000"> $</span>';
         document.querySelector(domHolder).innerHTML = html;
         domHolder = '.tradePlayer';
 
