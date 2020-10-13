@@ -809,11 +809,11 @@ var UIController = (function() {
       document.querySelector('.offer__display').children[0].innerHTML = bothPlayers[0].name;
 
       for (var i = 0; i < bothPlayers.length; i++) {
-        html = '<h1 style="color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;overflow:hidden">' + bothPlayers[i].name + '</h1>'
-          + '<div class="map__box2" style="margin:1rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
+        html = '<h1 style="font-size:20px;color:rgb(0, 174, 255);text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;overflow:hidden">' + bothPlayers[i].name + '</h1>'
+          + '<div class="map__box2" style="margin:.6rem auto;border: 1px solid #000; width:  40px; height: 40px; border-radius:50%;display:flex;justify-content: center;background-color:#82cdff"><span class="map__char" style="display:flex; align-items: center; font-size: 22px;">'+bothPlayers[i].char+'</span></div>'
           + statsCardsHTML(bothPlayers[i].id + 10, 'background-color: transparent;display:flex;flex-direction:column; height: 420px', 'margin-top:.2rem;width:80%;height:49%;margin-bottom:.4rem')
-          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="offer__money" type="number" style="outline:none;" value="" min="1" max="1000"> $</span>';
-        document.querySelector(domHolder).insertAdjacentHTML('beforeend', html);
+          + '<span style="color:darkgreen;font-size:18px">Money Amount: <input class="offer__money'+(bothPlayers[i].id + 10)+'" value="0" type="number" style="color:darkgreen;outline:none;" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" name="itemConsumption" value="" min="1" max="1000"> $</span>';
+        document.querySelector(domHolder).innerHTML = html;
         domHolder = '.tradePlayer';
 
         cards = document.querySelector('.stats__cards'+(bothPlayers[i].id + 10));
@@ -832,6 +832,24 @@ var UIController = (function() {
           }
           // dodaj na click da toggle klasu gde se pokazuje strelica !!! MOZDA BOLJE TO U CONTROLLERU DA DODAM ZBOG TOGA STO MORAM NEGDE DA SKUPLJAM STA JE ZA TRANSAKCIJU!!!
         }
+      }
+    },
+
+    hideTrade: function() {
+      document.querySelector('.offer__buttons').children[2].style.display = 'none';
+      document.querySelector('.offer__buttons').children[3].style.display = 'none';
+      document.querySelector('.trade__overlay').style.display = 'none';
+      document.querySelector('.trade__modal').style.display = 'none';
+      document.querySelectorAll('.menu__btn').forEach(el => el.style.display = 'block');
+      document.querySelectorAll('.menu__btn')[4].style.display = 'none';
+      document.querySelector('.currentPlayer').style.pointerEvents = 'initial';
+      document.querySelector('.tradePlayer').style.pointerEvents = 'initial';
+    },
+
+    statsCardsRestartForTrade: function(properties, id) {
+      var cards = document.querySelector('.stats__cards'+id);
+      for (var i = 0; i < properties.length; i++) {
+        cards.querySelector('[card-id="'+properties[i].id+'"]').style.backgroundColor = '';
       }
     }
 
@@ -1046,12 +1064,70 @@ var controller = (function(game, UICtrl) {
 
 
   var tradeOffered = false;
-  function tradeEventListener1() {
+  var tradeCanceled = false;
+  var tradeAccepted = false;
+  var tradeRejected = false;
+  var tradeProperties1 = [];
+  var tradeProperties2 = [];
+  var tradeMoney1;
+  var tradeMoney2;
+  function tradeEventListener1(bothPlayersLol) {
+    var cardId;
+    var cardIndex;
+    for (var i = 0; i < bothPlayersLol.length; i++) {
+      cards = document.querySelector('.stats__cards'+(bothPlayersLol[i].id + 10));
+      for (var j = 0; j < bothPlayersLol[i].properties.length; j++) {
+        if (i == 0) {
+          cards.querySelector('[card-id="'+bothPlayersLol[i].properties[j].id+'"]').addEventListener('click', event => {
+            cardId = event.target.getAttribute('card-id');
+            cardId = parseInt(cardId, 10);
+            if (tradeProperties1.includes(cardId)) {
+              cardIndex = tradeProperties1.indexOf(cardId);
+              tradeProperties1.splice(cardIndex, 1);
+            } else {
+              tradeProperties1.push(cardId);
+            }
+          });
+        } else {
+          cards.querySelector('[card-id="'+bothPlayersLol[i].properties[j].id+'"]').addEventListener('click', event => {
+            cardId = event.target.getAttribute('card-id');
+            cardId = parseInt(cardId, 10);
+            if (tradeProperties2.includes(cardId)) {
+              cardIndex = tradeProperties2.indexOf(cardId);
+              tradeProperties2.splice(cardIndex, 1);
+            } else {
+              tradeProperties2.push(cardId);
+            }
+          });
+        }
+      }
+    }
     document.querySelector('.offer__buttons').children[0].addEventListener('click', () => {
+      tradeMoney1 = document.querySelector('.offer__money'+(bothPlayersLol[0].id + 10)+'').value;
+      tradeMoney2 = document.querySelector('.offer__money'+(bothPlayersLol[1].id + 10)+'').value;
+      tradeMoney1 = parseInt(tradeMoney1, 10);
+      tradeMoney2 = parseInt(tradeMoney2, 10);
       tradeOffered = true;
+      // Change buttons!!!
+      document.querySelector('.offer__buttons').children[0].style.display = 'none';
+      document.querySelector('.offer__buttons').children[1].style.display = 'none';
+      document.querySelector('.offer__buttons').children[2].style.display = 'block';
+      document.querySelector('.offer__buttons').children[3].style.display = 'block';
+      // Chane text in the middle
+      document.querySelector('.offer__display').children[0].innerHTML = bothPlayersLol[1].name;
+      document.querySelector('.offer__display').children[1].innerHTML = 'This offer I...'
+      // Lock trading windows so it cant be changed
+      document.querySelector('.currentPlayer').style.pointerEvents = 'none';
+      document.querySelector('.tradePlayer').style.pointerEvents = 'none';
     })
     document.querySelector('.offer__buttons').children[1].addEventListener('click', () => {
-      
+      tradeCanceled = true;
+    })
+    document.querySelector('.offer__buttons').children[2].addEventListener('click', () => {
+      tradeAccepted = true;
+    })
+    document.querySelector('.offer__buttons').children[3].addEventListener('click', () => {
+      tradeRejected = true;
     })
   }
 
@@ -1770,7 +1846,15 @@ var controller = (function(game, UICtrl) {
 
   var trade = async function() {
     var indexOfTrader;
-    var trader
+    var trader;
+    var moneyDiff = 0;
+    var sign1 = '-', sign2 = '+';
+    var propIndex;
+    // clean properties chosen from last time always!!
+    tradeProperties1 = [];
+    tradeProperties2 = [];
+    tradeMoney1 = 0;
+    tradeMoney2 = 0;
     document.querySelector('.trade__overlay').style.display = 'block';
     if (playersArr.length >= 3) {
       var tradePlayers = playersArr.filter(x => x.id !== playersArr[currentPlayer].id);
@@ -1787,18 +1871,63 @@ var controller = (function(game, UICtrl) {
       indexOfTrader = playersArr.indexOf(playersArr.find(x => x.id !== playersArr[currentPlayer].id));
       trader = playersArr[indexOfTrader];
     }
-    
-    
-    console.log('trading is open!!', trader);
 
+    
     UICtrl.showTrade([playersArr[currentPlayer], trader]);
-    tradeEventListener1();
-    while(!tradeOffered) {
+    tradeEventListener1([playersArr[currentPlayer], trader]);
+    while(!tradeOffered && !tradeCanceled) {
       await new Promise(r => setTimeout(r, 0100));
     }
+    if (tradeOffered) {
+      while(!tradeAccepted && !tradeRejected) {
+        await new Promise(r => setTimeout(r, 0100));
+      }
+      if (tradeAccepted) {
+        // clean stats cards before moving properties
+        UICtrl.statsCardsRestartForTrade(playersArr[currentPlayer].properties, playersArr[currentPlayer].id)
+        UICtrl.statsCardsRestartForTrade(trader.properties, trader.id)
+        // Exchange properties and money agreed
+        for (var i = 0; i < tradeProperties2.length; i++) {
+          playersArr[currentPlayer].properties.push(trader.properties.find(x => x.id == tradeProperties2[i]));
+          propIndex = trader.properties.indexOf(trader.properties.find(x => x.id == tradeProperties2[i]));
+          trader.properties.splice(propIndex, 1);
+        }
+        for (var j = 0; j < tradeProperties1.length; j++) {
+          trader.properties.push(playersArr[currentPlayer].properties.find(x => x.id == tradeProperties1[j]));
+          propIndex = playersArr[currentPlayer].properties.indexOf(playersArr[currentPlayer].properties.find(x => x.id == tradeProperties1[j]));
+          playersArr[currentPlayer].properties.splice(propIndex, 1);
+        }
 
-    console.log('trading offered!!!!!!!');
+        if (tradeMoney1 > tradeMoney2) {
+          moneyDiff = tradeMoney1 - tradeMoney2;
+          game.payTime(playersArr[currentPlayer], trader, moneyDiff, '-');
+          sign1 = '-';
+          sign2 = '+';
+        } else if (tradeMoney1 < tradeMoney2) {
+          moneyDiff = tradeMoney2 - tradeMoney1;
+          game.payTime(trader, playersArr[currentPlayer], moneyDiff, '-');
+          sign1 = '+';
+          sign2 = '-';
+        } 
+      }
+    }
+    tradeOffered = false;
+    tradeCanceled = false;
+    tradeAccepted = false;
+    tradeRejected = false;
     
+    UICtrl.hideTrade();
+
+    console.log(playersArr[currentPlayer].properties, trader.properties);
+
+    UICtrl.showMoneyChange(playersArr[currentPlayer].id, moneyDiff, sign1);
+    UICtrl.showMoneyChange(trader.id, moneyDiff, sign2);
+    await new Promise(r => setTimeout(r, 1000));
+    UICtrl.hideMoneyChange(playersArr[currentPlayer].id, playersArr[currentPlayer].budget);
+    UICtrl.hideMoneyChange(trader.id, trader.budget);
+
+    UICtrl.updateStatsCards(playersArr[currentPlayer].properties, playersArr[currentPlayer].id, playersArr[currentPlayer].char);
+    UICtrl.updateStatsCards(trader.properties, trader.id, trader.char);
   }
 
   var checkIfPlayerPassedGO = function() {
