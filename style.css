@@ -14,10 +14,15 @@ body {
   background-color: rgb(255, 239, 214);
   font-size: 62.5%;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: rgba(182, 122, 122, 0.45);
   position: absolute;
   z-index: 9999;
   top: 0;
@@ -55,13 +60,11 @@ body {
 }
 
 .container {
-  height: 94vh;
   width: 1300px;
   display: flex;
   margin: auto;
   background-color: rgb(238, 218, 255);
   user-select: none;
-  margin: 2rem auto 0 auto;
 }
 /* Responsive maybe with 62vw?? */
 .map {
@@ -518,6 +521,7 @@ If you want players to be in the center of a property!!
   letter-spacing: .3rem;
   font-size: 1.1rem;
   padding: .8rem;
+  margin: .3rem 0;
 }
 
 .endTurn, .rent {
@@ -878,4 +882,65 @@ input::-webkit-inner-spin-button {
 
 .map__trade:hover {
   background-color: rgb(211, 211, 211);
+}
+
+/* MEDIA QUERIES */ 
+/* MEDIA QUERIES */ 
+/* MEDIA QUERIES */ 
+
+@media screen and (max-width: 1260px) {
+  body {
+    background-color: blue;
+    font-size: 50%;
+  }
+  .container {
+    height: auto;
+  }
+  .map {
+    min-height: 700px;
+    min-width: 700px;
+    width: 700px;
+    height: 700px;
+  }
+  .stats {
+    height: 700px;
+  }
+  .container {
+    width: 1100px;
+  }
+}
+
+@media screen and (max-width: 1020px) {
+  body {
+    background-color: red;
+  }
+  .map {
+    min-height: 550px;
+    min-width: 550px;
+    width: 550px;
+    height: 550px;
+  }
+  .stats {
+    height: 550px;
+  }
+  .section__stats {
+    width: 28%;
+  }
+  .container {
+    width: 900px;
+  }
+}
+
+/* PHONES */
+
+@media screen and (max-width: 1020), screen and (max-height: 400px) {
+  body {
+    background-color: green;
+  }
+  .map {
+    min-height: 350px;
+    min-width: 350px;
+    width: 350px;
+    height: 350px;
+  }
 }
