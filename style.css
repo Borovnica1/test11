@@ -888,7 +888,7 @@ input::-webkit-inner-spin-button {
 /* MEDIA QUERIES */ 
 /* MEDIA QUERIES */ 
 
-@media only screen and (max-width: 1260px) {
+/* @media only screen and (max-width: 1260px) {
   body {
     background-color: blue;
     font-size: 50%;
@@ -931,7 +931,6 @@ input::-webkit-inner-spin-button {
   }
 }
 
-/* PHONES */
 
 @media only screen and (max-width: 1020), only screen and (max-height: 400px) {
   body {
@@ -943,4 +942,4 @@ input::-webkit-inner-spin-button {
     width: 350px;
     height: 350px;
   }
-}
+} */
