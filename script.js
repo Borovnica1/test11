@@ -1729,7 +1729,6 @@ var controller = (function(game, UICtrl) {
         document.querySelector('.overlay__rankings').style.display = 'flex';
         UICtrl.showPlayerDashboard(game.getPlayers(), true);
         for (var i = 0; i < game.getPlayers().length; i++) {
-          console.log(i);
           UICtrl.updateStatsCards(playersArr[i].properties, playersArr[i].id, playersArr[i].char);
         }
         updateEventListener7();
@@ -1947,8 +1946,5 @@ var controller = (function(game, UICtrl) {
 // SNSOPOLY EDITION?!?!?!
 // make video cut extension and display on the board random cuts
 // svaka stranka druga boja i special effect???!?!?!?!?
-
-// trade feature!!!
-
 
 // responsive oon mobile
