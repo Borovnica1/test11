@@ -2,4 +2,4 @@
 
 Monopoly game clone made in vanilla javascript, css and html.
 
-Demo: ....
+Demo: https://borovnica1.github.io/monopoly-clone/
