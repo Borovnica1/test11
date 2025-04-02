@@ -6,6 +6,213 @@
   box-sizing: border-box;
 }
 
+/* New UI Components */
+.start-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  z-index: 1000;
+  text-align: center;
+}
+
+.player-selection {
+  margin-top: 1rem;
+}
+
+.player-count {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.player-count-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.player-stats {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #f0f0f0;
+  border-radius: 5px;
+}
+
+.player-stats.active {
+  background: #ffeb3b;
+  border: 2px solid #ffc107;
+}
+
+.player-icon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dice-result {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.dice-result {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.die {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: rollDice 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+}
+
+@keyframes rollDice {
+  0% {
+    transform: rotateX(0) rotateY(0) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: rotateX(360deg) rotateY(180deg) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(720deg) rotateY(360deg) scale(1);
+  }
+}
+
+.property-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  z-index: 1000;
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.buy-btn, .auction-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buy-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.auction-btn {
+  background: #f44336;
+  color: white;
+}
+
+.notification {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.notification.error {
+  background: rgba(255, 0, 0, 0.8);
+}
+
+.jail-options {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 1.5rem;
+  border-radius: 5px;
+  z-index: 1000;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.jail-options button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pay-bail-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.roll-double-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.card-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 5px;
+  z-index: 1000;
+  text-align: center;
+  max-width: 80%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
 html {
   position: relative;
 }
