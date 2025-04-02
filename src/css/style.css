@@ -1,0 +1,1039 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  position: relative;
+}
+
+body {
+  background-color: rgb(255, 239, 214);
+  font-size: 62.5%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+ /*  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+.overlay {
+  background-color: rgba(182, 122, 122, 0.45);
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+.overlay .unpause {
+  width: auto;
+  height: auto;
+  padding: .8rem 1.3rem;
+}
+
+.overlay__rankings {
+  background-color: rgb(130, 131, 226);
+  position: absolute;
+  width: 30%;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 1rem;
+}
+.startGame3 {
+  transform: translate(0%, 0%) !important;
+  position: initial !important;
+  font-size: 1.2rem !important;
+  padding: .8rem 1.2rem !important;
+  margin-top: 1rem;
+  align-self: center;
+}
+
+.container {
+  width: 1300px;
+  display: flex;
+  margin: auto;
+  background-color: rgb(238, 218, 255);
+  user-select: none;
+}
+/* Responsive maybe with 62vw?? */
+.map {
+  min-height: 870px;
+  min-width: 870px;
+  width: 870px;
+  height: 870px;
+  background-color: rgb(206, 233, 179);
+  display: grid;
+  /*transform: rotateX(360deg);*/
+  grid-template-columns: 45px repeat(11, 1fr) 45px;
+  grid-template-rows: 45px repeat(11, 1fr) 45px;
+  position: relative;
+}
+
+
+.map__overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url(../dices/monopoly.jpg); /* Adjusted path */
+  background-size: cover;
+  z-index: 10;
+  border: 2px solid #000;
+}
+.trade__overlay {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.4);
+  z-index: 105;
+  border: 2px solid #000;
+}
+
+.trade__modal {
+  width: 70%;
+  height: 70%;
+  background-color: rgba(255, 217, 0, 0.555);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  border-radius: 20px;
+  padding: 1rem;
+  display: none; /* Changed from flex to none initially */
+  flex-direction: row; /* Explicitly set flex direction */
+  justify-content: space-between; /* Align items */
+}
+
+.trade__modal .currentPlayer {
+  width: 35%;
+  height: 100%;
+  background-color: rgba(0,0,0,.2);
+  text-align: center;
+  padding: 1rem;
+  border-radius: 10px;
+}
+.trade__modal .offer {
+  width: 30%;
+  height: 100%;
+  margin: 0 1rem;
+  font-size: 18px;
+  text-align: center;
+}
+.trade__modal .offer h2 {
+  height: 30%;
+  font-size: 40px;
+  color: rgb(0, 174, 255);
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+.trade__modal .offer__display {
+  height: 30%;
+  color: rgb(0, 174, 255);
+  -webkit-text-stroke: .1px rgba(0, 0, 0, 0.226);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.438), 1px -1px 0 rgba(0, 0, 0, 0.438), -1px 1px 0 rgba(0, 0, 0, 0.438), 1px 1px 0 rgba(0, 0, 0, 0.438);
+}
+.trade__modal .offer__buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 40%;
+}
+.trade__modal .offer__buttons * {
+  width: 50%;
+  padding: .5rem 0;
+  margin-bottom: .4rem;
+  font-size: 18px;
+  color: white;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+.trade__modal .offer__buttons *:hover {
+  background-color: rgb(0, 174, 255);;
+}
+
+/* Specific button display control */
+.trade__modal .offer__buttons button:nth-child(1), /* Offer */
+.trade__modal .offer__buttons button:nth-child(2) { /* Cancel */
+    display: block; /* Initially visible */
+}
+.trade__modal .offer__buttons button:nth-child(3), /* Accept */
+.trade__modal .offer__buttons button:nth-child(4) { /* Reject */
+    display: none; /* Initially hidden */
+}
+
+
+.trade__modal .tradePlayer {
+  width: 35%;
+  height: 100%;
+  background-color: rgba(0,0,0,.2);
+  text-align: center;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.trade__arrow--left {
+  background-image: url(../dices/green-arrow-left.png); /* Adjusted path */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.trade__arrow--right {
+  background-image: url(../dices/green-arrow-right.png); /* Adjusted path */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.map__cards {
+  position: absolute;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  width: 97%;
+  padding: .1rem 0;
+  clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+}
+
+.map__cards-bottom {
+  top: -12%;
+  left: 50%;
+}
+
+.map__cards-right {
+  top: 50%;
+  left: 112%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  width: 60%;
+}
+
+.map__cards-top {
+  top: 112%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(180deg);
+  width: 97%;
+}
+
+.map__cards-left {
+  top: 50%;
+  left: -12%;
+  transform: translate(-50%, -50%) rotate(270deg);
+  width: 60%;
+}
+
+.map__houses {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  padding: .2rem;
+  margin: auto;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-start;
+}
+.map__houses > * {
+  margin-top: .5rem;
+}
+.map__houses > *:first-child {
+  margin-top: 0rem;
+}
+.map__houses-top {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+.map__houses-left {
+  transform: translate(-55%, -50%) rotate(90deg);
+  height: 170%;
+}
+.map__houses-right {
+  transform: translate(-45%, -50%) rotate(-90deg);
+  height: 170%;
+}
+
+.map__buildSell {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  /* background-color: rgba(0,0,0,0); /* Ensure it's transparent initially */
+  /* cursor: default; */
+  /* z-index: auto; */
+}
+
+.housePrice {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 50px;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  color: rgb(231, 255, 249);
+  font-size: 14px;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+}
+.housePrice-bottom {
+  top: 150%;
+}
+.housePrice-left {
+  left: -50%;
+}
+.housePrice-top {
+  top: -50%;
+}
+.housePrice-right {
+  left: 150%;
+}
+
+.housePrice span {
+  -webkit-text-stroke: .1px rgba(0, 0, 0, 0.24);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
+  font-size: 18px;
+}
+
+.houseSide {
+  position: absolute;
+  height: 102%;
+  width: 110%;
+}
+
+.houseSide__front {
+  transform: translateZ(10px);
+}
+.houseSide__back {
+  transform: translateZ(-10px);
+}
+.houseSide__left {
+  transform: translateX(10px) rotateY(270deg);
+}
+.houseSide__right {
+  transform: translateX(-10px) rotateY(270deg);
+}
+.houseSide__bottom {
+  transform: translateY(-10px) rotateX(90deg);
+}
+.houseSide__roof {
+  height: 120%;
+  width: 120%;
+  transform: translateY(6px) rotateX(90deg);
+  transform-style: preserve-3d;
+  position: relative;
+}
+.houseRoof__right {
+  width: 125%;
+  height: 125%;
+  transform: translateZ(5px) translateY(10px) translateX(-5px) rotateX(90deg);
+  clip-path: polygon(50% 0%, 0 30%, 100% 30%);
+}
+.houseRoof__left {
+  width: 125%;
+  height: 125%;
+  transform: translateZ(5px) translateY(-43px) translateX(-5px) rotateX(90deg);
+  clip-path: polygon(50% 0%, 0 30%, 100% 30%);
+}
+.houseRoof__topRight {
+  width: 70%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: -20%;
+  transform: translateZ(-5px) rotateY(-40deg);
+}
+.houseRoof__topLeft {
+  width: 70%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -20%;
+  transform: translateZ(-5px) rotateY(40deg);
+}
+
+.houseChimney {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateZ(-7px);
+}
+
+.houseSide__roof div:nth-child(6) {
+  transform: translateZ(-7.5px);
+}
+.houseSide__roof div:nth-child(7) {
+  transform: translateZ(-8px);
+}
+.houseSide__roof div:nth-child(8) {
+  transform: translateZ(-8.5px);
+}
+.houseSide__roof div:nth-child(9) {
+  transform: translateZ(-9px);
+}
+.houseSide__roof div:nth-child(10) {
+  transform: translateZ(-9.5px);
+}
+.houseSide__roof div:nth-child(11) { /* Corrected from 6 */
+  transform: translateZ(-10px);
+}
+
+.houseContainer {
+  animation: rotate 16s linear infinite;
+  transform-style: preserve-3d;
+  width: 19px;
+  height: 19px;
+  position: relative;
+}
+.houseContainer * {
+  background-color: inherit;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  50% {
+    transform: rotateY(180deg) rotateX(50deg);
+  }
+  to {
+    transform: rotateY(360deg) rotateX(0deg);
+  }
+}
+
+
+.map__box {
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.1); /* Add subtle border for clarity */
+}
+
+.map__box[data-id="1"] {
+  background-color: coral;
+  grid-area: 1 / 1 / 3 / 3;
+  position: relative;
+}
+
+.map__box[data-id="11"] {
+  background-color: coral;
+  grid-area: 1 / 12 / 3 / 14;
+}
+
+.map__box[data-id="21"] {
+  background-color: coral;
+  grid-area: 12 / 12 / 14 / 14;
+}
+
+.map__box[data-id="31"] {
+  background-color: coral;
+  grid-area: 12 / 1 / 14 / 3;
+}
+
+/*
+If you want players to be in the center of a property!!
+.map__box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+} */
+
+/* .map__box {
+  position: relative;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.45) !important;
+} */
+
+.map__box-bottom {
+  background-color: rgb(226, 186, 172);
+  grid-row: 1 / 3;
+}
+
+.map__box-left {
+  background-color: rgb(226, 186, 172);
+  grid-column: 12 / 14;
+}
+
+.map__box-top {
+  background-color: rgb(226, 186, 172);
+  grid-row: 12 / 14;
+}
+
+.map__box-right[data-id="40"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 3 / 1 / 4 / 3;
+}
+.map__box-right[data-id="39"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 4 / 1 / 5 / 3;
+}
+.map__box-right[data-id="38"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 5 / 1 / 6 / 3;
+}
+.map__box-right[data-id="37"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 6 / 1 / 7 / 3;
+}
+.map__box-right[data-id="36"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 7 / 1 / 8 / 3;
+}
+.map__box-right[data-id="35"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 8 / 1 / 9 / 3;
+}
+.map__box-right[data-id="34"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 9 / 1 / 10 / 3;
+}
+.map__box-right[data-id="33"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 10 / 1 / 11 / 3;
+}
+.map__box-right[data-id="32"] {
+  background-color: rgb(152, 222, 255);
+  grid-area: 11 / 1 / 12 / 3;
+}
+
+.section__stats {
+  width: 31%;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.stats {
+  height: 870px;
+  border-radius: 5px;
+  width: 100%;
+  background-color: rgb(130, 131, 226);
+  padding: .5rem;
+  padding-top: 0;
+  overflow: auto;
+}
+.clock {
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+  border-radius: 10px;
+  letter-spacing: .3rem;
+  font-size: 1.1rem;
+  padding: .8rem;
+  margin: .3rem 0;
+}
+
+.endTurn, .rent {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  padding: 1rem 1.6rem;
+  background-color: rgba(255, 47, 47, 0.699);
+  border: 1px solid rgb(255, 30, 0);
+}
+.endTurn:hover,
+.rent:hover {
+  background-color: rgb(255, 30, 0);
+}
+
+.rollDice {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  padding: 1rem 1.8rem;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.rollDice:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.qOption {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 100;
+  padding: 1rem 1.8rem;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.aBitLeft {
+  left: 35%;
+  background-color: rgba(47, 255, 82, 0.699);
+  border: 1px solid rgb(0, 255, 0);
+}
+.aBitLeft:hover {
+  background-color: rgb(0, 255, 0);
+}
+.aBitRight {
+  left: 65%;
+}
+.aBitRight:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.aBitLeftAuction {
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.aBitLeftAuction:hover {
+  background-color: rgb(0, 174, 255);
+}
+.aBitRightAuction {
+  background-color: rgba(255, 47, 47, 0.699);
+  border: 1px solid rgb(255, 30, 0);
+}
+.aBitRightAuction:hover {
+  background-color: rgb(255, 30, 0);
+}
+
+.rollDice1 {
+  position: absolute;
+  top: 40%;
+  left: 43%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
+  display: none;
+  z-index: 100;
+}
+.rollDice2 {
+  position: absolute;
+  top: 40%;
+  left: 57%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
+  display: none;
+  z-index: 100;
+}
+.playerNumber {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 1rem;
+  display: none;
+  z-index: 100;
+  color: rgb(231, 255, 249);
+  font-size: 30px;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+  word-break: break-word;
+}
+
+.card {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 1rem;
+  display: none;
+  z-index: 100;
+  color: rgb(231, 255, 249);
+  font-size: 30px;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+  word-break: break-word;
+  background-color: rgba(0,0,0,0.5); /* Added background for visibility */
+  border-radius: 10px;
+}
+
+/* Specific card types */
+.map__toJail, .map__inJail, .map__freeMoney {
+    width: 40%; /* Example width */
+    background-color: rgba(255, 255, 47, 0.8); /* Example background */
+}
+.map__toJail img, .map__freeMoney img {
+    margin-top: 3rem;
+    border-radius: 10px;
+    max-width: 80%; /* Ensure image fits */
+    height: auto;
+}
+
+
+.map__moneyPot {
+  top: 45%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 30%;
+  height: 30%;
+  z-index: 20;
+  position: absolute; /* Ensure it's positioned */
+  left: 50%; /* Ensure it's positioned */
+  display: block; /* Ensure it's visible */
+}
+
+.map__pot {
+  display: block;
+  font-size: 14px;
+  word-break: normal;
+  color: lightgreen;
+  -webkit-text-stroke: .1px darkgreen;
+  text-shadow: -1px -1px 0 darkgreen, 1px -1px 0 darkgreen, -1px 1px 0 darkgreen, 1px 1px 0 darkgreen;
+  position: absolute; /* Position within corner */
+  top: 10px; /* Adjust as needed */
+  left: 10px; /* Adjust as needed */
+  z-index: 101; /* Above map overlay */
+  background-color: rgba(0,0,0,0.4); /* Make text readable */
+  padding: 5px;
+  border-radius: 5px;
+}
+.map__addPotBudget {
+   display: none;
+   color: yellow; /* Make it stand out */
+}
+
+.startGame {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem 1.6rem;
+  z-index: 100;
+  background-color: rgba(255, 255, 47, 0.699);
+  border: 1px solid yellow;
+}
+.startGame:hover {
+  background-color: rgba(255, 255, 0, 0.938);
+}
+.cardTaken {
+  display: none;
+}
+
+.map__text {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 1rem 1.6rem;
+  z-index: 100;
+  background-color: rgba(245, 131, 0, 0.753);
+  border: 1px solid orange;
+  display: none;
+  color: white; /* Ensure text is visible */
+  border-radius: 5px;
+}
+
+.map__modal {
+  z-index: 110;
+  background-color: rgba(255, 255, 47, 0.699);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 300;
+  cursor: default;
+  /* Position handled by JS */
+}
+
+.map__mode {
+  width: 46%;
+  cursor: pointer;
+  display: inline-block;
+  margin: 2rem 2%;
+  padding: .15rem;
+  background-color: rgba(172, 172, 172, 0.151);
+  border-radius: 10px;
+}
+.map__mode:hover {
+  background-color:rgba(0, 174, 255, 0.308);
+}
+.map__mode * {font-size: 1.1rem;}
+.map__mode li {
+  position: relative;
+  left: 10px;
+  list-style: disc; /* Ensure list style is visible */
+  margin-left: 10px; /* Indent list items */
+}
+.map__mode li span {
+  position: relative;
+  left: -7px;
+}
+.map__mode-number {
+  outline: none;
+  width: 70px;
+  height: 25px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.map__modal img {
+  border-radius: 10px;
+  width: 100%;
+  height: 170px;
+  object-fit: cover; /* Ensure image covers area */
+}
+
+.map__modal .player__name {
+  font-size: 18px;
+  padding-left: .5rem;
+}
+
+.map__modal h2 {
+  font-weight: inherit;
+}
+
+.map__box2 {
+  margin-top: .1rem;
+  background-color: #ffa4d1;
+  color: rgb(31, 31, 31);
+}
+.map__box2:hover {
+  background-color: #82cdff;
+}
+
+.index100 {
+  z-index: 100;
+}
+
+.btn {
+  outline: none;
+  border-radius: 10px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: .05s;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.menu {
+  display: flex;
+  width: fit-content;
+  height: auto;
+  margin: .4rem auto;
+  position: relative;
+}
+
+.menu__btn {
+  outline: none;
+  border-radius: 10px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  width: 100px;
+  height: 44px;
+  transition: .05s;
+  margin-right: .4rem;
+  padding: .5rem 1rem;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+}
+.menu__btn:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.menu__exp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(22, 117, 161, 0.856);
+  border-radius: 10px;
+  width: 100px;
+  height: 44px;
+  z-index: 120;
+  transition: all .2s linear;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  visibility: hidden;
+  overflow: hidden; /* Hide buttons until expanded */
+}
+.menu__expClick {
+  visibility: visible;
+  width: 210px;
+  height: 210px;
+/*   -webkit-transform: rotateX(43200deg) rotateY(14400deg);
+  -moz-transform: rotateX(43200deg) rotateY(14400deg);
+  -ms-transform: rotateX(43200deg) rotateY(14400deg);
+  -o-transform: rotateX(43200deg) rotateY(14400deg);
+  transform: rotateX(43200deg) rotateY(14400deg);  */
+}
+
+.menu__exp__btn {
+  outline: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  width: 90%;
+  margin-top: .6rem;
+  padding: .5rem 1rem;
+  -webkit-text-stroke: .1px black;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: rgba(47, 206, 255, 0.699);
+  border: 1px solid rgb(0, 174, 255);
+  display: none; /* Initially hidden */
+}
+.menu__exp__btnClick {
+  display: block; /* Shown when menu is expanded */
+}
+.menu__exp__btn:hover {
+  background-color: rgb(0, 174, 255);
+}
+
+.map__done:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+/* Removed player-specific ::after pseudo-elements as characters are now dynamic */
+
+.map__trade:hover {
+  background-color: rgb(211, 211, 211);
+}
+
+/* Stats cards grid styling */
+.stats__cards {
+    /* Styles applied by JS */
+}
+.stats__cards > div { /* The two grid containers */
+    /* Styles applied by JS */
+}
+.stats__cards span[card-id] {
+    display: block; /* Ensure spans take up grid space */
+    /* Border applied inline */
+    background-color: transparent; /* Default background */
+    transition: background-color 0.2s; /* Smooth transition for trade selection */
+}
+
+/* Player budget display */
+.player-budget {
+    /* Styles applied inline/via JS */
+}
+.money-change {
+    /* Styles applied inline/via JS */
+    animation: fadeOut 1s forwards;
+    animation-delay: 1s; /* Start fading after 1 second */
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        /* transform: translateY(-10px); Optional: move up while fading */
+    }
+}
+
+/* Win display */
+.map__winDisplay {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7); /* Semi-transparent background */
+    z-index: 1000;
+    display: flex; /* Use flex for centering */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.map__winDisplay img {
+    width: 55%;
+    border: 2px solid #000;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 20px; /* Space between image and text */
+}
+.map__winDisplay .playerNumber { /* Reusing class, ensure styles don't conflict badly */
+    position: static; /* Override absolute positioning */
+    transform: none; /* Override transform */
+    font-size: 40px;
+    color: yellow; /* Make winner text stand out */
+    display: block; /* Ensure it's visible */
+}
+
+
+/* MEDIA QUERIES */
+/* MEDIA QUERIES */
+/* MEDIA QUERIES */
+
+/* @media only screen and (max-width: 1260px) {
+  body {
+    background-color: blue;
+    font-size: 50%;
+  }
+  .container {
+    height: auto;
+  }
+  .map {
+    min-height: 700px;
+    min-width: 700px;
+    width: 700px;
+    height: 700px;
+  }
+  .stats {
+    height: 700px;
+  }
+  .container {
+    width: 1100px;
+  }
+}
+
+@media only screen and (max-width: 1020px) {
+  body {
+    background-color: red;
+  }
+  .map {
+    min-height: 550px;
+    min-width: 550px;
+    width: 550px;
+    height: 550px;
+  }
+  .stats {
+    height: 550px;
+  }
+  .section__stats {
+    width: 28%;
+  }
+  .container {
+    width: 900px;
+  }
+}
+
+
+@media only screen and (max-width: 1020), only screen and (max-height: 400px) {
+  body {
+    background-color: green;
+  }
+  .map {
+    min-height: 350px;
+    min-width: 350px;
+    width: 350px;
+    height: 350px;
+  }
+} */
