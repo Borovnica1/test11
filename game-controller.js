@@ -13,6 +13,10 @@ export class GameController {
   }
 
   startNewGame(playerNames) {
+    // Clear any existing game state
+    this.clearGame();
+    
+    // Initialize new players
     this.players = playerNames.map((name, index) => 
       new Player(
         index + 1,
@@ -22,10 +26,13 @@ export class GameController {
         this.config.startingPosition
       )
     );
+    
     this.gameActive = true;
     this.currentPlayerIndex = 0;
     this.uiController.updatePlayers(this.players);
-    this.startTurn();
+    this.uiController.showPlayerPanel(); // Show player selection
+    
+    console.log('New game started with players:', this.players);
   }
 
   startTurn() {

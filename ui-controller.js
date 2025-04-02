@@ -10,17 +10,20 @@ export class UIController {
   }
 
   showStartScreen() {
+    // Clear any existing modals
+    const existingModal = document.querySelector('.start-modal');
+    if (existingModal) existingModal.remove();
+    
     // Create and show player selection UI
     const html = `
-      <div class="start-modal">
-        <h1>Monopoly Clone</h1>
-        <div class="player-selection">
-          <h2>Select Number of Players</h2>
-          <div class="player-count">
-            ${[2,3,4,5,6,7,8].map(num => `
-              <button class="player-count-btn" data-count="${num}">${num}</button>
-            `).join('')}
-          </div>
+      <div class="start-modal" style="width: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2rem; background: white; border-radius: 10px; z-index: 1000;">
+        <h1 style="text-align: center; margin-bottom: 1rem;">Number of players?</h1>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+          ${[2,3,4,5,6,7,8].map(num => `
+            <button class="player-count-btn" data-count="${num}" style="margin: 0.5rem; padding: 1rem; font-size: 1.2rem; border-radius: 5px; background: #4CAF50; color: white; border: none; cursor: pointer;">
+              ${num} Players
+            </button>
+          `).join('')}
         </div>
       </div>
     `;
@@ -197,11 +200,13 @@ export class UIController {
     document.querySelectorAll('.player-marker').forEach(el => el.remove());
     // Clear player stats
     this.domElements.stats.innerHTML = '';
-    // Hide dice roll button
+    // Reset game buttons
     this.domElements.rollDiceBtn.style.display = 'none';
+    // Show New Game button again
+    document.querySelector('.startGame').style.display = 'block';
     // Remove any active dialogs
     this.removePropertyDialog();
-    document.querySelectorAll('.notification, .jail-options, .card-display')
+    document.querySelectorAll('.notification, .jail-options, .card-display, .start-modal')
       .forEach(el => el.remove());
     // Reset any UI state
     if (this.domElements.endTurnBtn) {

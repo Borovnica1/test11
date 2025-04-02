@@ -19,8 +19,10 @@ const gameController = new GameController(board, uiController, GAME_CONFIG);
 // Connect UI controller to game controller
 uiController.gameController = gameController;
 
-// Start the game
-uiController.showStartScreen();
+// Initialize game but don't start until New Game is clicked
+document.querySelector('.startGame').addEventListener('click', () => {
+  uiController.showStartScreen();
+});
 
 // Handle player selection
 document.addEventListener('click', (e) => {
